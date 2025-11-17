@@ -1,0 +1,97 @@
+name: Converti Documenti DOCX in MD
+
+
+
+on:
+
+  push:
+
+    branches:
+
+      - main
+
+    paths:
+
+      - '**.docx'
+
+
+
+jobs:
+
+  convert-docs:
+
+    permissions:
+
+      contents: write 
+
+
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # 1. Fa il "checkout" del codice del tuo repository sul runner
+
+      - name: Checkout repository
+
+        uses: actions/checkout@v4
+
+
+
+      # 2. Installa Pandoc usando apt-get
+
+      - name: Install Pandoc
+
+        run: |
+
+          sudo apt-get update
+
+          sudo apt-get install -y pandoc
+
+          
+
+      # 3. Trova e converti i file DOCX (con opzioni per un diff pulito)
+
+      - name: Trova e converti i file DOCX
+
+        run: |
+
+          # Aggiunto -t gfm --wrap=none per diff puliti
+
+          find . -type f -name "*.docx" -not -name "~$*.docx" | while read docx_file; do
+
+            md_file="${docx_file%.docx}.md"
+
+            echo "Convertendo $docx_file in $md_file..."
+
+            # Opzioni: -t gfm (GitHub Markdown) e --wrap=none (niente ritorni a capo)
+
+            pandoc "$docx_file" -f docx -t gfm --wrap=none -s -o "$md_file"
+
+          done
+
+
+
+      # 4. Fai il commit dei file .md generati
+
+      - name: Commit dei file Markdown
+
+        run: |
+
+          git config --global user.name 'GitHub Action Bot'
+
+          git config --global user.email 'github-actions-bot@github.com'
+
+          git add *.md
+
+          if ! git diff --cached --quiet; then
+
+            git commit -m "Azione: Convertito automaticamente DOCX in Markdown"
+
+            git push
+
+          else
+
+            echo "Nessun file .md modificato. Nessun commit necessario."
+
+          fi
