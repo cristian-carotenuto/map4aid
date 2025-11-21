@@ -1407,3 +1407,319 @@ Il sistema provvede ad aggiornare le scorte relative a quel punto, aggiornare la
 </tr>
 </tbody>
 </table>
+
+**\#6: Segnalazione di un punto di bisogno sulla mappa**
+
+<table>
+<colgroup>
+<col style="width: 5%" />
+<col style="width: 7%" />
+<col style="width: 0%" />
+<col style="width: 0%" />
+<col style="width: 0%" />
+<col style="width: 4%" />
+<col style="width: 8%" />
+<col style="width: 0%" />
+<col style="width: 0%" />
+<col style="width: 0%" />
+<col style="width: 0%" />
+<col style="width: 36%" />
+<col style="width: 17%" />
+<col style="width: 0%" />
+<col style="width: 18%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th colspan="8" rowspan="3"><p><strong>Identificativo</strong></p>
+<p>UC #6</p></th>
+<th colspan="4" rowspan="3"><em>Segnalazione di un punto di bisogno sulla mappa</em></th>
+<th colspan="2"><em>Data</em></th>
+<th><em>17/11/2025</em></th>
+</tr>
+<tr class="odd">
+<th><em>Vers.</em></th>
+<th colspan="2"><em>1.00.000</em></th>
+</tr>
+<tr class="header">
+<th><em>Autore</em></th>
+<th colspan="2"><em>Gregorio Maria Chiara</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td colspan="8"><strong>Descrizione</strong></td>
+<td colspan="7">L’utente segnala sulla mappa un’area o un punto in cui ritiene necessario attivare un punto di raccolta o distribuzione (ad esempio zone con famiglie in difficoltà o situazioni di emergenza). La segnalazione comprende posizione, tipologia del bisogno e descrizione sintetica. Il sistema invia la segnalazione agli enti amministratori, che ne verificheranno la validità per approvarla o respingerla.</td>
+</tr>
+<tr class="even">
+<td colspan="8"><strong>Attore Principale</strong></td>
+<td colspan="7"><p><strong>Cittadino beneficiario (non autenticato o registrato)</strong></p>
+<p>Segnalare un’area di criticità e permettere al sistema di attivare un nuovo punto di aiuto.</p></td>
+</tr>
+<tr class="odd">
+<td colspan="8"><strong>Attori secondari</strong></td>
+<td colspan="7"><p><strong>Amministratore di sistema / Ente erogatore</strong></p>
+<p>Ricevere le segnalazioni, verificarle e decidere se attivare un nuovo punto di supporto.</p></td>
+</tr>
+<tr class="even">
+<td colspan="8"><strong>Entry Condition</strong></td>
+<td colspan="7"><p>L’utente visualizza la mappa.</p>
+<p>L’utente seleziona l’opzione “Segnala punto di bisogno”.</p></td>
+</tr>
+<tr class="odd">
+<td colspan="8"><p><strong>Exit condition</strong></p>
+<p>On success</p></td>
+<td colspan="7"><p>La segnalazione è registrata nel sistema.</p>
+<p>La segnalazione è inoltrata agli enti amministratori.</p></td>
+</tr>
+<tr class="even">
+<td colspan="8"><p><strong>Exit condition</strong></p>
+<p>On failure</p></td>
+<td colspan="7"><p>La segnalazione non viene inviata per errore tecnico o per dati mancanti.</p>
+<p>L’utente riceve un messaggio di errore.</p></td>
+</tr>
+<tr class="odd">
+<td colspan="8"><strong>Rilevanza/User Priority</strong></td>
+<td colspan="7">Medio/alta – consente di individuare aree critiche non ancora mappate.</td>
+</tr>
+<tr class="even">
+<td colspan="8"><strong>Frequenza stimata</strong></td>
+<td colspan="7">1-10/giorno, variabile a seconda delle situazioni territoriali.</td>
+</tr>
+<tr class="odd">
+<td colspan="15"><strong>Flusso di Eventi Principale/Main Scenario</strong></td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td colspan="5"><blockquote>
+<p>Attore:</p>
+</blockquote></td>
+<td colspan="9"><blockquote>
+<p>STEP 1. Seleziona sulla mappa l’opzione <em>“Segnala punto di bisogno”</em>.</p>
+</blockquote></td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td colspan="5"><blockquote>
+<p>Sistema:</p>
+</blockquote></td>
+<td colspan="9"><blockquote>
+<p>STEP 2. Mostra il modulo di segnalazione con i campi richiesti (posizione, tipologia bisogno, descrizione).</p>
+</blockquote></td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td colspan="5"><blockquote>
+<p>Attore:</p>
+</blockquote></td>
+<td colspan="9">STEP 3. Inserisce i dati richiesti e seleziona sulla mappa la posizione del punto di bisogno.</td>
+</tr>
+<tr class="odd">
+<td>4</td>
+<td colspan="5"><blockquote>
+<p>Sistema:</p>
+</blockquote></td>
+<td colspan="9">STEP 4. Valida i dati inseriti (tutti i campi obbligatori compilati).</td>
+</tr>
+<tr class="even">
+<td>5</td>
+<td colspan="5"><blockquote>
+<p>Attore:</p>
+</blockquote></td>
+<td colspan="9">STEP 5. Conferma l’invio della segnalazione.</td>
+</tr>
+<tr class="odd">
+<td>6</td>
+<td colspan="5"><blockquote>
+<p>Sistema:</p>
+</blockquote></td>
+<td colspan="9">STEP 6. Registra la segnalazione e la inoltra agli enti amministratori.</td>
+</tr>
+<tr class="even">
+<td>7</td>
+<td colspan="5"><blockquote>
+<p>Attore:</p>
+</blockquote></td>
+<td colspan="9">STEP 7. Visualizza il messaggio <em>“Segnalazione inviata correttamente”</em>.</td>
+</tr>
+<tr class="odd">
+<td colspan="15"></td>
+</tr>
+<tr class="even">
+<td colspan="15"><strong>I Scenario/Flusso di eventi Alternativo:</strong> Posizione rilevata automaticamente (GPS attivo)</td>
+</tr>
+<tr class="odd">
+<td colspan="5"><strong>2.1</strong></td>
+<td colspan="3"><strong>Sistema:</strong></td>
+<td colspan="7">Se l’utente autorizza la geolocalizzazione, il sistema propone automaticamente la posizione corrente come punto di bisogno.</td>
+</tr>
+<tr class="even">
+<td colspan="5"><strong>2.2</strong></td>
+<td colspan="3"><strong>Attore:</strong></td>
+<td colspan="7">Conferma o modifica manualmente la posizione proposta.</td>
+</tr>
+<tr class="odd">
+<td colspan="15"></td>
+</tr>
+<tr class="even">
+<td colspan="15"><strong>II Scenario Alternativo</strong>: L’utente seleziona la posizione attraverso indirizzo</td>
+</tr>
+<tr class="odd">
+<td colspan="3"><strong>2.3</strong></td>
+<td colspan="6"><strong>Attore:</strong></td>
+<td colspan="6">Inserisce un indirizzo manualmente invece di cliccare sulla mappa.</td>
+</tr>
+<tr class="even">
+<td colspan="3"><strong>2.4</strong></td>
+<td colspan="6"><strong>Sistema:</strong></td>
+<td colspan="6">Converte l’indirizzo in coordinate (geocoding) e mostra l’anteprima sulla mappa.</td>
+</tr>
+<tr class="odd">
+<td colspan="15"></td>
+</tr>
+<tr class="even">
+<td colspan="15"><strong>III Scenario/Flusso di eventi Alternativo:</strong> Utente autenticato</td>
+</tr>
+<tr class="odd">
+<td colspan="5"><strong>3.1</strong></td>
+<td colspan="3"><strong>Sistema:</strong></td>
+<td colspan="7">Se l’utente è registrato, precompila automaticamente i dati opzionali associati al profilo (es. e-mail per feedback).</td>
+</tr>
+<tr class="even">
+<td colspan="8"></td>
+<td colspan="7"></td>
+</tr>
+<tr class="odd">
+<td colspan="15"><strong>IV Scenario/Flusso di eventi Alternativo:</strong> Tipologia di bisogno non presente nelle categorie</td>
+</tr>
+<tr class="even">
+<td colspan="3"><strong>3.2</strong></td>
+<td colspan="5"><strong>Attore:</strong></td>
+<td colspan="7">Non trova una tipologia coerente nell’elenco.</td>
+</tr>
+<tr class="odd">
+<td colspan="3"><strong>3.3</strong></td>
+<td colspan="5"><strong>Sistema:</strong></td>
+<td colspan="7">Mostra un campo “Altro (specificare)” abilitando l’inserimento di testo libero.</td>
+</tr>
+<tr class="even">
+<td colspan="15"></td>
+</tr>
+<tr class="odd">
+<td colspan="15"><strong>V Scenario Alternativo:</strong> Inserimento di allegati</td>
+</tr>
+<tr class="even">
+<td colspan="4"><strong>3.4</strong></td>
+<td colspan="3"><strong>Attore:</strong></td>
+<td colspan="8">Aggiunge una foto o un file come supporto informativo.</td>
+</tr>
+<tr class="odd">
+<td colspan="4"><strong>3.5</strong></td>
+<td colspan="3"><strong>Sistema:</strong></td>
+<td colspan="8">Valida formato e dimensione dell’allegato prima dell’invio.</td>
+</tr>
+<tr class="even">
+<td colspan="15"></td>
+</tr>
+<tr class="odd">
+<td colspan="15"><strong>VI Scenario Alternativo</strong>: Utente non autenticato lascia contatto</td>
+</tr>
+<tr class="even">
+<td colspan="3"><strong>5.1</strong></td>
+<td colspan="5"><strong>Sistema:</strong></td>
+<td colspan="7">Se l’utente non è autenticato, propone un campo opzionale “Inserisci email per essere ricontattato”.</td>
+</tr>
+<tr class="odd">
+<td colspan="3"><strong>5.2</strong></td>
+<td colspan="5"><strong>Attore:</strong></td>
+<td colspan="7">Inserisce un contatto oppure prosegue senza fornire nulla.</td>
+</tr>
+<tr class="even">
+<td colspan="15"></td>
+</tr>
+<tr class="odd">
+<td colspan="15"><strong>I Scenario/Flusso di eventi di ERRORE:</strong> Dati mancanti</td>
+</tr>
+<tr class="even">
+<td colspan="5"><strong>2.1</strong></td>
+<td colspan="3"><strong>Sistema:</strong></td>
+<td colspan="7">Indica quali campi obbligatori non sono stati compilati e richiede correzione.</td>
+</tr>
+<tr class="odd">
+<td colspan="15"></td>
+</tr>
+<tr class="even">
+<td colspan="15"><strong>II Scenario/Flusso di eventi di ERRORE:</strong> Allegato non valido</td>
+</tr>
+<tr class="odd">
+<td colspan="3"><strong>3.7</strong></td>
+<td colspan="7"><strong>Sistema:</strong></td>
+<td colspan="5">Se il file allegato è troppo grande o in un formato non consentito (es. .exe), blocca l’invio.<br />
+Mostra: <em>“Formato o dimensione del file non supportati.”</em></td>
+</tr>
+<tr class="even">
+<td colspan="15"></td>
+</tr>
+<tr class="odd">
+<td colspan="15"><strong>III Scenario/Flusso di eventi di ERRORE:</strong> Utente prova a segnalare un punto già segnalato</td>
+</tr>
+<tr class="even">
+<td colspan="2"><strong>3.8</strong></td>
+<td colspan="9"><strong>Sistema:</strong></td>
+<td colspan="4">Individua che la stessa posizione è già stata segnalata recentemente da altri utenti.<br />
+Propone all’utente:<br />
+<em>“Questa area è già stata segnalata. Vuoi comunque inviare una nuova segnalazione?”</em></td>
+</tr>
+<tr class="odd">
+<td colspan="2"><strong>3.9</strong></td>
+<td colspan="9"><strong>Attore:</strong></td>
+<td colspan="4">Conferma → la segnalazione prosegue normalmente (ritorna al passo 6).<br />
+Annulla → la procedura termina.</td>
+</tr>
+<tr class="even">
+<td colspan="15"></td>
+</tr>
+<tr class="odd">
+<td colspan="15"><strong>IV Scenario/Flusso di eventi di ERRORE:</strong> Problema di rete/server</td>
+</tr>
+<tr class="even">
+<td colspan="5"><strong>6.1</strong></td>
+<td colspan="3"><strong>Sistema:</strong></td>
+<td colspan="7">Mostra il messaggio <em>“Errore durante l’invio della segnalazione. Riprovare più tardi.”</em> senza salvare i dati.</td>
+</tr>
+<tr class="odd">
+<td colspan="8"></td>
+<td colspan="7"></td>
+</tr>
+<tr class="even">
+<td colspan="15"><strong>Note</strong></td>
+</tr>
+<tr class="odd">
+<td colspan="8"></td>
+<td colspan="7">Le segnalazioni non sono immediatamente visibili sulla mappa fino ad approvazione degli enti.</td>
+</tr>
+<tr class="even">
+<td colspan="8"></td>
+<td colspan="7"></td>
+</tr>
+<tr class="odd">
+<td colspan="8"><strong>Special Requirements</strong></td>
+<td colspan="7"></td>
+</tr>
+<tr class="even">
+<td colspan="8"></td>
+<td colspan="7">La selezione della posizione deve essere semplice e precisa (es. click sulla mappa).</td>
+</tr>
+<tr class="odd">
+<td colspan="8"></td>
+<td colspan="7">Le segnalazioni devono essere memorizzate in modo sicuro e accessibile solo agli enti autorizzati.</td>
+</tr>
+<tr class="even">
+<td colspan="8"></td>
+<td colspan="7">Il sistema deve gestire un eventuale alto numero di segnalazioni contemporanee.</td>
+</tr>
+<tr class="odd">
+<td colspan="8"></td>
+<td colspan="7">Deve essere rispettata la privacy (no dati sensibili non necessari).</td>
+</tr>
+</tbody>
+</table>
