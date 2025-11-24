@@ -3,6 +3,7 @@ Funzionalità principali Map4Aid
 
 Funzionalità #1 – Login e registrazione
 Si danno per scontate, ma si precisa una distinzione al momento della registrazione in base al tipo di attività che si vuole effettuare (donatore o ricevitore). Questo serve a creare due tipologie di richieste di dati diverse, con lo scopo di migliorare la protezione delle informazioni ed evitare di chiedere dati inutili agli utenti (es. Gino il panettiere).
+
 Funzionalità #2 – Modifica dei dati
 Anche questa è data per scontata, ma va comunque segnalata in quanto deve essere implementata.
 
