@@ -2,7 +2,7 @@
 
 PROGETTISTI: Luciano Corvino, Cristian Carotenuto, Emilio Maione, Vito Francesco Maistrini, Giovanni De Caro, Gabriele Milone, Carlo Antonio Caserta, Nicola Luciano, Giovanni Esposito, Maria Chiara Gregorio, Riccardo Di Girolamo.
 
-PROJECT MANAJER: Gabriele D'Auria, Antonio Botticchio
+PROJECT MANAJER: Emmanuele D'Auria, Antonio Botticchio
 
 **\#1 CASI D'USO**
 
@@ -568,7 +568,7 @@ Il codice risulta non valido o per corrispondenza, o per la terminazione della s
 <tr class="odd">
 <td colspan="4" rowspan="3"><p><strong>Identificativo</strong></p>
 <p><em>UC#04</em></p></td>
-<td rowspan="3"><strong>DONAZIONE DI BENI</strong></td>
+<td rowspan="3"><em>Donazioni di beni</em></td>
 <td colspan="2"><em>Data</em></td>
 <td><em>18/11/2025</em></td>
 </tr>
