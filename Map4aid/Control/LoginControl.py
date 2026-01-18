@@ -13,7 +13,7 @@ def login():
     if not email or not password:
         return jsonify({"error": "Email e password obbligatorie"}), 400
 
-    user = db.get(email)
+    user = Db.get(email)
 
     if not user:
         return jsonify({"error": "Credenziali non valide"}), 401
