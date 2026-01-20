@@ -15,8 +15,7 @@ def donazione_monetaria():
     email_donatore = session.get("user_email")
 
     # ---- DATI DA FORM ----
-    email_ente = request.form.get("email_ente")
-    iban_ente = request.form.get("iban_ente")
+    nome_ente = request.form.get("ente")
     numero_carta = request.form.get("numero_carta")
     scadenza = request.form.get("scadenza")
     cvv = request.form.get("cvv")
@@ -25,6 +24,8 @@ def donazione_monetaria():
         importo = float(request.form.get("importo"))
     except (TypeError, ValueError):
         return {"successo": False, "errore": "Importo non valido"}
+
+    #Bisogna prendere l'email e l'iban del'ente dal database tramite nome
 
     # ---- VALIDAZIONE ----
     if not all([email_ente, iban_ente, numero_carta, scadenza, cvv]):
@@ -53,7 +54,7 @@ def donazione_monetaria():
     # ---- EMAIL DI CONFERMA ----
     email_ok = EmailControl.invia_email_donazione(
         email_ente=email_ente,
-        nome_ente="Ente Erogatore",
+        nome_ente=nome_ente,
         email_donatore=email_donatore,
         importo=importo,
         data=donazione.data
@@ -73,9 +74,7 @@ def donazione_monetaria():
 
 def esegui_transazione(self, numero_carta, scadenza, cvv,
                         iban_destinatario, importo):
-    """
-    Simulazione pagamento carta → IBAN ente erogatore
-    """
+    print("transazione in elaborazione")
     if len(numero_carta) != 16:
         return False
     if len(cvv) != 3:

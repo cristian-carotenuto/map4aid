@@ -1,0 +1,19 @@
+Index: Map4aid/Control/LoginControl.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from flask import Flask, request, session, jsonify\r\nimport hashlib\r\nfrom Model import *\r\napp = Flask(__name__)\r\napp.secret_key = \"9fA!2xZ$kL8@Pq7#sW\"\r\n\r\n# ---- LOGIN ----\r\n@app.route(\"/login\", methods=[\"POST\"])\r\ndef login():\r\n    email = request.form.get(\"email\")\r\n    password = request.form.get(\"password\")\r\n\r\n    if not email or not password:\r\n        return jsonify({\"error\": \"Email e password obbligatorie\"}), 400\r\n\r\n    user = db.get(email)\r\n\r\n    if not user:\r\n        return jsonify({\"error\": \"Credenziali non valide\"}), 401\r\n\r\n    password_hash = hashlib.sha256(password.encode()).hexdigest()\r\n\r\n    if password_hash != user[\"password_hash\"]:\r\n        return jsonify({\"error\": \"Credenziali non valide\"}), 401\r\n\r\n    # ✅ Salvataggio sessione\r\n    session[\"logged_in\"] = True\r\n    session[\"user_email\"] = email\r\n\r\n    return jsonify({\r\n        \"message\": \"Login effettuato con successo\",\r\n        \"email\": email\r\n    })\r\n\r\n@app.route(\"/logout\", methods=[\"POST\"])\r\ndef logout():\r\n    session.clear()\r\n    return jsonify({\"message\": \"Logout effettuato\"})
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Map4aid/Control/LoginControl.py b/Map4aid/Control/LoginControl.py
+--- a/Map4aid/Control/LoginControl.py	(revision 0616ccca72b5476477c7d1168a353cb351374c20)
++++ b/Map4aid/Control/LoginControl.py	(date 1768938874293)
+@@ -23,7 +23,7 @@
+     if password_hash != user["password_hash"]:
+         return jsonify({"error": "Credenziali non valide"}), 401
+ 
+-    # ✅ Salvataggio sessione
++    #  Salvataggio sessione
+     session["logged_in"] = True
+     session["user_email"] = email
+ 

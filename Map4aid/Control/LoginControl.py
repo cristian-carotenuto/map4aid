@@ -23,7 +23,7 @@ def login():
     if password_hash != user["password_hash"]:
         return jsonify({"error": "Credenziali non valide"}), 401
 
-    # ✅ Salvataggio sessione
+    #  Salvataggio sessione
     session["logged_in"] = True
     session["user_email"] = email
 

@@ -4,14 +4,12 @@ from email.mime.multipart import MIMEMultipart
 
 class EmailControl:
 
-    def __init__(self, db_config_email):
-        self.config = db_config_email
 
     def invia_email_donazione(self, email_ente, nome_ente,
                               email_donatore, importo, data):
 
         msg = MIMEMultipart()
-        msg["From"] = self.config["email"]
+        msg["From"] = email_donatore
         msg["To"] = email_ente
         msg["Subject"] = "Notifica di donazione monetaria ricevuta"
 
@@ -45,3 +43,4 @@ Piattaforma di gestione donazioni
         except Exception as e:
             print(f"Errore SMTP: {e}")
             return False
+
