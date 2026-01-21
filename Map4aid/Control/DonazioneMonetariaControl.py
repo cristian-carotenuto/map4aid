@@ -25,7 +25,7 @@ def donazione_monetaria():
     except (TypeError, ValueError):
         return {"successo": False, "errore": "Importo non valido"}
 
-    #Bisogna prendere l'email e l'iban del'ente dal database tramite nome
+    #Bisogna prendere l'email e l'iban dell'ente dal database tramite nome
 
     # ---- VALIDAZIONE ----
     if not all([email_ente, iban_ente, numero_carta, scadenza, cvv]):

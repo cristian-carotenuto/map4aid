@@ -1,6 +1,11 @@
+import random
+
 from flask import Flask, request, session, jsonify
 import hashlib
 from Model import *
+
+from Map4aid.Control.EmailControl import EmailControl
+
 app = Flask(__name__)
 app.secret_key = "9fA!2xZ$kL8@Pq7#sW"
 
@@ -36,3 +41,23 @@ def login():
 def logout():
     session.clear()
     return jsonify({"message": "Logout effettuato"})
+
+@app.route("/recuperoPassword", methods=["POST"])
+def recuperoPassword():
+    email = request.form.get("email")
+    session["user_email"] = email
+    codice = int(random.uniform(1000,9999))
+    session["codice"] = codice
+    EmailControl.invia_email_recupero(email, codice)
+    #Invia l'utente alla page in cui deve inserire il codice
+
+@app.route("/confermaRecupero", methods=["POST"])
+def confermaRecupero():
+    codice = session["codice"]
+    email = session["user_email"]
+    codice_inserito = request.form.get("codice")
+    if(codice == codice_inserito):
+        #Predni password dal database e mostrala
+        print("password recuperata")
+    else:
+        return jsonify({"errore": "Codice non valido"}), 401
