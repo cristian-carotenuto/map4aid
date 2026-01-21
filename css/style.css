@@ -1,0 +1,32 @@
+body {
+  background-color: #f8f9fa;
+}
+
+.sidebar {
+  background-color: #f0f0f0;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+#map {
+  height: 600px;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.header-bg {
+  background-color: #28a745;
+}
+
+.logo-placeholder {
+  width: 60px;
+  height: 60px;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #28a745;
+}
