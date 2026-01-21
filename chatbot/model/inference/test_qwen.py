@@ -36,6 +36,20 @@ def test_basic_inference():
     print(f"Prompt: {prompt3}")
     print(f"Risposta: {response3}\n")
     
+    # Test 4: Consapevolezza temporale (Nuova modifica)
+    print(">> Test 4: Consapevolezza temporale")
+    prompt4 = "Che giorno è oggi e che ore sono? Salutami in modo appropriato all'orario."
+    response4 = client.generate_response(prompt4, max_length=100)
+    print(f"Prompt: {prompt4}")
+    print(f"Risposta: {response4}\n")
+    
+    # Test 5: Memoria della conversazione (Nuova modifica)
+    print(">> Test 5: Memoria della conversazione")
+    prompt5 = "Cosa ti ho chiesto nel prompt precedente (il numero 4)? Rispondimi in modo conciso."
+    response5 = client.generate_response(prompt5, max_length=100)
+    print(f"Prompt: {prompt5}")
+    print(f"Risposta: {response5}\n")
+    
     print("=" * 60)
     print("[OK] Test completati con successo!")
     print("=" * 60)
