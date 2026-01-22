@@ -95,3 +95,32 @@ class SottoCategoria(db.Model):
     macro_categoria_id = db.Column(db.Integer, db.ForeignKey("macro_categorie.id"), nullable=False)
 
     macro_categoria = db.relationship("MacroCategoria", back_populates="sotto_categorie")
+
+class Bene(db.Model):
+    __tablename__ = "beni"
+
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(150), nullable=False)
+    quantita = db.Column(db.Integer, nullable=False, default=0)
+
+    punto_distribuzione_id = db.Column(
+        db.Integer,
+        db.ForeignKey("punti_distribuzione.id"),
+        nullable=False
+    )
+
+    sottocategoria_id = db.Column(
+        db.Integer,
+        db.ForeignKey("sotto_categorie.id"),
+        nullable=False
+    )
+
+    punto_distribuzione = db.relationship(
+        "PuntoDistribuzione",
+        backref="beni"
+    )
+
+    sottocategoria = db.relationship(
+        "SottoCategoria",
+        backref="beni"
+    )
