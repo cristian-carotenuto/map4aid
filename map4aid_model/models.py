@@ -127,10 +127,6 @@ class Bene(db.Model):
         backref="beni"
     )
 
-    import uuid
-from datetime import datetime
-from app import db
-
 
 class Prenotazione(db.Model):
     __tablename__ = "prenotazioni"
