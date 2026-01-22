@@ -1,23 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="55397952-be6e-4a64-8a4f-522745ebe921" name="Changes" comment="Fixati alcune funzioni sull'autenticazione e aggiuta autenticazione a 2 fattori">
-      <change afterPath="$PROJECT_DIR$/Map4aid/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Map4aid/map4aid_model/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Map4aid/map4aid_model/instance/database.db" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Map4aid/map4aid_model/migrations/__init__.py" afterDir="false" />
+    <list default="true" id="55397952-be6e-4a64-8a4f-522745ebe921" name="Changes" comment="Fatti alcuni test">
+      <change afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/progetto-is.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/progetto-is.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Map4aid/Control/2FAControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Map4aid/Control/2FAControl.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Map4aid/Control/AutenticazioneControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Map4aid/Control/AutenticazioneControl.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Map4aid/Control/DonazioneMonetariaControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Map4aid/Control/DonazioneMonetariaControl.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Map4aid/Control/LoginControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Map4aid/Control/LoginControl.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Map4aid/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_model/instance/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/Map4aid/Control/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_model/migrations/README" beforeDir="false" afterPath="$PROJECT_DIR$/Map4aid/map4aid_model/migrations/README" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_model/migrations/alembic.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Map4aid/map4aid_model/migrations/alembic.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_model/migrations/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/Map4aid/map4aid_model/migrations/env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_model/migrations/script.py.mako" beforeDir="false" afterPath="$PROJECT_DIR$/Map4aid/map4aid_model/migrations/script.py.mako" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_model/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/Map4aid/map4aid_model/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Map4aid/Control/SegnalazioneControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Map4aid/Control/SegnalazioneControl.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Map4aid/Control/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/Map4aid/Control/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Map4aid/map4aid_model/instance/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/Map4aid/map4aid_model/instance/database.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +52,8 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Flask server.Flask (Map4aid/run.py).executor": "Run",
+    "Flask server.Flask (run.py).executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "Python.test.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -70,17 +66,42 @@
     "last_opened_file_path": "C:/Users/Giovanni/Documents/GitHub/progetto-is/Map4aid",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "sqlite"
+    ]
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\Map4aid" />
+      <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\Map4aid\map4aid_model\instance" />
       <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\map4aid_model" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is" />
       <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\Map4aid" />
     </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="progetto-is" type="Python.FlaskServer">
+      <module name="progetto-is" />
+      <option name="target" value="$PROJECT_DIR$/app.py" />
+      <option name="targetType" value="PATH" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <method v="2" />
+    </configuration>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -102,7 +123,9 @@
       <workItem from="1768992234092" duration="12040000" />
       <workItem from="1769078344727" duration="300000" />
       <workItem from="1769089179181" duration="2909000" />
-      <workItem from="1769092138677" duration="3424000" />
+      <workItem from="1769092138677" duration="5877000" />
+      <workItem from="1769103201555" duration="309000" />
+      <workItem from="1769103537363" duration="5494000" />
     </task>
     <task id="LOCAL-00001" summary="Fixati alcune funzioni sull'autenticazione e aggiuta autenticazione a 2 fattori">
       <option name="closed" value="true" />
@@ -112,7 +135,15 @@
       <option name="project" value="LOCAL" />
       <updated>1769092574197</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Fatti alcuni test">
+      <option name="closed" value="true" />
+      <created>1769095920700</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1769095920700</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -120,9 +151,14 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Fixati alcune funzioni sull'autenticazione e aggiuta autenticazione a 2 fattori" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixati alcune funzioni sull'autenticazione e aggiuta autenticazione a 2 fattori" />
+    <MESSAGE value="Fatti alcuni test" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fatti alcuni test" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/progetto_is$test.coverage" NAME="test Coverage Results" MODIFIED="1769091857102" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Map4aid/Control" />
+    <SUITE FILE_PATH="coverage/progetto_is$extension.coverage" NAME="extension Coverage Results" MODIFIED="1769102015150" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Map4aid/map4aid_model" />
+    <SUITE FILE_PATH="coverage/progetto_is$Flask__Map4aid_run_py_.coverage" NAME="Flask (Map4aid/run.py) Coverage Results" MODIFIED="1769107499939" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/progetto_is$Flask__run_py_.coverage" NAME="Flask (run.py) Coverage Results" MODIFIED="1769107778768" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/progetto_is$progetto_is.coverage" NAME="progetto-is Coverage Results" MODIFIED="1769101824912" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/progetto_is$test.coverage" NAME="test Coverage Results" MODIFIED="1769108190082" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Map4aid/Control" />
   </component>
 </project>

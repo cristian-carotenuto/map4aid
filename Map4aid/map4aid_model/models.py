@@ -1,5 +1,6 @@
-from app import db
+
 from werkzeug.security import generate_password_hash, check_password_hash
+from Map4aid.map4aid_model.extension import db
 
 
 # CLASSE BASE ACCOUNT (polimorfismo SQLAlchemy)

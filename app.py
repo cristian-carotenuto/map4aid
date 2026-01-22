@@ -1,29 +1,26 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-#creazione app flask
-app = Flask(__name__)
+from Map4aid.map4aid_model.extension import db, migrate
 
-#configurazione db SQLite
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+def create_app():
+    app = Flask(__name__)
 
-#secretKey (serve per sessioni, login..)
-app.config['SECRET_KEY'] = 'skMomentanea'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SECRET_KEY'] = 'skMomentanea'
+
+    db.init_app(app)
+    migrate.init_app(app, db)
+
+    # importa i modelli DOPO aver inizializzato db
+    from Map4aid.map4aid_model import models
+
+    # importa i controller DOPO i modelli
+    from Map4aid.Control import AutenticazioneControl
+    AutenticazioneControl.init_routes(app)
 
 
-#inizializzazione del db e migration system
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+    @app.route("/")
+    def home():
+        return "sono on"
 
-#import modelli(necessario per farli conoscere a Flask)
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
-#route di test
-
-@app.route("/")
-def home():
-    return "sono on"
+    return app
