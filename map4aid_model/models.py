@@ -1,5 +1,7 @@
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
+import uuid
+from datetime import datetime
 
 
 #CLASSE BASE ACCOUNT (polimorfismo SQLAlchemy)
@@ -124,3 +126,53 @@ class Bene(db.Model):
         "SottoCategoria",
         backref="beni"
     )
+
+    import uuid
+from datetime import datetime
+from app import db
+
+
+class Prenotazione(db.Model):
+    __tablename__ = "prenotazioni"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    # FK beneficiario
+    beneficiario_id = db.Column(
+        db.Integer,
+        db.ForeignKey("account_beneficiari.id"),
+        nullable=False
+    )
+
+    # FK bene
+    bene_id = db.Column(
+        db.Integer,
+        db.ForeignKey("beni.id"),
+        nullable=False
+    )
+
+    # Timestamp prenotazione
+    data_prenotazione = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
+
+    # Stato prenotazione
+    stato = db.Column(
+        db.String(50),
+        nullable=False,
+        default="in_attesa"  
+    )
+
+    # Codice univoco per QR
+    codice_qr = db.Column(
+        db.String(36),
+        unique=True,
+        nullable=False,
+        default=lambda: str(uuid.uuid4())
+    )
+
+    # Relazioni
+    beneficiario = db.relationship("AccountBeneficiario")
+    bene = db.relationship("Bene")
