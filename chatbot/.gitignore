@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Hugging Face cache (modelli scaricati)
+*.bin
+*.safetensors
+# model/  <-- RIMOSSO: Vogliamo tracciare il codice sorgente
+# models/ <-- RIMOSSO: Vogliamo tracciare il codice sorgente
+*.pt
+*.pth
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Dataset grandi (non committare)
+data/datasets/*.json
+data/datasets/*.csv
+data/datasets/*.txt
