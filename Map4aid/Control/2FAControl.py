@@ -1,8 +1,9 @@
 from datetime import datetime
-from flask import request, session, jsonify
-from app import app
+from flask import request, session, jsonify, Blueprint
 
-@app.route("/2FARegister", methods=["POST"])
+auth_bp = Blueprint("auth", __name__)
+
+@auth_bp.route("/2FARegister", methods=["POST"])
 def conferma_codice():
     data = session.get("registrazione")
     if not data:

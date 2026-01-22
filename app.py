@@ -1,6 +1,10 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+
+from Map4aid.Control.AutenticazioneControl import auth_bp
+from Map4aid.map4aid_model.extension import migrate, db
+
 #creazione app flask
 app = Flask(__name__)
 
@@ -13,10 +17,11 @@ app.config['SECRET_KEY'] = 'skMomentanea'
 
 
 #inizializzazione del db e migration system
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+db.init_app(app)
+migrate.init_app(app, db)
 
 #import modelli(necessario per farli conoscere a Flask)
+app.register_blueprint(auth_bp, url_prefix="/auth")
 
 
 if __name__ == "__main__":

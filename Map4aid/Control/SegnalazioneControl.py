@@ -1,10 +1,10 @@
-from flask import Flask, request, session, jsonify
+from flask import Flask, request, session, jsonify, Blueprint
 
 from Map4aid.Control.EmailControl import EmailControl
 
-app = Flask(__name__)
-app.secret_key = "9fA!2xZ$kL8@Pq7#sW"
-@app.route("/segnalazione", methods=["POST"])
+auth_bp = Blueprint("auth", __name__)
+
+@auth_bp.route("/segnalazione", methods=["POST"])
 def segnalazione():
     data = request.get_json()
 

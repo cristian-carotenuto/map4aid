@@ -1,12 +1,12 @@
 import secrets
 from datetime import datetime, timedelta
-from flask import request, session, jsonify
+from flask import request, session, jsonify, Blueprint
 from Map4aid.Control.EmailControl import EmailControl
-from app import app
+from Map4aid.map4aid_model.models import Account
 
+auth_bp = Blueprint("auth", __name__)
 
-# ---- LOGIN ----
-@app.route("/login", methods=["POST"])
+@auth_bp.route("/login", methods=["POST"])
 def login():
     email = request.form.get("email")
     password = request.form.get("password")

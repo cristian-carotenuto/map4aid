@@ -8,7 +8,7 @@ data = {
     "cognome": "Rossi"
 }
 try:
-    response = requests.post("http://127.0.0.1:5000/register", data=data)
+    response = requests.post("http://127.0.0.1:5000//auth/register", data=data)
     print("Status:", response.status_code)
     try:
         print("JSON:", response.json())

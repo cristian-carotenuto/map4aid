@@ -1,12 +1,12 @@
-from flask import request, session
+from flask import request, session, Blueprint
 from Model import *
 
 from Map4aid.Control.EmailControl import EmailControl
 from Map4aid.Control.Permessi import require_roles
-from app import app
 
+auth_bp = Blueprint("auth", __name__)
 
-@app.route("/donazioneMonetaria", methods=["POST"])
+@auth_bp.route("/donazioneMonetaria", methods=["POST"])
 @require_roles("ente_donatore")
 def donazione_monetaria():
         # ---- DATI DA SESSIONE ----
