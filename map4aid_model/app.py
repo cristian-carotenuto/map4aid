@@ -1,28 +1,28 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+from config import db, migrate
 
-#creazione app flask
-app = Flask(__name__)
+def create_app():
+    app = Flask(__name__)
 
-#configurazione db SQLite
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SECRET_KEY'] = 'skMomentanea'
 
-#secretKey (serve per sessioni, login..)
-app.config['SECRET_KEY'] = 'skMomentanea'
+    db.init_app(app)
+    migrate.init_app(app, db)
+
+    # importa i modelli DOPO aver inizializzato db
+    import models
+
+    # importa i controller DOPO i modelli
+    import AutenticazioneControl 
+    AutenticazioneControl.init_routes(app)
+    import EmailControl
+
+    @app.route("/")
+    def home():
+        return "sono on"
+
+    return app
 
 
-#inizializzazione del db e migration system
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-
-#import modelli(necessario per farli conoscere a Flask)
-from models import *
-
-
-#route di test
-
-@app.route("/")
-def home():
-    return "sono on"

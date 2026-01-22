@@ -1,5 +1,7 @@
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
+import uuid
+from datetime import datetime, timezone
 
 
 #CLASSE BASE ACCOUNT (polimorfismo SQLAlchemy)
@@ -59,7 +61,10 @@ class AccountEnteErogatore(Account):
     iban = db.Column(db.String(34), nullable=True)
     indirizzo_sede = db.Column(db.String(200), nullable=True)
 
-    punti_distribuzione = db.relationship("PuntoDistribuzione", back_populates="ente_erogatore")
+    punti_distribuzione = db.relationship(
+        "PuntoDistribuzione",
+        backref="ente_erogatore"
+    )
 
     __mapper_args__ = {
         "polymorphic_identity": "ente_erogatore"
@@ -74,10 +79,15 @@ class PuntoDistribuzione(db.Model):
     indirizzo = db.Column(db.String(255), nullable=False)
     latitudine = db.Column(db.Float, nullable=False)
     longitudine = db.Column(db.Float, nullable=False)
-    orari = db.Column(db.String(255), nullable=True)    #json?
+    orari = db.Column(db.String(255), nullable=True)
 
-    ente_erogatore_id = db.Column(db.Integer, db.ForeignKey("account_enti_erogatori.id"), nullable=False)
-    ente_erogatore = db.relationship("AccountEnteErogatore", back_populates="punti_distribuzione")
+    ente_erogatore_id = db.Column(
+        db.Integer,
+        db.ForeignKey("account_enti_erogatori.id"),
+        nullable=False
+    )
+
+    beni = db.relationship("Bene", backref="punto_distribuzione")
 
 class MacroCategoria(db.Model):
     __tablename__ = "macro_categorie"
@@ -85,13 +95,115 @@ class MacroCategoria(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(120), unique=True, nullable=False)
 
-    sotto_categorie = db.relationship("SottoCategoria", back_populates="macro_categoria", cascade="all, delete")
+    sotto_categorie = db.relationship(
+        "SottoCategoria",
+        backref="macro_categoria",
+        cascade="all, delete"
+    )
 
 class SottoCategoria(db.Model):
     __tablename__ = "sotto_categorie"
 
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(120), nullable=False)
-    macro_categoria_id = db.Column(db.Integer, db.ForeignKey("macro_categorie.id"), nullable=False)
 
-    macro_categoria = db.relationship("MacroCategoria", back_populates="sotto_categorie")
+    macro_categoria_id = db.Column(
+        db.Integer,
+        db.ForeignKey("macro_categorie.id"),
+        nullable=False
+    )
+
+    beni = db.relationship("Bene", backref="sottocategoria")
+
+
+class Bene(db.Model):
+    __tablename__ = "beni"
+
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(150), nullable=False)
+    quantita = db.Column(db.Integer, nullable=False, default=0)
+
+    punto_distribuzione_id = db.Column(
+        db.Integer,
+        db.ForeignKey("punti_distribuzione.id"),
+        nullable=False
+    )
+
+    sottocategoria_id = db.Column(
+        db.Integer,
+        db.ForeignKey("sotto_categorie.id"),
+        nullable=False
+    )
+
+    punto_distribuzione = db.relationship(
+        "PuntoDistribuzione",
+        backref="beni"
+    )
+
+    sottocategoria = db.relationship(
+        "SottoCategoria",
+        backref="beni"
+    )
+
+
+class Prenotazione(db.Model):
+    __tablename__ = "prenotazioni"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    # FK beneficiario
+    beneficiario_id = db.Column(
+        db.Integer,
+        db.ForeignKey("account_beneficiari.id"),
+        nullable=False
+    )
+
+    # FK bene
+    bene_id = db.Column(
+        db.Integer,
+        db.ForeignKey("beni.id"),
+        nullable=False
+    )
+
+    # Timestamp prenotazione
+    data_prenotazione = db.Column(
+        db.DateTime(timezone=True), 
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False )
+
+    # Stato prenotazione
+    stato = db.Column(
+        db.String(50),
+        nullable=False,
+        default="in_attesa"  
+    )
+
+    # Codice univoco per QR
+    codice_qr = db.Column(
+        db.String(36),
+        unique=True,
+        nullable=False,
+        default=lambda: str(uuid.uuid4())
+    )
+
+    # Relazioni
+    beneficiario = db.relationship("AccountBeneficiario")
+    bene = db.relationship("Bene")
+
+class DonazioneMonetaria(db.Model):
+    __tablename__ = "donazioni_monetarie"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    donatore_id = db.Column(db.Integer, db.ForeignKey("account_enti_donatori.id"), nullable=False)
+    ente_id = db.Column(db.Integer, db.ForeignKey("account_enti_erogatori.id"), nullable=False)
+    
+    importo = db.Column(db.Float, nullable=False)
+    data = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+    donatore = db.relationship("AccountEnteDonatore", backref="donazioni_monetarie")
+    ente = db.relationship("AccountEnteErogatore", backref="donazioni_ricevute")
+
+    def __repr__(self):
+        return f"<DonazioneMonetaria {self.id} - {self.importo}€>"
