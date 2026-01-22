@@ -18,8 +18,10 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 #import modelli(necessario per farli conoscere a Flask)
-from models import *
+from Control.AutenticazioneControl import *
 
+if __name__ == "__main__":
+    app.run(debug=True)
 
 #route di test
 

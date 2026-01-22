@@ -2,6 +2,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+
 class EmailControl:
 
 
@@ -51,15 +52,14 @@ Map4Aid
             print(f"Errore SMTP: {e}")
             return False
 
-    def invia_email_recupero(self, email_utente,codice):
+    def invia_email_codice(self, email_utente,codice):
         msg = MIMEMultipart()
         msg["From"] = self.config["email"]
         msg["To"] = email_utente
         msg["Subject"] = "Email per recupero password"
 
         corpo = f"""
-E' stato richiesto un recupero della password associato a questa email.
-Inserire il seguente codice per confermare la propria identità:
+Per favore inserire il seguente codice per confermare l'emaill:
 {codice}
 
 Cordiali saluti,

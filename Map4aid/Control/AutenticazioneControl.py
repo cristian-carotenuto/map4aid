@@ -1,23 +1,26 @@
-from flask import Flask, request, session, jsonify
-import hashlib
-from Model import *
+import secrets
+from datetime import datetime, timedelta
+from flask import request, session, jsonify
 
-app = Flask(__name__)
-app.secret_key = "9fA!2xZ$kL8@Pq7#sW"
+from Map4aid.Control.EmailControl import EmailControl
+from Map4aid.app import *
+from map4aid_model.models import *
+
+
 
 @app.route("/register", methods=["POST"])
 def register():
     ruolo = request.form.get("ruolo")
     email = request.form.get("email")
     password = request.form.get("password")
+    user = Account.query.filter_by(email=email).first()
 
     if not ruolo or not email or not password:
         return jsonify({"error": "Campi obbligatori mancanti"}), 400
 
-    if email in db:
+    if user:
         return jsonify({"error": "Email già registrata"}), 409
 
-    password_hash = hashlib.sha256(password.encode()).hexdigest()
 
     # ----- BENEFICIARIO -----
     if ruolo == "beneficiario":
@@ -27,7 +30,12 @@ def register():
         if not nome or not cognome:
             return jsonify({"error": "Dati beneficiario incompleti"}), 400
 
-        user = AccountBeneficiario(email, password_hash, nome, cognome)
+        user = AccountBeneficiario(
+            email=email,
+            nome=nome,
+            cognome=cognome
+        )
+        user.set_password(password)
 
     # ----- DONATORE -----
     elif ruolo == "donatore":
@@ -42,10 +50,16 @@ def register():
                     indirizzo_sede, nome, cognome]):
             return jsonify({"error": "Dati donatore incompleti"}), 400
 
-        user = AccountDonatore(
-            email, password_hash, partita_iva, categoria,
-            nome_attivita, indirizzo_sede, nome, cognome
+        user = AccountEnteDonatore(
+            email = email,
+            nome = nome,
+            cognome = cognome,
+            partita_iva = partita_iva,
+            categoria = categoria,
+            nome_attivita = nome_attivita,
+            indirizzo_sede = indirizzo_sede
         )
+        user.set_password(password)
 
     # ----- ENTE EROGATORE -----
     elif ruolo == "erogatore":
@@ -58,18 +72,32 @@ def register():
             return jsonify({"error": "Dati ente erogatore incompleti"}), 400
 
         user = AccountEnteErogatore(
-            email, password_hash, nome_org,
-            indirizzo_sede, tipologia, iban
+            email = email,
+            nome_attivita = nome_org,
+            indirizzo_sede = indirizzo_sede,
+            tipologia = tipologia,
+            iban = iban
         )
+        user.set_password(password)
+        email = request.form.get("email")
+        if not email:
+            return jsonify({"error": "Email mancante"}), 400
+
+        # Genera codice OTP sicuro a 4 cifre
+        codice = secrets.randbelow(9000) + 1000  # tra 1000 e 9999
+
+        # Salva nella sessione solo temporaneamente con scadenza
+        session["registrazione"] = {
+            "user": user,
+            "codice": str(codice),
+            "expires_at": (datetime.utcnow() + timedelta(minutes=10)).isoformat()
+        }
+
+        # Invia email con il codice
+        EmailControl.invia_email_codice(email, codice)
+
+        return jsonify({"message": "Email inviata"}), 200
 
     else:
         return jsonify({"error": "Ruolo non valido"}), 400
 
-    # Salvataggio (mock DB)
-    db[email] = user.__dict__
-
-    return jsonify({
-        "message": "Registrazione avvenuta con successo",
-        "email": email,
-        "ruolo": ruolo
-    }), 201

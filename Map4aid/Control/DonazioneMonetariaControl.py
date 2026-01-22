@@ -1,16 +1,14 @@
-from flask import Flask, request, session, jsonify
+from flask import request, session
 from Model import *
 
 from Map4aid.Control.EmailControl import EmailControl
+from Map4aid.Control.Permessi import require_roles
+from Map4aid.app import app
 
-app = Flask(__name__)
-app.secret_key = "9fA!2xZ$kL8@Pq7#sW"
 
 @app.route("/donazioneMonetaria", methods=["POST"])
+@require_roles("ente_donatore")
 def donazione_monetaria():
-    if "logged_in" not in session:
-        return {"successo": False, "errore": "Utente non autenticato"}
-
         # ---- DATI DA SESSIONE ----
     email_donatore = session.get("user_email")
 

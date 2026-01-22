@@ -15,6 +15,7 @@ def segnalazione():
 
 
     if email_ok:
+        #Creazione di un nuovo punto di bisogno con stato in attessa
         return {
             "successo": True,
             "messaggio": "Segnalazione completata con successo"
