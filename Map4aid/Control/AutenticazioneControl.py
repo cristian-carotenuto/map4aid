@@ -1,12 +1,9 @@
 import secrets
 from datetime import datetime, timedelta
-from flask import request, session, jsonify
-
-from Map4aid.Control.EmailControl import EmailControl
-from Map4aid.app import *
-from map4aid_model.models import *
-
-
+from flask import request, session, jsonify, Blueprint
+from app import app
+from .EmailControl import EmailControl
+from Map4aid.map4aid_model.models import Account
 
 @app.route("/register", methods=["POST"])
 def register():

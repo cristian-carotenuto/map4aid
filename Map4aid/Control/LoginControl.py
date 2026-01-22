@@ -1,9 +1,8 @@
 import secrets
 from datetime import datetime, timedelta
 from flask import request, session, jsonify
-from map4aid_model.models import *
 from Map4aid.Control.EmailControl import EmailControl
-from Map4aid.app import app
+from app import app
 
 
 # ---- LOGIN ----

@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-
 #creazione app flask
 app = Flask(__name__)
 
@@ -18,7 +17,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 #import modelli(necessario per farli conoscere a Flask)
-from Control.AutenticazioneControl import *
+
 
 if __name__ == "__main__":
     app.run(debug=True)

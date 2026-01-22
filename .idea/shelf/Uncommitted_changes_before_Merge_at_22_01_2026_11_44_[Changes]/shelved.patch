@@ -1,0 +1,67 @@
+Index: Map4aid/Control/AutenticazioneControl.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from flask import Flask, request, session, jsonify\r\nimport hashlib\r\nfrom Model import *\r\n\r\napp = Flask(__name__)\r\napp.secret_key = \"9fA!2xZ$kL8@Pq7#sW\"\r\n\r\n@app.route(\"/register\", methods=[\"POST\"])\r\ndef register():\r\n    ruolo = request.form.get(\"ruolo\")\r\n    email = request.form.get(\"email\")\r\n    password = request.form.get(\"password\")\r\n\r\n    if not ruolo or not email or not password:\r\n        return jsonify({\"error\": \"Campi obbligatori mancanti\"}), 400\r\n\r\n    if email in db:\r\n        return jsonify({\"error\": \"Email già registrata\"}), 409\r\n\r\n    password_hash = hashlib.sha256(password.encode()).hexdigest()\r\n\r\n    # ----- BENEFICIARIO -----\r\n    if ruolo == \"beneficiario\":\r\n        nome = request.form.get(\"nome\")\r\n        cognome = request.form.get(\"cognome\")\r\n\r\n        if not nome or not cognome:\r\n            return jsonify({\"error\": \"Dati beneficiario incompleti\"}), 400\r\n\r\n        user = AccountBeneficiario(email, password_hash, nome, cognome)\r\n\r\n    # ----- DONATORE -----\r\n    elif ruolo == \"donatore\":\r\n        partita_iva = request.form.get(\"partita_iva\")\r\n        categoria = request.form.get(\"categoria\")\r\n        nome_attivita = request.form.get(\"nome_attivita\")\r\n        indirizzo_sede = request.form.get(\"indirizzo_sede\")\r\n        nome = request.form.get(\"nome\")\r\n        cognome = request.form.get(\"cognome\")\r\n\r\n        if not all([partita_iva, categoria, nome_attivita,\r\n                    indirizzo_sede, nome, cognome]):\r\n            return jsonify({\"error\": \"Dati donatore incompleti\"}), 400\r\n\r\n        user = AccountDonatore(\r\n            email, password_hash, partita_iva, categoria,\r\n            nome_attivita, indirizzo_sede, nome, cognome\r\n        )\r\n\r\n    # ----- ENTE EROGATORE -----\r\n    elif ruolo == \"erogatore\":\r\n        nome_org = request.form.get(\"nome_organizzazione\")\r\n        indirizzo_sede = request.form.get(\"indirizzo_sede\")\r\n        tipologia = request.form.get(\"tipologia_ente\")\r\n        iban = request.form.get(\"iban\")\r\n\r\n        if not all([nome_org, indirizzo_sede, tipologia, iban]):\r\n            return jsonify({\"error\": \"Dati ente erogatore incompleti\"}), 400\r\n\r\n        user = AccountEnteErogatore(\r\n            email, password_hash, nome_org,\r\n            indirizzo_sede, tipologia, iban\r\n        )\r\n\r\n    else:\r\n        return jsonify({\"error\": \"Ruolo non valido\"}), 400\r\n\r\n    # Salvataggio (mock DB)\r\n    db[email] = user.__dict__\r\n\r\n    return jsonify({\r\n        \"message\": \"Registrazione avvenuta con successo\",\r\n        \"email\": email,\r\n        \"ruolo\": ruolo\r\n    }), 201
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Map4aid/Control/AutenticazioneControl.py b/Map4aid/Control/AutenticazioneControl.py
+--- a/Map4aid/Control/AutenticazioneControl.py	(revision 963687df0e90889756691c4a13f2c50784ce6013)
++++ b/Map4aid/Control/AutenticazioneControl.py	(date 1769078688154)
+@@ -18,6 +18,10 @@
+         return jsonify({"error": "Email già registrata"}), 409
+ 
+     password_hash = hashlib.sha256(password.encode()).hexdigest()
++    Account = (
++        "email": email,
++        "password_hash": password_hash
++    )
+ 
+     # ----- BENEFICIARIO -----
+     if ruolo == "beneficiario":
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"55397952-be6e-4a64-8a4f-522745ebe921\" name=\"Changes\" comment=\"\">\r\n      <change afterPath=\"$PROJECT_DIR$/Map4aid/Control/SegnalazioneControl.py\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/Map4aid/Control/DonazioneMonetariaControl.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/Map4aid/Control/DonazioneMonetariaControl.py\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/Map4aid/Control/EmailControl.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/Map4aid/Control/EmailControl.py\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/Map4aid/Control/LoginControl.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/Map4aid/Control/LoginControl.py\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Python Script\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 4\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"38FPBu2HuieGGiTHouE7QUrUW7k\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"autoscrollFromSource\" value=\"true\" />\r\n    <option name=\"autoscrollToSource\" value=\"true\" />\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,\r\n    &quot;ai.playground.ignore.import.keys.banner.in.settings&quot;: &quot;true&quot;,\r\n    &quot;git-widget-placeholder&quot;: &quot;Control__De__Caro&quot;,\r\n    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,\r\n    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,\r\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\r\n  }\r\n}</component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-PY-253.29346.142\" />\r\n        <option value=\"bundled-python-sdk-f2b7a9f6281b-6e1f45a539f7-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.29346.142\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"55397952-be6e-4a64-8a4f-522745ebe921\" name=\"Changes\" comment=\"\" />\r\n      <created>1768392214348</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1768392214348</updated>\r\n      <workItem from=\"1768392215557\" duration=\"762000\" />\r\n      <workItem from=\"1768403983401\" duration=\"1338000\" />\r\n      <workItem from=\"1768992234092\" duration=\"8378000\" />\r\n    </task>\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 963687df0e90889756691c4a13f2c50784ce6013)
++++ b/.idea/workspace.xml	(date 1769078688154)
+@@ -2,11 +2,8 @@
+ <project version="4">
+   <component name="ChangeListManager">
+     <list default="true" id="55397952-be6e-4a64-8a4f-522745ebe921" name="Changes" comment="">
+-      <change afterPath="$PROJECT_DIR$/Map4aid/Control/SegnalazioneControl.py" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/Map4aid/Control/DonazioneMonetariaControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Map4aid/Control/DonazioneMonetariaControl.py" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/Map4aid/Control/EmailControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Map4aid/Control/EmailControl.py" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/Map4aid/Control/LoginControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Map4aid/Control/LoginControl.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/Map4aid/Control/AutenticazioneControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Map4aid/Control/AutenticazioneControl.py" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -23,6 +20,12 @@
+   <component name="Git.Settings">
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+   </component>
++  <component name="GithubPullRequestsUISettings"><![CDATA[{
++  "selectedUrlAndAccountId": {
++    "url": "https://github.com/cristian-carotenuto/map4aid.git",
++    "accountId": "ac26df4b-dbc5-47f8-91a4-7e31c3885a9b"
++  }
++}]]></component>
+   <component name="ProjectColorInfo">{
+   &quot;associatedIndex&quot;: 4
+ }</component>
+@@ -63,7 +66,8 @@
+       <updated>1768392214348</updated>
+       <workItem from="1768392215557" duration="762000" />
+       <workItem from="1768403983401" duration="1338000" />
+-      <workItem from="1768992234092" duration="8378000" />
++      <workItem from="1768992234092" duration="12040000" />
++      <workItem from="1769078344727" duration="300000" />
+     </task>
+     <servers />
+   </component>

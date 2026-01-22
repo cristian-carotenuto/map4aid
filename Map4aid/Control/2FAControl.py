@@ -1,7 +1,6 @@
 from datetime import datetime
 from flask import request, session, jsonify
-from EmailControl import *
-from Map4aid.app import app
+from app import app
 
 @app.route("/2FARegister", methods=["POST"])
 def conferma_codice():

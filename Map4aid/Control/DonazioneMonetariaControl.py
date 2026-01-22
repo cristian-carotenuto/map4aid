@@ -3,7 +3,7 @@ from Model import *
 
 from Map4aid.Control.EmailControl import EmailControl
 from Map4aid.Control.Permessi import require_roles
-from Map4aid.app import app
+from app import app
 
 
 @app.route("/donazioneMonetaria", methods=["POST"])
