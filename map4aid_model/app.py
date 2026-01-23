@@ -1,21 +1,26 @@
+import os
 from flask import Flask
 from config import db, migrate
 
 def create_app():
-    app = Flask(__name__)
+    # Attiva la gestione della cartella instance/
+    app = Flask(__name__, instance_relative_config=True)
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+    #mi assicuro che esista la cartella instance
+    os.makedirs(app.instance_path, exist_ok=True)
+
+    #configurazione db, sempre dentro instance
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{app.instance_path}/database.db"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = 'skMomentanea'
 
+    # Inizializza estensioni
     db.init_app(app)
     migrate.init_app(app, db)
 
-    # importa i modelli DOPO aver inizializzato db
     import models
 
-    # importa i controller DOPO i modelli
-    import AutenticazioneControl 
+    import AutenticazioneControl
     AutenticazioneControl.init_routes(app)
     import EmailControl
 
@@ -24,5 +29,3 @@ def create_app():
         return "sono on"
 
     return app
-
-
