@@ -1,6 +1,6 @@
 from flask import Flask, request, session, jsonify, Blueprint
 
-from controllers.EmailControl import EmailControl
+from EmailControl import EmailControl
 
 def init_routes(app):
     @app.route("/segnalazione", methods=["POST"])

@@ -18,12 +18,14 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
 
-    import models
+    from models import models
+    from models import pendingAccounts
 
     import AutenticazioneControl
     AutenticazioneControl.init_routes(app)
     import EmailControl
-
+    import tasks
+    print(">>>>>Flask root:", os.getcwd())
     @app.route("/")
     def home():
         return "sono on"

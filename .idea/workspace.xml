@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="55397952-be6e-4a64-8a4f-522745ebe921" name="Changes" comment="" />
+    <list default="true" id="55397952-be6e-4a64-8a4f-522745ebe921" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/map4aid_project/_init_.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map4aid_project/controllers/autenticazione_control.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map4aid_project/models/_init_.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map4aid_project/models/pendingAccounts.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map4aid_project/tasks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore.txt" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map4aid_project/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/2FAControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/2FAControl.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/AutenticazioneControl.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/DonazioneMonetariaControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/DonazioneMonetariaControl.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/EmailControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/EmailControl.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/SegnalazioneControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/SegnalazioneControl.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map4aid_project/instance/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/instance/database.db" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -17,6 +32,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;girgio&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/cristian-carotenuto/map4aid.git&quot;,
+    &quot;accountId&quot;: &quot;ac26df4b-dbc5-47f8-91a4-7e31c3885a9b&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -27,19 +54,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "ai.playground.ignore.import.keys.banner.in.settings": "true",
-    "git-widget-placeholder": "Autenticazione",
-    "ignore.virus.scanning.warn.message": "true",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;ai.playground.ignore.import.keys.banner.in.settings&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;controller&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Giovanni/Documents/GitHub/progetto-is/map4aid_project&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\map4aid_project" />
+      <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\map4aid_project\models" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -57,10 +93,17 @@
       <updated>1768392214348</updated>
       <workItem from="1768392215557" duration="762000" />
       <workItem from="1768403983401" duration="1338000" />
+      <workItem from="1769186513179" duration="772000" />
+      <workItem from="1769187309856" duration="1206000" />
+      <workItem from="1769188544451" duration="745000" />
+      <workItem from="1769189316896" duration="9331000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/progetto_is$test.coverage" NAME="test Coverage Results" MODIFIED="1769190857022" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/map4aid_project/models" />
   </component>
 </project>

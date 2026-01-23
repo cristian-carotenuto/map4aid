@@ -1,8 +1,8 @@
 from flask import request, session, Blueprint
 from models import models
 
-from controllers.EmailControl import EmailControl
-from controllers.Permessi import require_roles
+from EmailControl import EmailControl
+from Permessi import require_roles
 
 
 def init_routes(app):
