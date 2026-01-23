@@ -1,4 +1,6 @@
 __pycache__/
+*.pyc
 instance/
+migrations/versions/
+*.pyc 
 *.db
-migrations/__pycache__/
