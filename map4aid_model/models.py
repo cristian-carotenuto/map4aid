@@ -1,5 +1,7 @@
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
+from enum import Enum
+from sqlalchemy import Enum as SqlEnum
 import uuid
 from datetime import datetime, timezone
 
@@ -20,6 +22,8 @@ class Account(db.Model):
         "polymorphic_identity": "account"
     }
 
+    segnalazioni = db.relationship("Segnalazione", back_populates="utente")
+
     #gestione password
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -39,6 +43,9 @@ class AccountBeneficiario(Account):
     __mapper_args__ = {
         "polymorphic_identity": "beneficiario"
     }
+
+    prenotazioni = db.relationship("Prenotazione", back_populates="beneficiario")
+
 
 
 class AccountEnteDonatore(Account):
@@ -61,10 +68,7 @@ class AccountEnteErogatore(Account):
     iban = db.Column(db.String(34), nullable=True)
     indirizzo_sede = db.Column(db.String(200), nullable=True)
 
-    punti_distribuzione = db.relationship(
-        "PuntoDistribuzione",
-        backref="ente_erogatore"
-    )
+    punti_distribuzione = db.relationship("PuntoDistribuzione", back_populates="ente_erogatore")
 
     __mapper_args__ = {
         "polymorphic_identity": "ente_erogatore"
@@ -87,7 +91,10 @@ class PuntoDistribuzione(db.Model):
         nullable=False
     )
 
-    beni = db.relationship("Bene", backref="punto_distribuzione")
+    ente_erogatore = db.relationship("AccountEnteErogatore", back_populates="punti_distribuzione")
+    beni = db.relationship("Bene", back_populates="punto_distribuzione")
+    prenotazioni = db.relationship("Prenotazione", back_populates="punto")
+
 
 class MacroCategoria(db.Model):
     __tablename__ = "macro_categorie"
@@ -95,11 +102,8 @@ class MacroCategoria(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(120), unique=True, nullable=False)
 
-    sotto_categorie = db.relationship(
-        "SottoCategoria",
-        backref="macro_categoria",
-        cascade="all, delete"
-    )
+    sotto_categorie = db.relationship("SottoCategoria", back_populates="macro_categoria", cascade="all, delete")
+
 
 class SottoCategoria(db.Model):
     __tablename__ = "sotto_categorie"
@@ -107,13 +111,10 @@ class SottoCategoria(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(120), nullable=False)
 
-    macro_categoria_id = db.Column(
-        db.Integer,
-        db.ForeignKey("macro_categorie.id"),
-        nullable=False
-    )
+    macro_categoria = db.relationship("MacroCategoria", back_populates="sotto_categorie")
 
-    beni = db.relationship("Bene", backref="sottocategoria")
+    beni = db.relationship("Bene", back_populates="sottocategoria")
+
 
 
 class Bene(db.Model):
@@ -135,15 +136,11 @@ class Bene(db.Model):
         nullable=False
     )
 
-    punto_distribuzione = db.relationship(
-        "PuntoDistribuzione",
-        backref="beni"
-    )
+    punto_distribuzione = db.relationship("PuntoDistribuzione", back_populates="beni")
+    sottocategoria = db.relationship("SottoCategoria", back_populates="beni")
+    prenotazioni = db.relationship("Prenotazione", back_populates="bene")
 
-    sottocategoria = db.relationship(
-        "SottoCategoria",
-        backref="beni"
-    )
+
 
 
 class Prenotazione(db.Model):
@@ -152,43 +149,28 @@ class Prenotazione(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     # FK beneficiario
-    beneficiario_id = db.Column(
-        db.Integer,
-        db.ForeignKey("account_beneficiari.id"),
-        nullable=False
-    )
+    beneficiario_id = db.Column(db.Integer, db.ForeignKey("account_beneficiari.id"), nullable=False)
 
     # FK bene
-    bene_id = db.Column(
-        db.Integer,
-        db.ForeignKey("beni.id"),
-        nullable=False
-    )
+    bene_id = db.Column(db.Integer, db.ForeignKey("beni.id"), nullable=False)
 
     # Timestamp prenotazione
-    data_prenotazione = db.Column(
-        db.DateTime(timezone=True), 
-        default=lambda: datetime.now(timezone.utc),
-        nullable=False )
+    data_prenotazione = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
 
-    # Stato prenotazione
-    stato = db.Column(
-        db.String(50),
-        nullable=False,
-        default="in_attesa"  
-    )
+    stato = db.Column(db.String(50), nullable=False, default="in_attesa")
 
     # Codice univoco per QR
-    codice_qr = db.Column(
-        db.String(36),
-        unique=True,
-        nullable=False,
-        default=lambda: str(uuid.uuid4())
-    )
+    codice_qr = db.Column(db.String(36), unique=True, nullable=False, default=lambda: str(uuid.uuid4()))
+    
+    punto_id = db.Column(db.Integer,db.ForeignKey("punti_distribuzione.id"),nullable=False)
 
     # Relazioni
-    beneficiario = db.relationship("AccountBeneficiario")
-    bene = db.relationship("Bene")
+    punto = db.relationship("PuntoDistribuzione", back_populates="prenotazioni")
+    beneficiario = db.relationship("AccountBeneficiario", back_populates="prenotazioni")
+    bene = db.relationship("Bene", back_populates="prenotazioni")
+
+
+
 
 class DonazioneMonetaria(db.Model):
     __tablename__ = "donazioni_monetarie"
@@ -207,3 +189,46 @@ class DonazioneMonetaria(db.Model):
 
     def __repr__(self):
         return f"<DonazioneMonetaria {self.id} - {self.importo}€>"
+
+
+
+class TipoBisogno(Enum):
+    ALIMENTI = "alimenti"
+    MEDICINALI = "medicinali"
+    ABBIGLIAMENTO = "abbigliamento"
+    MOBILITA_E_SUPPORTO = "mobilita/trasporto"
+    CHILDREN = "prodottiperbambini"
+    IGIENE = "igienepersonale"
+
+
+class StatoApprovazione(Enum):
+    IN_ATTESA = "in_attesa"
+    APPROVATA = "approvata"
+    RIFIUTATA = "rifiutata"
+
+
+class Segnalazione(db.Model):
+    __tablename__ = "segnalazioni"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    latitudine = db.Column(db.Float, nullable=False)
+    longitudine = db.Column(db.Float, nullable=False)
+
+    tipo_bisogno = db.Column(SqlEnum(TipoBisogno), nullable=True)
+    stato_approvazione = db.Column(SqlEnum(StatoApprovazione), default=StatoApprovazione.IN_ATTESA, nullable=False)
+    punto_id = db.Column(db.Integer, db.ForeignKey("punti_distribuzione.id"), nullable=False)
+
+    punto = db.relationship("PuntoDistribuzione", back_populates="segnalazioni")
+
+    # Timestamp tengo traccia
+    created_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime(timezone=True),default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+    utente_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=False)
+
+    utente = db.relationship("Account",back_populates="segnalazioni")
+
+    def __repr__(self): 
+        tipo = self.tipo_bisogno.value if self.tipo_bisogno else "nessun_bisogno" 
+        return f"<Segnalazione {self.id} - {tipo}>"
