@@ -79,9 +79,46 @@
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   }).addTo(map);
-  L.marker([41.8902, 12.4922])
+  /*L.marker([41.8902, 12.4922])
     .bindPopup('<b>Punto di distribuzione</b><br>Via del Colosseo, 1')
-    .addTo(map);
+    .addTo(map);*/
+  
+  navigator.geolocation.watchPosition(success, error);
+
+  let marker;
+  let circle;
+  let zoomed;
+
+  function success(pos)
+  {
+    const lat = pos.coords.latitude;
+    const long = pos.coords.longitude;
+    const accuracy = pos.coords.accuracy;
+
+    if(marker)
+    { 
+      map.removeLayer(marker);
+      map.removeLayer(circle);
+    }
+
+    marker = L.marker([lat, long]).addTo(map);
+    circle = L.circle([lat, long], {radius: accuracy}).addTo(map);
+
+    if(!zoomed)
+    {
+      zoomed = map.fitBounds(circle.getBounds());
+    }
+
+    map.setView([lat, long])
+  }
+
+  function error(err)
+  {
+    if(err.code === 1) 
+      alert("Per favore accettare l'accesso alla geolocalizzazione per visualizzare la posizione corretta sulla mappa")
+    /*else
+      alert("Impossibile accedere alla geolocalizzazione")*/
+  }
 </script>
 <script src="../js/auth.js"></script>
 

@@ -10,7 +10,7 @@ body {
 }
 
 #map {
-  height: 600px;
+  height: 79vh;
   width: 100%;
   border-radius: 15px;
   overflow: hidden;
