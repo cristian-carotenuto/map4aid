@@ -1,34 +1,49 @@
 """
 Client per l'inferenza con QWEN 2.5-3B.
-Questo modulo gestisce il caricamento del modello e la generazione di risposte.
+Questo modulo gestisce il caricamento del modello, la memoria della conversazione
+e la consapevolezza temporale.
 """
 
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+import os
 import torch
+from datetime import datetime
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
 class QwenClient:
     """Client per interagire con il modello QWEN."""
     
-    def __init__(self, model_name="Qwen/Qwen2.5-3B-Instruct"):
+    def __init__(self, model_name="Qwen/Qwen2.5-3B-Instruct", use_adapters=True):
         """
         Inizializza il client QWEN.
-        
-        Args:
-            model_name: Nome del modello su Hugging Face
         """
         self.model_name = model_name
         self.model = None
         self.tokenizer = None
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.history = []
+        self.use_adapters = use_adapters
         
+    def _get_system_info(self):
+        # ... (stesso codice di prima)
+        now = datetime.now()
+        data = now.strftime("%d/%m/%Y")
+        ora = now.strftime("%H:%M:%S")
+        giorni = {
+            "Monday": "Lunedì", "Tuesday": "Martedì", "Wednesday": "Mercoledì",
+            "Thursday": "Giovedì", "Friday": "Venerdì", "Saturday": "Sabato", "Sunday": "Domenica"
+        }
+        giorno_settimana = giorni.get(now.strftime("%A"), now.strftime("%A"))
+        return f"Oggi è {giorno_settimana}, {data}. L'ora attuale è {ora}."
+
     def load_model(self):
-        """Carica il modello e il tokenizer."""
+        """Carica il modello e opzionalmente gli adapter."""
         print(f">> Caricamento modello {self.model_name}...")
-        print(f">> Device: {self.device}")
-        
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-        # Configurazione per quantizzazione a 4-bit
-        # Questo riduce drasticamente l'uso della VRAM (<2GB per il modello 3B)
+        
+        # Sincronizzazione pad token come fatto nel training
+        if self.tokenizer.pad_token is None:
+            self.tokenizer.pad_token = self.tokenizer.eos_token
+            
         quantization_config = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_compute_dtype=torch.float16,
@@ -39,65 +54,69 @@ class QwenClient:
         self.model = AutoModelForCausalLM.from_pretrained(
             self.model_name,
             quantization_config=quantization_config,
-            device_map="auto"
+            device_map="auto",
+            trust_remote_code=True
         )
         
-        print("[OK] Modello caricato con successo!")
-        
-    def generate_response(self, prompt, max_length=512, temperature=0.7):
-        """
-        Genera una risposta dato un prompt.
-        
-        Args:
-            prompt: Testo di input
-            max_length: Lunghezza massima della risposta
-            temperature: Creatività della risposta (0.0-1.0)
+        if self.use_adapters:
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            adapter_path = os.path.join(script_dir, "../training/qwen-aidano-final")
+            if os.path.exists(adapter_path):
+                from peft import PeftModel
+                print(f">> Caricamento adapter personalizzati Aidano da: {adapter_path}")
+                self.model = PeftModel.from_pretrained(self.model, adapter_path)
+            else:
+                print(">> Nessun adapter trovato.")
+        else:
+            print(">> Utilizzo modello base (adapter disabilitati).")
             
-        Returns:
-            Risposta generata dal modello
-        """
+        print("[OK] Modello pronto!")
+
+    def generate_response(self, prompt, max_length=512, temperature=0.7):
         if self.model is None:
-            raise RuntimeError("Modello non caricato. Chiama load_model() prima.")
+            raise RuntimeError("Modello non caricato.")
         
-        # Prepara il prompt con il formato chat
-        messages = [
-            {"role": "system", "content": "Sei un assistente utile che risponde in italiano."},
-            {"role": "user", "content": prompt}
-        ]
-        
-        text = self.tokenizer.apply_chat_template(
-            messages,
-            tokenize=False,
-            add_generation_prompt=True
+        # 1. System Prompt più bilanciato (Conversazionale + Esperto)
+        system_info = self._get_system_info()
+        system_prompt = (
+            "Sei Aidano, l'assistente virtuale di Map4Aid. Sei un assistente gentile, utile e preparato. "
+            "Il tuo compito è rispondere alle domande degli utenti sulla piattaforma Map4Aid utilizzando la tua conoscenza specifica, "
+            "ma sei anche un assistente conversazionale: tieni traccia di quanto detto in chat per rispondere in modo coerente. "
+            f"Informazioni attuali: {system_info}"
         )
         
-        # Tokenizza
+        # 2. Gestione History
+        if not self.history:
+            self.history.append({"role": "system", "content": system_prompt})
+        else:
+            self.history[0] = {"role": "system", "content": system_prompt}
+            
+        self.history.append({"role": "user", "content": prompt})
+        if len(self.history) > 11:
+            self.history = [self.history[0]] + self.history[-10:]
+        
+        # DEBUG: Decommenta per vedere cosa stiamo inviando al modello
+        # print(f"DEBUG: Numero messaggi in history: {len(self.history)}")
+        
+        # 3. Generazione
+        text = self.tokenizer.apply_chat_template(self.history, tokenize=False, add_generation_prompt=True)
         inputs = self.tokenizer([text], return_tensors="pt").to(self.device)
         
-        # Genera risposta
         with torch.no_grad():
             outputs = self.model.generate(
                 **inputs,
                 max_new_tokens=max_length,
                 temperature=temperature,
                 do_sample=True,
-                top_p=0.9
+                top_p=0.9,
+                pad_token_id=self.tokenizer.pad_token_id
             )
         
-        # Decodifica
-        response = self.tokenizer.decode(
-            outputs[0][len(inputs.input_ids[0]):],
-            skip_special_tokens=True
-        )
-        
-        return response.strip()
+        response = self.tokenizer.decode(outputs[0][len(inputs.input_ids[0]):], skip_special_tokens=True).strip()
+        self.history.append({"role": "assistant", "content": response})
+        return response
 
 if __name__ == "__main__":
-    # Test del client
     client = QwenClient()
     client.load_model()
-    
-    test_prompt = "Ciao! Puoi presentarti brevemente?"
-    print(f"\n>> Prompt: {test_prompt}")
-    response = client.generate_response(test_prompt)
-    print(f">> Risposta: {response}")
+    print(client.generate_response("Ciao, chi sei?"))
