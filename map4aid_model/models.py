@@ -1,4 +1,4 @@
-from app import db
+from config import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from enum import Enum
 from sqlalchemy import Enum as SqlEnum
