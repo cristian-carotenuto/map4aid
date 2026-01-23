@@ -1,8 +1,8 @@
-"""initial schema
+"""Initial schema
 
-Revision ID: 8cf7f5a92553
+Revision ID: f6609230d540
 Revises: 
-Create Date: 2026-01-23 11:33:06.447005
+Create Date: 2026-01-23 19:12:02.329450
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '8cf7f5a92553'
+revision = 'f6609230d540'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -31,11 +31,6 @@ def upgrade():
     sa.Column('nome', sa.String(length=120), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('nome')
-    )
-    op.create_table('sotto_categorie',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('nome', sa.String(length=120), nullable=False),
-    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('account_beneficiari',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -60,6 +55,13 @@ def upgrade():
     sa.Column('iban', sa.String(length=34), nullable=True),
     sa.Column('indirizzo_sede', sa.String(length=200), nullable=True),
     sa.ForeignKeyConstraint(['id'], ['accounts.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('sotto_categorie',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('nome', sa.String(length=120), nullable=False),
+    sa.Column('macro_categoria_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['macro_categoria_id'], ['macro_categorie.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('donazioni_monetarie',
@@ -131,10 +133,10 @@ def downgrade():
     op.drop_table('beni')
     op.drop_table('punti_distribuzione')
     op.drop_table('donazioni_monetarie')
+    op.drop_table('sotto_categorie')
     op.drop_table('account_enti_erogatori')
     op.drop_table('account_enti_donatori')
     op.drop_table('account_beneficiari')
-    op.drop_table('sotto_categorie')
     op.drop_table('macro_categorie')
     op.drop_table('accounts')
     # ### end Alembic commands ###

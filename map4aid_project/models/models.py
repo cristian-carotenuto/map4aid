@@ -91,6 +91,7 @@ class PuntoDistribuzione(db.Model):
         nullable=False
     )
 
+    segnalazioni = db.relationship("Segnalazione", back_populates="punto")
     ente_erogatore = db.relationship("AccountEnteErogatore", back_populates="punti_distribuzione")
     beni = db.relationship("Bene", back_populates="punto_distribuzione")
     prenotazioni = db.relationship("Prenotazione", back_populates="punto")
@@ -110,6 +111,7 @@ class SottoCategoria(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(120), nullable=False)
+    macro_categoria_id = db.Column(db.Integer, db.ForeignKey("macro_categorie.id"))
 
     macro_categoria = db.relationship("MacroCategoria", back_populates="sotto_categorie")
 
