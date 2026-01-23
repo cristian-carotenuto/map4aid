@@ -1,5 +1,0 @@
-peft
-trl==0.8.6
-datasets
-bitsandbytes
-rich
