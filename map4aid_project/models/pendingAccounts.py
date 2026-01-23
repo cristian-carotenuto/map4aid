@@ -14,11 +14,11 @@ class PendingAccount(db.Model):
 
     # dati comuni Account
     email = db.Column(db.String(120), nullable=False)
-    password_hash = db.Column(db.String(255), nullable=False)
-    tipo = db.Column(db.String(50), nullable=False)
+    password_hash = db.Column(db.String(255), nullable=True)
+    tipo = db.Column(db.String(50), nullable=True)
 
     # dati specifici del tipo (beneficiario, ente, ecc.)
-    extra_data = db.Column(db.JSON, nullable=False)
+    extra_data = db.Column(db.JSON, nullable=True)
     expires_at = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc) + timedelta(minutes=10))
     created_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
 

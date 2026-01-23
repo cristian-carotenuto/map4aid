@@ -59,24 +59,19 @@ def conferma_codice():
 
 @auth_bp.route("/2FALogin", methods=["POST"])
 def conferma_codice():
-    data = session.get("login")
-    if not data:
+    email = session.get("pending_email")
+    puser = PendingAccount(PendingAccount.query.filter_by(email=email).first())
+    if not puser:
         return jsonify({"error": "Nessun login in corso"}), 400
 
-    # Controlla scadenza
-    if datetime.utcnow() > datetime.fromisoformat(data["expires_at"]):
-        session.pop("login")
-        return jsonify({"error": "Codice scaduto"}), 400
-
     codice_inserito = request.form.get("codice")
-    if codice_inserito != data["codice"]:
+    if codice_inserito != puser.token:
         return jsonify({"error": "Codice non valido"}), 401
 
     # Codice corretto → consenti login
-    email = data["email"]
     session["logged_in"] = True
     session["user_email"] = email
-    session.pop("registrazione")  # rimuovi codice
+    session.pop("pendindg_email")  # rimuovi codice
     return jsonify({
         "message": "Login effettuato con successo",
         "email": email
