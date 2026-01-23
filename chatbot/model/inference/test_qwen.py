@@ -1,58 +1,55 @@
 """
-Script di test per verificare il funzionamento di QWEN.
+Script di test completo per Aidano (Qwen 2.5-3B Fine-tuned).
+Verifica: inferenza, memoria, tempo e conoscenza del progetto.
 """
 
 from qwen_client import QwenClient
+import time
 
-def test_basic_inference():
-    """Test di base per l'inferenza con QWEN 2.5-3B."""
+def test_aidano_capabilities():
+    """Test approfondito delle capacità di Aidano."""
     
     print("=" * 60)
-    print(">> TEST QWEN 2.5-3B - Inferenza Base")
+    print(">> TEST AIDANO - Modello Fine-tuned & Memory Ready")
     print("=" * 60)
     
     # Inizializza il client
     client = QwenClient()
     client.load_model()
     
-    # Test 1: Saluto semplice
-    print("\n>> Test 1: Saluto semplice")
-    prompt1 = "Ciao, come stai?"
+    # Test 1: Consapevolezza temporale
+    print("\n>> Test 1: Consapevolezza temporale")
+    prompt1 = "Che ore sono e che giorno è oggi? Salutami in modo appropriato."
     response1 = client.generate_response(prompt1, max_length=100)
     print(f"Prompt: {prompt1}")
-    print(f"Risposta: {response1}\n")
+    print(f"Risposta: {response1}")
     
-    # Test 2: Domanda sul chatbot
-    print(">> Test 2: Domanda sul chatbot")
-    prompt2 = "Sei un chatbot per un sito di beneficenza. Puoi aiutarmi a fare una donazione?"
-    response2 = client.generate_response(prompt2, max_length=150)
+    # Test 2: Conoscenza specifica del Progetto (Fine-tuning check)
+    print("\n>> Test 2: Conoscenza Map4Aid (Fine-tuning)")
+    prompt2 = "Che tipo di donazioni posso effettuare su Map4Aid?"
+    # Nota: Abbiamo allineato il prompt nel client, ora dovrebbe rispondere basandosi sui dati di training.
+    response2 = client.generate_response(prompt2, max_length=200)
     print(f"Prompt: {prompt2}")
-    print(f"Risposta: {response2}\n")
+    print(f"Risposta: {response2}")
     
-    # Test 3: Domanda in italiano
-    print(">> Test 3: Comprensione italiano")
-    prompt3 = "Quali sono le funzionalita principali di un sito di beneficenza?"
+    # Test 3: Altra domanda specifica
+    print("\n>> Test 3: Gestione scorte (Fine-tuning)")
+    prompt3 = "Come posso aggiornare le scorte se sono un ente?"
     response3 = client.generate_response(prompt3, max_length=200)
     print(f"Prompt: {prompt3}")
-    print(f"Risposta: {response3}\n")
-    
-    # Test 4: Consapevolezza temporale (Nuova modifica)
-    print(">> Test 4: Consapevolezza temporale")
-    prompt4 = "Che giorno è oggi e che ore sono? Salutami in modo appropriato all'orario."
+    print(f"Risposta: {response3}")
+
+    # Test 4: Memoria della conversazione
+    print("\n>> Test 4: Memoria")
+    # Proviamo una domanda di memoria più diretta se la precedente falliva
+    prompt4 = "Cosa ti ho chiesto nel mio primissimo messaggio di questa conversazione?"
     response4 = client.generate_response(prompt4, max_length=100)
     print(f"Prompt: {prompt4}")
-    print(f"Risposta: {response4}\n")
+    print(f"Risposta: {response4}")
     
-    # Test 5: Memoria della conversazione (Nuova modifica)
-    print(">> Test 5: Memoria della conversazione")
-    prompt5 = "Cosa ti ho chiesto nel prompt precedente (il numero 4)? Rispondimi in modo conciso."
-    response5 = client.generate_response(prompt5, max_length=100)
-    print(f"Prompt: {prompt5}")
-    print(f"Risposta: {response5}\n")
-    
-    print("=" * 60)
-    print("[OK] Test completati con successo!")
+    print("\n" + "=" * 60)
+    print("[OK] Tutti i test di Aidano completati!")
     print("=" * 60)
 
 if __name__ == "__main__":
-    test_basic_inference()
+    test_aidano_capabilities()
