@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Model Training Artifacts (Checkpoints & Final Adapters)
+chatbot/model/training/qwen-aidano-checkpoints/
+chatbot/model/training/qwen-aidano-final/
+
+# Data expansion results
+chatbot/data/training_data_expanded.jsonl

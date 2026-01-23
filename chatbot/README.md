@@ -26,6 +26,26 @@ Il modello verrà scaricato in `C:\Users\<username>\.cache\huggingface\hub\`
 python model/inference/test_qwen.py
 ```
 
+## 🏋️ Addestramento (Fine-tuning)
+
+Se desideri specializzare il modello sui dati di progetto:
+
+### 1. Installare le dipendenze di training
+```bash
+pip install -r model/training/requirements-train.txt
+```
+
+### 2. Generare il dataset espanso
+```bash
+python data/dataset_generator.py
+```
+
+### 3. Avviare il fine-tuning
+```bash
+python model/training/fine_tune.py
+```
+*I risultati (adapter LoRA) verranno salvati nella cartella `model/training/qwen-aidano-checkpoints`.*
+
 ## 📁 Struttura del Progetto
 
 ```
@@ -35,10 +55,12 @@ chatbot/
 │   │   ├── qwen_client.py  # Client QWEN (3B 4-bit)
 │   │   ├── test_qwen.py    # Test di base
 │   │   └── download_model.py
-│   └── training/           # Fine-tuning LoRA (futuro)
+│   └── training/           # Fine-tuning LoRA
+│       ├── fine_tune.py    # Script di addestramento
+│       └── requirements-train.txt
 ├── data/
-│   ├── kb/                 # Knowledge base del sito
-│   └── datasets/           # Dataset per training
+│   ├── training_data.jsonl # Dataset base dai documenti
+│   └── dataset_generator.py # Script per espandere il dataset
 ├── contracts/              # API contracts
 ├── backend/                # Integrazione backend
 └── requirements.txt
