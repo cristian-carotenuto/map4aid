@@ -22,12 +22,14 @@ function updateAuthButtons() {
 
   if (isLoggedIn()) {
     container.innerHTML = `
+      <a href="home.html" class="btn btn-light">Home</a>
       <a href="donazione.html" class="btn btn-light">Donazione monetaria</a>
       <a href="profilo.html" class="btn btn-light">Profilo</a>
       <button class="btn btn-light" onclick="handleLogout()">Logout</button>
     `;
   } else {
     container.innerHTML = `
+      <a href="home.html" class="btn btn-light">Home</a>
       <a href="donazione.html" class="btn btn-light">Donazione monetaria</a>
       <a href="APP.html" class="btn btn-light">APP</a>
       <a href="login.html" class="btn btn-light">Login</a>
