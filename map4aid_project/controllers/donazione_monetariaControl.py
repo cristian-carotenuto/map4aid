@@ -1,11 +1,11 @@
 from flask import request, session, Blueprint
+
+from controllers.routes import auth_bp
 from models import models
 
 from EmailControl import EmailControl
 from Permessi import require_roles
 
-
-auth_bp = Blueprint("auth", __name__)
 
 @auth_bp.route("/donazioneMonetaria", methods=["POST"])
 @require_roles("ente_donatore")

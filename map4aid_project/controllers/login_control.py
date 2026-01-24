@@ -5,8 +5,7 @@ from flask import request, session, jsonify, Blueprint
 from controllers.EmailControl import EmailControl
 from models.models import Account
 from models.pendingAccounts import PendingAccount
-
-auth_bp = Blueprint("auth", __name__)
+from controllers.routes import auth_bp
 
 @auth_bp.route("/login", methods=["POST"])
 def login():

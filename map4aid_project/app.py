@@ -1,6 +1,8 @@
 import os
 from flask import Flask
 from config import db, migrate
+from tasks import start_scheduler
+
 
 def create_app():
     # Attiva la gestione della cartella instance/
@@ -21,13 +23,18 @@ def create_app():
     from models import models
     from models import pendingAccounts
 
-    from controllers.autenticazione_control import auth_bp
+    from controllers.routes import auth_bp
+    from controllers import two_fa_contol
+    from controllers import autenticazione_control
     app.register_blueprint(auth_bp, url_prefix="/auth")
-    import tasks
 
     print(">>>>>Flask root:", os.getcwd())
     @app.route("/")
     def home():
         return "sono on"
 
+    if os.environ.get('WERKZEUG_RUN_MAIN') == 'true' or not app.debug:
+        start_scheduler(app)
+
     return app
+

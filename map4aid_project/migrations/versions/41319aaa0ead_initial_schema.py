@@ -1,8 +1,8 @@
-"""Initial schema
+"""initial schema
 
-Revision ID: f6609230d540
+Revision ID: 41319aaa0ead
 Revises: 
-Create Date: 2026-01-23 19:12:02.329450
+Create Date: 2026-01-24 12:24:07.344096
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'f6609230d540'
+revision = '41319aaa0ead'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -32,6 +32,20 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('nome')
     )
+    op.create_table('pending_accounts',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('token', sa.String(length=64), nullable=False),
+    sa.Column('email', sa.String(length=120), nullable=False),
+    sa.Column('password_hash', sa.String(length=255), nullable=True),
+    sa.Column('tipo', sa.String(length=50), nullable=True),
+    sa.Column('extra_data', sa.JSON(), nullable=True),
+    sa.Column('expires_at', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
+    with op.batch_alter_table('pending_accounts', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_pending_accounts_token'), ['token'], unique=True)
+
     op.create_table('account_beneficiari',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('nome', sa.String(length=100), nullable=False),
@@ -137,6 +151,10 @@ def downgrade():
     op.drop_table('account_enti_erogatori')
     op.drop_table('account_enti_donatori')
     op.drop_table('account_beneficiari')
+    with op.batch_alter_table('pending_accounts', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_pending_accounts_token'))
+
+    op.drop_table('pending_accounts')
     op.drop_table('macro_categorie')
     op.drop_table('accounts')
     # ### end Alembic commands ###

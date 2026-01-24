@@ -1,12 +1,12 @@
 import secrets
 from datetime import datetime, timedelta
 from flask import request, session, jsonify, Blueprint
-from EmailControl import EmailControl
+from controllers.EmailControl import EmailControl
 from config import db
+from controllers.routes import auth_bp
 from models.models import Account, AccountBeneficiario, AccountEnteDonatore, AccountEnteErogatore
 from models.pendingAccounts import PendingAccount
 
-auth_bp = Blueprint("auth", __name__)
 
 @auth_bp.route("/register", methods=["POST"])
 def register():
@@ -87,7 +87,8 @@ def register():
     db.session.commit()
 
     # Invia email con codice OTP
-    email_ok = EmailControl.invia_email_codice(email, codice)
+    email_control = EmailControl()
+    email_ok = email_control.invia_email_codice(email, codice)
 
     if email_ok:
         return jsonify({"message": "Email inviata. Controlla la tua casella."}), 200

@@ -10,8 +10,8 @@ class EmailControl:
         self.config = {
             "smtp_server": "smtp.gmail.com",
             "smtp_port": 587,
-            "email": "map4aid@gmail.com",
-            "password": "PASSWORD_APP"
+            "email": "map4aid01@gmail.com",
+            "password": "cmtf ymqz iekk lqbq"
         }
 
     def invia_email_donazione(self, email_ente, nome_ente,
@@ -56,7 +56,7 @@ Map4Aid
         msg = MIMEMultipart()
         msg["From"] = self.config["email"]
         msg["To"] = email_utente
-        msg["Subject"] = "Email per recupero password"
+        msg["Subject"] = "Email per conferma codice"
 
         corpo = f"""
         Per favore inserire il seguente codice per confermare l'emaill:
@@ -65,7 +65,7 @@ Map4Aid
         
         Cordiali saluti,
         Map4Aid
-"""
+        """
 
         msg.attach(MIMEText(corpo, "plain", "utf-8"))
 

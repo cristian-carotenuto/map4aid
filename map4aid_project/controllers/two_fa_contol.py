@@ -2,13 +2,13 @@ from datetime import datetime
 from flask import request, session, jsonify, Blueprint
 
 from config import db
+from controllers.routes import auth_bp
 from models.models import AccountBeneficiario, AccountEnteDonatore, AccountEnteErogatore
 from models.pendingAccounts import PendingAccount
 
-auth_bp = Blueprint("auth", __name__)
 
 @auth_bp.route("/2FARegister", methods=["POST"])
-def conferma_codice():
+def conferma_codice_registrazione():
     email = session.get("pending_email")
     puser = PendingAccount(PendingAccount.query.filter_by(email=email).first())
     if not puser:
@@ -58,7 +58,7 @@ def conferma_codice():
 
 
 @auth_bp.route("/2FALogin", methods=["POST"])
-def conferma_codice():
+def conferma_codice_login():
     email = session.get("pending_email")
     puser = PendingAccount(PendingAccount.query.filter_by(email=email).first())
     if not puser:
