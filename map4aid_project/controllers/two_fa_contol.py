@@ -3,8 +3,9 @@ from flask import request, session, jsonify, Blueprint
 
 from config import db
 from controllers.routes import auth_bp
-from models.models import AccountBeneficiario, AccountEnteDonatore, AccountEnteErogatore
 from models.pendingAccounts import PendingAccount
+from models.models import AccountBeneficiario, AccountDonatore, AccountEnteErogatore
+
 
 
 @auth_bp.route("/2FARegister", methods=["POST"])
@@ -32,7 +33,7 @@ def conferma_codice_registrazione():
 
     # ----DONATORE-----
     if puser.tipo == "ente_donatore":
-        user = AccountEnteDonatore(
+        user = AccountDonatore(
             email=email,
             password_hash = puser.password_hash,
             nome_attivita = puser.extra_data["nome_attivita"],

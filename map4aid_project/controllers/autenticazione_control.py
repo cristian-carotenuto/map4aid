@@ -4,7 +4,7 @@ from flask import request, session, jsonify, Blueprint
 from controllers.EmailControl import EmailControl
 from config import db
 from controllers.routes import auth_bp
-from models.models import Account, AccountBeneficiario, AccountEnteDonatore, AccountEnteErogatore
+from models.models import Account, AccountBeneficiario, AccountDonatore, AccountEnteErogatore
 from models.pendingAccounts import PendingAccount
 
 
