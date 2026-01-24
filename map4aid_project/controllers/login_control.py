@@ -33,7 +33,8 @@ def login():
     )
     db.session.add(puser)
     db.session.commit()
-    email_ok = EmailControl.invia_email_codice(email,codice)
+    email_control = EmailControl()
+    email_ok = email_control.invia_email_codice(email,codice)
     if not email_ok:
         return jsonify({"error": "Email non inviata"}), 401
 
@@ -64,7 +65,8 @@ def recupero_password():
     db.session.commit()
 
     # Invia email con il codice
-    email_ok = EmailControl.invia_email_codice(email, codice)
+    email_control = EmailControl()
+    email_ok = email_control.invia_email_codice(email, codice)
 
     if not email_ok:
         return jsonify({"message": "Email di recupero inviata"}), 200

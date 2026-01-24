@@ -10,7 +10,7 @@ from models.pendingAccounts import PendingAccount
 @auth_bp.route("/2FARegister", methods=["POST"])
 def conferma_codice_registrazione():
     email = session.get("pending_email")
-    puser = PendingAccount(PendingAccount.query.filter_by(email=email).first())
+    puser = PendingAccount.query.filter_by(email=email).first()
     if not puser:
         return jsonify({"error": "Nessuna registrazionein corso"}), 400
 
@@ -51,8 +51,9 @@ def conferma_codice_registrazione():
     if(user == None):
         return jsonify({"error": "Nessuna registrazionein corso"}), 400
     db.session.add(user)
+    db.session.delete(puser)
     db.session.commit()
-    session.pop("email")  # rimuovi email
+    session.pop("pending_email")  # rimuovi email
 
     return jsonify({"message": "Codice valido, registrazione avvenuta"}), 200
 
@@ -60,7 +61,7 @@ def conferma_codice_registrazione():
 @auth_bp.route("/2FALogin", methods=["POST"])
 def conferma_codice_login():
     email = session.get("pending_email")
-    puser = PendingAccount(PendingAccount.query.filter_by(email=email).first())
+    puser = PendingAccount.query.filter_by(email=email).first()
     if not puser:
         return jsonify({"error": "Nessun login in corso"}), 400
 
@@ -71,7 +72,8 @@ def conferma_codice_login():
     # Codice corretto → consenti login
     session["logged_in"] = True
     session["user_email"] = email
-    session.pop("pendindg_email")  # rimuovi codice
+    db.session.delete(puser)
+    session.pop("pendindg_email")
     return jsonify({
         "message": "Login effettuato con successo",
         "email": email

@@ -26,6 +26,7 @@ def create_app():
     from controllers.routes import auth_bp
     from controllers import two_fa_contol
     from controllers import autenticazione_control
+    from controllers import login_control
     app.register_blueprint(auth_bp, url_prefix="/auth")
 
     print(">>>>>Flask root:", os.getcwd())

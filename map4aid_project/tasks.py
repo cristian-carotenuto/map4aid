@@ -18,7 +18,7 @@ def start_scheduler(app):
     scheduler.add_job(
         func=cleanup_expired_pending_accounts,
         trigger='interval',
-        minutes=5,
+        minutes=1,
         args=[app]
     )
     print("Scheduler avviato")

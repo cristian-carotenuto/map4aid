@@ -59,13 +59,12 @@ Map4Aid
         msg["Subject"] = "Email per conferma codice"
 
         corpo = f"""
-        Per favore inserire il seguente codice per confermare l'emaill:
-        {codice}
-        Il codice scadrà dopo 10 minuti
+Per favore inserire il seguente codice per confermare l'emaill:
+{codice}
+Il codice scadrà dopo 10 minuti
         
-        Cordiali saluti,
-        Map4Aid
-        """
+Cordiali saluti,
+Map4Aid"""
 
         msg.attach(MIMEText(corpo, "plain", "utf-8"))
 

@@ -9,8 +9,8 @@ def segnalazione():
 
     indirizzo = data["indirizzo"]
     email_ente = data["email_ente"]
-
-    email_ok = EmailControl.invia_email_segnalazione(email_ente, indirizzo)
+    email_control = EmailControl()
+    email_ok = email_control.invia_email_segnalazione(email_ente, indirizzo)
 
 
     if email_ok:
