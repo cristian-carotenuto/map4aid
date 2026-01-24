@@ -1,12 +1,13 @@
 from config import db
 from werkzeug.security import generate_password_hash, check_password_hash
-from enum import Enum
-from sqlalchemy import Enum as SqlEnum
 import uuid
 from datetime import datetime, timezone
 
+#la classe notifica presente nel RAD non è stata definita
+#la classe segnalazione presente nelle direttive clickUp non è stata definita perchè non presente nel RAD
 
-#CLASSE BASE ACCOUNT (polimorfismo SQLAlchemy)
+#  ACCOUNT BASE (POLIMORFISMO)
+
 class Account(db.Model):
     __tablename__ = "accounts"
 
@@ -14,23 +15,23 @@ class Account(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
 
-    #distinguo polimorfismo
-    tipo = db.Column(db.String(50))
+    tipo = db.Column(db.String(50))  # per polimorfismo
 
     __mapper_args__ = {
         "polymorphic_on": tipo,
         "polymorphic_identity": "account"
     }
 
-    segnalazioni = db.relationship("Segnalazione", back_populates="utente")
-
-    #gestione password
+    # gestione password
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+
+
+#ACCOUNT BENEFICIARIO
 
 class AccountBeneficiario(Account):
     __tablename__ = "account_beneficiari"
@@ -45,57 +46,82 @@ class AccountBeneficiario(Account):
     }
 
     prenotazioni = db.relationship("Prenotazione", back_populates="beneficiario")
+    feedback = db.relationship("Feedback", back_populates="beneficiario")
 
 
 
-class AccountEnteDonatore(Account):
-    __tablename__ = "account_enti_donatori"
+#ACCOUNT DONATORE
+
+class AccountDonatore(Account):
+    __tablename__ = "account_donatori"
 
     id = db.Column(db.Integer, db.ForeignKey("accounts.id"), primary_key=True)
-    partita_iva = db.Column(db.String(11), unique=True, nullable=False)
-    nome_attivita = db.Column(db.String(150), nullable=False)
+
+    #se azienda
+    partita_iva = db.Column(db.String(11), unique=True, nullable=True)
+    nome_attivita = db.Column(db.String(150), nullable=True)
+    indirizzo_sede = db.Column(db.String(200), nullable=True)
+
+    #non azienda
+    nome = db.Column(db.String(100), nullable=True)
+    cognome = db.Column(db.String(100), nullable=True)
+
+    #categoaira(azienda,privato)
+    categoria = db.Column(db.String(100), nullable=False)
 
     __mapper_args__ = {
-        "polymorphic_identity": "ente_donatore"
+        "polymorphic_identity": "donatore"
     }
 
+    donazioni_beni = db.relationship("DonazioneBene", back_populates="donatore")
+    donazioni_monetarie = db.relationship("DonazioneMonetaria", back_populates="donatore")
+
+
+
+#ACCOUNT ENTE EROGATORE
 
 class AccountEnteErogatore(Account):
     __tablename__ = "account_enti_erogatori"
 
     id = db.Column(db.Integer, db.ForeignKey("accounts.id"), primary_key=True)
+
+    nome_organizzazione = db.Column(db.String(150), nullable=False)
+    indirizzo_sede = db.Column(db.String(200), nullable=True)
     tipologia_ente = db.Column(db.String(100), nullable=False)
     iban = db.Column(db.String(34), nullable=True)
-    indirizzo_sede = db.Column(db.String(200), nullable=True)
 
     punti_distribuzione = db.relationship("PuntoDistribuzione", back_populates="ente_erogatore")
+    donazioni_beni = db.relationship("DonazioneBene", back_populates="ente_erogatore")
+    donazioni_monetarie = db.relationship("DonazioneMonetaria", back_populates="ente")
 
     __mapper_args__ = {
         "polymorphic_identity": "ente_erogatore"
     }
 
 
+
+#PUNTO DISTRIBUZIONE
+
 class PuntoDistribuzione(db.Model):
     __tablename__ = "punti_distribuzione"
 
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(120), nullable=False)
-    indirizzo = db.Column(db.String(255), nullable=False)
+    regione = db.Column(db.String(100), nullable=True)
+    citta = db.Column(db.String(100), nullable=True)
     latitudine = db.Column(db.Float, nullable=False)
     longitudine = db.Column(db.Float, nullable=False)
-    orari = db.Column(db.String(255), nullable=True)
 
-    ente_erogatore_id = db.Column(
-        db.Integer,
-        db.ForeignKey("account_enti_erogatori.id"),
-        nullable=False
-    )
+    ente_erogatore_id = db.Column( db.Integer, db.ForeignKey("account_enti_erogatori.id"), nullable=False)
 
-    segnalazioni = db.relationship("Segnalazione", back_populates="punto")
     ente_erogatore = db.relationship("AccountEnteErogatore", back_populates="punti_distribuzione")
     beni = db.relationship("Bene", back_populates="punto_distribuzione")
     prenotazioni = db.relationship("Prenotazione", back_populates="punto")
+    feedback = db.relationship("Feedback", back_populates="punto")
 
+
+
+#TASSONOMIA: MACROC → SOTTOC → BENE
 
 class MacroCategoria(db.Model):
     __tablename__ = "macro_categorie"
@@ -114,10 +140,11 @@ class SottoCategoria(db.Model):
     macro_categoria_id = db.Column(db.Integer, db.ForeignKey("macro_categorie.id"))
 
     macro_categoria = db.relationship("MacroCategoria", back_populates="sotto_categorie")
-
     beni = db.relationship("Bene", back_populates="sottocategoria")
 
 
+
+#BENE 
 
 class Bene(db.Model):
     __tablename__ = "beni"
@@ -125,6 +152,8 @@ class Bene(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(150), nullable=False)
     quantita = db.Column(db.Integer, nullable=False, default=0)
+
+    tipo = db.Column(db.String(50))  # polimorfismo
 
     punto_distribuzione_id = db.Column(
         db.Integer,
@@ -138,99 +167,154 @@ class Bene(db.Model):
         nullable=False
     )
 
+    __mapper_args__ = {
+        "polymorphic_on": tipo,
+        "polymorphic_identity": "bene"
+    }
+
     punto_distribuzione = db.relationship("PuntoDistribuzione", back_populates="beni")
     sottocategoria = db.relationship("SottoCategoria", back_populates="beni")
     prenotazioni = db.relationship("Prenotazione", back_populates="bene")
+    donazioni_beni = db.relationship("DonazioneBene", back_populates="bene")
 
 
 
+#BENI SPECIFICI (POLIMORFISMO)
 
-class Prenotazione(db.Model):
-    __tablename__ = "prenotazioni"
+class BeneAlimentare(Bene):
+    __tablename__ = "beni_alimentari"
+
+    id = db.Column(db.Integer, db.ForeignKey("beni.id"), primary_key=True)
+    allergeni = db.Column(db.String(255))
+    scadenza = db.Column(db.Date)
+
+    __mapper_args__ = {
+        "polymorphic_identity": "alimentare"
+    }
+
+
+class BeneMedicinale(Bene):
+    __tablename__ = "beni_medicinali"
+
+    id = db.Column(db.Integer, db.ForeignKey("beni.id"), primary_key=True)
+    tipo_medicinale = db.Column(db.String(100))
+    scadenza = db.Column(db.Date)
+
+    __mapper_args__ = {
+        "polymorphic_identity": "medicinale"
+    }
+
+
+class BeneVestiario(Bene):
+    __tablename__ = "beni_vestiario"
+
+    id = db.Column(db.Integer, db.ForeignKey("beni.id"), primary_key=True)
+    taglia = db.Column(db.String(20))
+    condizioni = db.Column(db.String(100))
+
+    __mapper_args__ = {
+        "polymorphic_identity": "vestiario"
+    }
+
+
+class BeneIgiene(Bene):
+    __tablename__ = "beni_igiene"
+
+    id = db.Column(db.Integer, db.ForeignKey("beni.id"), primary_key=True)
+    destinatari = db.Column(db.String(100))
+
+    __mapper_args__ = {
+        "polymorphic_identity": "igiene"
+    }
+
+
+class BeneMobilita(Bene):
+    __tablename__ = "beni_mobilita"
+
+    id = db.Column(db.Integer, db.ForeignKey("beni.id"), primary_key=True)
+    tipo_mobilita = db.Column(db.String(100))
+    stato = db.Column(db.String(100))
+
+    __mapper_args__ = {
+        "polymorphic_identity": "mobilita"
+    }
+
+
+
+#DONAZIONE DI BENI
+
+class DonazioneBene(db.Model):
+    __tablename__ = "donazioni_beni"
 
     id = db.Column(db.Integer, primary_key=True)
 
-    # FK beneficiario
-    beneficiario_id = db.Column(db.Integer, db.ForeignKey("account_beneficiari.id"), nullable=False)
-
-    # FK bene
+    donatore_id = db.Column(db.Integer, db.ForeignKey("account_donatori.id"), nullable=False)
+    ente_erogatore_id = db.Column(db.Integer, db.ForeignKey("account_enti_erogatori.id"), nullable=False)
     bene_id = db.Column(db.Integer, db.ForeignKey("beni.id"), nullable=False)
+    punto_id = db.Column(db.Integer, db.ForeignKey("punti_distribuzione.id"), nullable=False)
 
-    # Timestamp prenotazione
-    data_prenotazione = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    data = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
-    stato = db.Column(db.String(50), nullable=False, default="in_attesa")
-
-    # Codice univoco per QR
-    codice_qr = db.Column(db.String(36), unique=True, nullable=False, default=lambda: str(uuid.uuid4()))
-    
-    punto_id = db.Column(db.Integer,db.ForeignKey("punti_distribuzione.id"),nullable=False)
-
-    # Relazioni
-    punto = db.relationship("PuntoDistribuzione", back_populates="prenotazioni")
-    beneficiario = db.relationship("AccountBeneficiario", back_populates="prenotazioni")
-    bene = db.relationship("Bene", back_populates="prenotazioni")
+    donatore = db.relationship("AccountDonatore", back_populates="donazioni_beni")
+    ente_erogatore = db.relationship("AccountEnteErogatore", back_populates="donazioni_beni")
+    bene = db.relationship("Bene", back_populates="donazioni_beni")
+    punto = db.relationship("PuntoDistribuzione")
 
 
 
+#DONAZIONE MONETARIA
 
 class DonazioneMonetaria(db.Model):
     __tablename__ = "donazioni_monetarie"
 
     id = db.Column(db.Integer, primary_key=True)
 
-    donatore_id = db.Column(db.Integer, db.ForeignKey("account_enti_donatori.id"), nullable=False)
+    donatore_id = db.Column(db.Integer, db.ForeignKey("account_donatori.id"), nullable=False)
     ente_id = db.Column(db.Integer, db.ForeignKey("account_enti_erogatori.id"), nullable=False)
-    
+
     importo = db.Column(db.Float, nullable=False)
     data = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
-
-    donatore = db.relationship("AccountEnteDonatore", backref="donazioni_monetarie")
-    ente = db.relationship("AccountEnteErogatore", backref="donazioni_ricevute")
-
-    def __repr__(self):
-        return f"<DonazioneMonetaria {self.id} - {self.importo}€>"
+    donatore = db.relationship("AccountDonatore", back_populates="donazioni_monetarie")
+    ente = db.relationship("AccountEnteErogatore", back_populates="donazioni_monetarie")
 
 
 
-class TipoBisogno(Enum):
-    ALIMENTI = "alimenti"
-    MEDICINALI = "medicinali"
-    ABBIGLIAMENTO = "abbigliamento"
-    MOBILITA_E_SUPPORTO = "mobilita/trasporto"
-    CHILDREN = "prodottiperbambini"
-    IGIENE = "igienepersonale"
+#PRENOTAZIONE
 
-
-class StatoApprovazione(Enum):
-    IN_ATTESA = "in_attesa"
-    APPROVATA = "approvata"
-    RIFIUTATA = "rifiutata"
-
-
-class Segnalazione(db.Model):
-    __tablename__ = "segnalazioni"
+class Prenotazione(db.Model):
+    __tablename__ = "prenotazioni"
 
     id = db.Column(db.Integer, primary_key=True)
 
-    latitudine = db.Column(db.Float, nullable=False)
-    longitudine = db.Column(db.Float, nullable=False)
+    beneficiario_id = db.Column(db.Integer, db.ForeignKey("account_beneficiari.id"), nullable=False)
+    bene_id = db.Column(db.Integer, db.ForeignKey("beni.id"), nullable=False)
+    punto_id = db.Column(db.Integer, db.ForeignKey("punti_distribuzione.id"), nullable=False)       #nel RAD non c'è
 
-    tipo_bisogno = db.Column(SqlEnum(TipoBisogno), nullable=True)
-    stato_approvazione = db.Column(SqlEnum(StatoApprovazione), default=StatoApprovazione.IN_ATTESA, nullable=False)
+    data_prenotazione = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    stato = db.Column(db.String(50), nullable=False, default="in_attesa")
+    codice_qr = db.Column(db.String(36), unique=True, nullable=False, default=lambda: str(uuid.uuid4()))
+
+    beneficiario = db.relationship("AccountBeneficiario", back_populates="prenotazioni")
+    bene = db.relationship("Bene", back_populates="prenotazioni")
+    punto = db.relationship("PuntoDistribuzione", back_populates="prenotazioni")
+
+
+
+#FEEDBACK
+
+class Feedback(db.Model):
+    __tablename__ = "feedback"
+
+    id = db.Column(db.Integer, primary_key=True)
+    recensione = db.Column(db.Text, nullable=True)
+    valutazione = db.Column(db.Integer, nullable=False)
+
+    beneficiario_id = db.Column(db.Integer, db.ForeignKey("account_beneficiari.id"), nullable=False)
     punto_id = db.Column(db.Integer, db.ForeignKey("punti_distribuzione.id"), nullable=False)
 
-    punto = db.relationship("PuntoDistribuzione", back_populates="segnalazioni")
+    beneficiario = db.relationship("AccountBeneficiario", back_populates="feedback")
+    punto = db.relationship("PuntoDistribuzione", back_populates="feedback")
 
-    # Timestamp tengo traccia
-    created_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime(timezone=True),default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
-    utente_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=False)
 
-    utente = db.relationship("Account",back_populates="segnalazioni")
-
-    def __repr__(self): 
-        tipo = self.tipo_bisogno.value if self.tipo_bisogno else "nessun_bisogno" 
-        return f"<Segnalazione {self.id} - {tipo}>"
