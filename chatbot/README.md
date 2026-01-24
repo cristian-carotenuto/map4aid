@@ -51,17 +51,9 @@ python model/training/fine_tune.py
 ```
 chatbot/
 ├── model/
-│   ├── inference/          # Codice per inferenza
-│   │   ├── qwen_client.py  # Client QWEN (3B 4-bit)
-│   │   ├── test_qwen.py    # Test di base
-│   │   └── download_model.py
-│   └── training/           # Fine-tuning LoRA
-│       ├── fine_tune.py    # Script di addestramento
-│       └── requirements-train.txt
-├── data/
-│   ├── training_data.jsonl # Dataset base dai documenti
-│   └── dataset_generator.py # Script per espandere il dataset
-├── contracts/              # API contracts
-├── backend/                # Integrazione backend
-└── requirements.txt
+│   ├── inference/          # Codice e client per l'utilizzo del modello
+│   └── training/           # Script e configurazioni per il Fine-tuning
+├── data/                   # Dataset di addestramento e Knowledge Base
+├── contracts/              # Definizione delle interfacce API
+└── backend/                # Logica di integrazione con il server
 ```
