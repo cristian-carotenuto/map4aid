@@ -1,10 +1,12 @@
+from datetime import timezone, datetime
+
 from flask import request, session, Blueprint
-
 from controllers.routes import auth_bp
-from models import models
-
+from models import models, AccountEnteErogatore
 from EmailControl import EmailControl
 from Permessi import require_roles
+from config import db
+from models.models import AccountDonatore, DonazioneMonetaria
 
 
 @auth_bp.route("/donazioneMonetaria", methods=["POST"])
@@ -14,7 +16,7 @@ def donazione_monetaria():
     email_donatore = session.get("user_email")
 
     # ---- DATI DA FORM ----
-    nome_ente = request.form.get("ente")
+    nome_ente = request.form.get("nome_ente_erogatore")
     numero_carta = request.form.get("numero_carta")
     scadenza = request.form.get("scadenza")
     cvv = request.form.get("cvv")
@@ -24,7 +26,10 @@ def donazione_monetaria():
     except (TypeError, ValueError):
         return {"successo": False, "errore": "Importo non valido"}
 
-    #Bisogna prendere l'email e l'iban dell'ente dal database tramite nome
+    ente_erogatore = AccountEnteErogatore.query.filter_by(nome_organizzazione=nome_ente).first()
+    ente_donatore = AccountDonatore.query.filter_by(email=email_donatore).first()
+    email_ente = ente_erogatore.email
+    iban_ente = ente_erogatore.iban
 
     # ---- VALIDAZIONE ----
     if not all([email_ente, iban_ente, numero_carta, scadenza, cvv]):
@@ -43,12 +48,14 @@ def donazione_monetaria():
 
     # ---- CREAZIONE ENTITY ----
     donazione = DonazioneMonetaria(
-        id_donatore=email_donatore,
-        id_erogatore=iban_ente,
-        importo=importo
+        id_donatore=ente_donatore.id,
+        id_erogatore=ente_erogatore.id,
+        importo=importo,
+        data =  datetime.now(timezone.utc)
     )
 
-    #Da aggiungere nel database
+    db.session.add(donazione)
+    db.session.commit()
 
     # ---- EMAIL DI CONFERMA ----
     email_ok = EmailControl.invia_email_donazione(
