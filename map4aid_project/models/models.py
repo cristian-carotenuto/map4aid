@@ -39,7 +39,6 @@ class AccountBeneficiario(Account):
     id = db.Column(db.Integer, db.ForeignKey("accounts.id"), primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     cognome = db.Column(db.String(100), nullable=False)
-    codice_fiscale = db.Column(db.String(16), unique=True, nullable=False)
 
     __mapper_args__ = {
         "polymorphic_identity": "beneficiario"
@@ -111,7 +110,8 @@ class PuntoDistribuzione(db.Model):
     citta = db.Column(db.String(100), nullable=True)
     latitudine = db.Column(db.Float, nullable=False)
     longitudine = db.Column(db.Float, nullable=False)
-
+    accettato = db.Column(db.Boolean, nullable=False, default=False)
+    
     ente_erogatore_id = db.Column( db.Integer, db.ForeignKey("account_enti_erogatori.id"), nullable=False)
 
     ente_erogatore = db.relationship("AccountEnteErogatore", back_populates="punti_distribuzione")
