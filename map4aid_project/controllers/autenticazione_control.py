@@ -25,14 +25,17 @@ def register():
     if ruolo == "beneficiario":
         nome = request.form.get("nome")
         cognome = request.form.get("cognome")
-
+        data_nascita = request.form.get("data_nascita")
+        patologie = request.form.get("patologie")
 
         if not all([nome, cognome]):
             return jsonify({"error": "Dati beneficiario incompleti"}), 400
 
         extra_data = {
             "nome": nome,
-            "cognome": cognome
+            "cognome": cognome,
+            "data_nascita": data_nascita,
+            "patologie": patologie
         }
 
     # ----- DONATORE -----

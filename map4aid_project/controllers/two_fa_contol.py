@@ -29,7 +29,9 @@ def conferma_codice_registrazione():
             email=email,
             password_hash = puser.password_hash,
             nome = puser.extra_data["nome"],
-            cognome = puser.extra_data["cognome"]
+            cognome = puser.extra_data["cognome"],
+            data_nascita = puser.extra_data["data_nascita"],
+            patologie = puser.extra_data["patologie"]
         )
 
     # ----DONATORE-----

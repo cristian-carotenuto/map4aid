@@ -10,7 +10,7 @@ from models.models import AccountDonatore, DonazioneMonetaria
 
 
 @auth_bp.route("/donazioneMonetaria", methods=["POST"])
-@require_roles("donatore")
+@require_roles("donatore","beneficiario","ente_erogatore")
 def donazione_monetaria():
         # ---- DATI DA SESSIONE ----
     email_donatore = session.get("user_email")

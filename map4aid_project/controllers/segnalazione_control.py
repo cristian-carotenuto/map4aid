@@ -1,9 +1,12 @@
 from flask import Flask, request, session, jsonify, Blueprint
+
+from controllers.permessi import require_roles
 from controllers.routes import auth_bp
 from controllers.EmailControl import EmailControl
 from models.models import AccountEnteErogatore
 
 @auth_bp.route("/segnalazione", methods=["POST"])
+@require_roles("donatore","beneficiario","ente_erogatore")
 def segnalazione():
     data = request.get_json()
     lat = data["latitudine"]
