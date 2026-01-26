@@ -1,1 +1,0 @@
-from .models import ( Account, AccountBeneficiario, AccountEnteDonatore, AccountEnteErogatore )

@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+
+# Flask instance & DB
+instance/
+*.db
+
+# Alembic cache
+migrations/__pycache__/
