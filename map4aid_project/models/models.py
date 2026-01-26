@@ -40,6 +40,10 @@ class AccountBeneficiario(Account):
     nome = db.Column(db.String(100), nullable=False)
     cognome = db.Column(db.String(100), nullable=False)
 
+    data_nascita = db.Column(db.Date, nullable=True)
+    allergeni = db.Column(db.Text, nullable=True)
+    patologie = db.Column(db.Text, nullable=True)
+
     __mapper_args__ = {
         "polymorphic_identity": "beneficiario"
     }
@@ -106,8 +110,11 @@ class PuntoDistribuzione(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(120), nullable=False)
-    regione = db.Column(db.String(100), nullable=True)
-    citta = db.Column(db.String(100), nullable=True)
+    
+    giorni_apertura = db.Column(db.String(100), nullable=False)
+    orario_apertura = db.Column(db.Time, nullable=False)
+    orario_chiusura = db.Column(db.Time, nullable=False)
+    
     latitudine = db.Column(db.Float, nullable=False)
     longitudine = db.Column(db.Float, nullable=False)
     accettato = db.Column(db.Boolean, nullable=False, default=False)
