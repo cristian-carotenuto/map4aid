@@ -25,22 +25,24 @@ def register():
     if ruolo == "beneficiario":
         nome = request.form.get("nome")
         cognome = request.form.get("cognome")
-        cf = request.form.get("codice_fiscale")
 
-        if not all([nome, cognome, cf]):
+
+        if not all([nome, cognome]):
             return jsonify({"error": "Dati beneficiario incompleti"}), 400
 
         extra_data = {
             "nome": nome,
-            "cognome": cognome,
-            "codice_fiscale": cf
+            "cognome": cognome
         }
 
     # ----- DONATORE -----
     elif ruolo == "donatore":
         partita_iva = request.form.get("partita_iva")
-
         nome_attivita = request.form.get("nome_attivita")
+        indirizzo_sede = request.form.get("indirizzo_sede")
+        nome = request.form.get("nome")
+        cognome = request.form.get("cognome")
+        categoria = request.form.get("categoria")
 
 
         if not all([partita_iva, nome_attivita]):
@@ -49,6 +51,10 @@ def register():
         extra_data = {
             "partita_iva": partita_iva,
             "nome_attivita": nome_attivita,
+            "indirizzo_sede": indirizzo_sede,
+            "nome": nome,
+            "cognome": cognome,
+            "categoria": categoria
         }
 
     # ----- ENTE EROGATORE -----

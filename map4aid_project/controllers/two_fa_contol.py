@@ -27,8 +27,7 @@ def conferma_codice_registrazione():
             email=email,
             password_hash = puser.password_hash,
             nome = puser.extra_data["nome"],
-            cognome = puser.extra_data["cognome"],
-            codice_fiscale = puser.extra_data["codice_fiscale"]
+            cognome = puser.extra_data["cognome"]
         )
 
     # ----DONATORE-----
@@ -37,7 +36,11 @@ def conferma_codice_registrazione():
             email=email,
             password_hash = puser.password_hash,
             nome_attivita = puser.extra_data["nome_attivita"],
-            partita_iva = puser.extra_data["partita_iva"]
+            partita_iva = puser.extra_data["partita_iva"],
+            indirizzo_sede = puser.extra_data["indirizzo_sede"],
+            nome = puser.extra_data["nome"],
+            cognome = puser.extra_data["cognome"],
+            categoria = puser.extra_data["categoria"]
         )
 
     #--------ENTE EROGATORE--------
@@ -74,7 +77,8 @@ def conferma_codice_login():
     session["logged_in"] = True
     session["user_email"] = email
     db.session.delete(puser)
-    session.pop("pendindg_email")
+    db.session.commit()
+    session.pop("pending_email")
     return jsonify({
         "message": "Login effettuato con successo",
         "email": email
