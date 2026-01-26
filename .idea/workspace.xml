@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="55397952-be6e-4a64-8a4f-522745ebe921" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map4aid_project/migrations/versions/accd59667894_aggiunti_orari_e_giorni_ai_punti_.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_23_01_2026_19_43_[Changes]/database.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/map4aid_project/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/models/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,7 +113,7 @@
       <workItem from="1769351621565" duration="5072000" />
       <workItem from="1769385432852" duration="4086000" />
       <workItem from="1769426941686" duration="2079000" />
-      <workItem from="1769447523955" duration="313000" />
+      <workItem from="1769447523955" duration="665000" />
     </task>
     <servers />
   </component>
