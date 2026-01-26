@@ -1,6 +1,6 @@
 from flask import Flask, request, session, jsonify, Blueprint
 from controllers.routes import auth_bp
-from EmailControl import EmailControl
+from controllers.EmailControl import EmailControl
 from models.models import AccountEnteErogatore
 
 @auth_bp.route("/segnalazione", methods=["POST"])
@@ -16,7 +16,7 @@ def segnalazione():
     }
     enti_erogatori = AccountEnteErogatore.query.all()
     for ente in enti_erogatori:
-        email_ok = email_control.invia_email_segnalazione(ente.email, indirizzo,lat,lon)
+        email_ok = email_control.invia_email_segnalazione(ente.email,indirizzo,lat,lon)
         if not email_ok:
             resoconto["successo"] = False
             resoconto["email_non_inviate"].append(ente.email)

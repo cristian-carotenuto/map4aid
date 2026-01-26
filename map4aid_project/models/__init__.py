@@ -1,1 +1,1 @@
-from .models import ( Account, AccountBeneficiario, AccountEnteDonatore, AccountEnteErogatore )
+from .models import ( Account, AccountBeneficiario, AccountDonatore, AccountEnteErogatore )

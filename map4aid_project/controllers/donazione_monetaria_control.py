@@ -3,14 +3,14 @@ from datetime import timezone, datetime
 from flask import request, session, Blueprint
 from controllers.routes import auth_bp
 from models import models, AccountEnteErogatore
-from EmailControl import EmailControl
-from Permessi import require_roles
+from controllers.EmailControl import EmailControl
+from controllers.permessi import require_roles
 from config import db
 from models.models import AccountDonatore, DonazioneMonetaria
 
 
 @auth_bp.route("/donazioneMonetaria", methods=["POST"])
-@require_roles("ente_donatore")
+@require_roles("donatore")
 def donazione_monetaria():
         # ---- DATI DA SESSIONE ----
     email_donatore = session.get("user_email")
@@ -18,13 +18,15 @@ def donazione_monetaria():
     # ---- DATI DA FORM ----
     nome_ente = request.form.get("nome_ente_erogatore")
     numero_carta = request.form.get("numero_carta")
-    scadenza = request.form.get("scadenza")
+    scadenza_str = request.form.get("scadenza")
+    scadenza = datetime.strptime(scadenza_str, "%Y-%m-%d").date()
     cvv = request.form.get("cvv")
 
+    importo = 0
     try:
         importo = float(request.form.get("importo"))
     except (TypeError, ValueError):
-        return {"successo": False, "errore": "Importo non valido"}
+        return {"errore": "Importo non valido"},400
 
     ente_erogatore = AccountEnteErogatore.query.filter_by(nome_organizzazione=nome_ente).first()
     ente_donatore = AccountDonatore.query.filter_by(email=email_donatore).first()
@@ -33,10 +35,10 @@ def donazione_monetaria():
 
     # ---- VALIDAZIONE ----
     if not all([email_ente, iban_ente, numero_carta, scadenza, cvv]):
-        return {"successo": False, "errore": "Dati obbligatori mancanti"}
+        return {"errore": "Dati obbligatori mancanti"},400
 
     if importo <= 0:
-        return {"successo": False, "errore": "Importo non valido"}
+        return {"errore": "Importo non valido"},400
 
     # ---- TRANSAZIONE MONETARIA ----
     transazione_ok = esegui_transazione(
@@ -44,12 +46,12 @@ def donazione_monetaria():
     )
 
     if not transazione_ok:
-        return {"successo": False, "errore": "Transazione rifiutata"}
+        return {"successo": False, "errore": "Transazione rifiutata"},400
 
     # ---- CREAZIONE ENTITY ----
     donazione = DonazioneMonetaria(
-        id_donatore=ente_donatore.id,
-        id_erogatore=ente_erogatore.id,
+        donatore_id=ente_donatore.id,
+        ente_id=ente_erogatore.id,
         importo=importo,
         data =  datetime.now(timezone.utc)
     )
@@ -58,7 +60,8 @@ def donazione_monetaria():
     db.session.commit()
 
     # ---- EMAIL DI CONFERMA ----
-    email_ok = EmailControl.invia_email_donazione(
+    email_control = EmailControl()
+    email_ok = email_control.invia_email_donazione(
         email_ente=email_ente,
         nome_ente=nome_ente,
         email_donatore=email_donatore,
@@ -68,17 +71,15 @@ def donazione_monetaria():
 
     if not email_ok:
         return {
-            "successo": False,
             "errore": "Donazione eseguita ma email non inviata"
-        }
+        },400
 
     return {
-        "successo": True,
         "messaggio": "Donazione monetaria completata con successo"
-    }
+    },200
 
 
-def esegui_transazione(self, numero_carta, scadenza, cvv,
+def esegui_transazione(numero_carta, scadenza, cvv,
                         iban_destinatario, importo):
     print("transazione in elaborazione")
     if len(numero_carta) != 16:
@@ -86,6 +87,8 @@ def esegui_transazione(self, numero_carta, scadenza, cvv,
     if len(cvv) != 3:
         return False
     if not iban_destinatario.startswith("IT"):
+        return False
+    if scadenza < datetime.now(timezone.utc):
         return False
     return True
 

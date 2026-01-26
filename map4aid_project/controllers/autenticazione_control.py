@@ -45,7 +45,7 @@ def register():
         categoria = request.form.get("categoria")
 
 
-        if not all([partita_iva, nome_attivita]):
+        if not all([partita_iva, nome_attivita,indirizzo_sede,nome,cognome,categoria]):
             return jsonify({"error": "Dati donatore incompleti"}), 400
 
         extra_data = {
@@ -99,4 +99,4 @@ def register():
     if email_ok:
         return jsonify({"message": "Email inviata. Controlla la tua casella."}), 200
     else:
-        return jsonify({"error": "Email non inviata"}), 400
+        return jsonify({"errore": "Email non inviata"}), 400

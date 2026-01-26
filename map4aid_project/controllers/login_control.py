@@ -1,5 +1,8 @@
 import secrets
 from datetime import datetime, timedelta
+
+from flask_login import logout_user, current_user
+
 from config import db
 from flask import request, session, jsonify, Blueprint
 from controllers.EmailControl import EmailControl
@@ -11,6 +14,9 @@ from controllers.routes import auth_bp
 def login():
     email = request.form.get("email")
     password = request.form.get("password")
+
+    if current_user.is_authenticated:
+        return jsonify({"error": "Già loggatp"}), 400
 
     if not email or not password:
         return jsonify({"error": "Email e password obbligatorie"}), 400
@@ -44,6 +50,7 @@ def login():
 @auth_bp.route("/logout", methods=["POST"])
 def logout():
     session.clear()
+    logout_user()
     return jsonify({"message": "Logout effettuato"})
 
 @auth_bp.route("/recuperoPassword", methods=["POST"])

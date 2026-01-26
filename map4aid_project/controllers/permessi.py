@@ -1,6 +1,6 @@
 from functools import wraps
 from flask import jsonify
-from sqlalchemy.sql.functions import current_user
+from flask_login import current_user
 
 
 def require_roles(*roles):

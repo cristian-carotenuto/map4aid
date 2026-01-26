@@ -83,7 +83,7 @@ Map4Aid"""
             print(f"Errore SMTP: {e}")
             return False
 
-    def invia_email_segnalazione(self,indirizzo,email_ente,lan,lon):
+    def invia_email_segnalazione(self,email_ente,indirizzo,lan,lon):
         msg = MIMEMultipart()
         msg["From"] = self.config["email"]
         msg["To"] = email_ente
