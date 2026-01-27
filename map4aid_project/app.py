@@ -40,6 +40,8 @@ def create_app():
     from controllers import segnalazione_control
     from controllers import donazione_monetaria_control
     from controllers import permessi
+    from controllers import api_punti
+    app.register_blueprint(api_punti.api, url_prefix="/api")
     app.register_blueprint(auth_bp, url_prefix="/auth")
 
     print(">>>>>Flask root:", os.getcwd())
