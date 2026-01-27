@@ -39,6 +39,7 @@ def create_app():
     from controllers import login_control
     from controllers import segnalazione_control
     from controllers import donazione_monetaria_control
+    from controllers import donazione_bene
     from controllers import permessi
     app.register_blueprint(auth_bp, url_prefix="/auth")
 

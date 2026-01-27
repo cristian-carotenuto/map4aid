@@ -1,8 +1,8 @@
 """initial schema
 
-Revision ID: 9e31be8cde26
+Revision ID: 0edcd725e429
 Revises: 
-Create Date: 2026-01-25 15:37:07.563695
+Create Date: 2026-01-26 18:29:38.845312
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '9e31be8cde26'
+revision = '0edcd725e429'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -50,10 +50,11 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('nome', sa.String(length=100), nullable=False),
     sa.Column('cognome', sa.String(length=100), nullable=False),
-    sa.Column('codice_fiscale', sa.String(length=16), nullable=False),
+    sa.Column('data_nascita', sa.Date(), nullable=True),
+    sa.Column('allergeni', sa.Text(), nullable=True),
+    sa.Column('patologie', sa.Text(), nullable=True),
     sa.ForeignKeyConstraint(['id'], ['accounts.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('codice_fiscale')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('account_donatori',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -96,10 +97,12 @@ def upgrade():
     op.create_table('punti_distribuzione',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('nome', sa.String(length=120), nullable=False),
-    sa.Column('regione', sa.String(length=100), nullable=True),
-    sa.Column('citta', sa.String(length=100), nullable=True),
+    sa.Column('giorni_apertura', sa.String(length=100), nullable=False),
+    sa.Column('orario_apertura', sa.Time(), nullable=False),
+    sa.Column('orario_chiusura', sa.Time(), nullable=False),
     sa.Column('latitudine', sa.Float(), nullable=False),
     sa.Column('longitudine', sa.Float(), nullable=False),
+    sa.Column('accettato', sa.Boolean(), nullable=False),
     sa.Column('ente_erogatore_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['ente_erogatore_id'], ['account_enti_erogatori.id'], ),
     sa.PrimaryKeyConstraint('id')
