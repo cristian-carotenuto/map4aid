@@ -1,74 +1,161 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <title>Map4Aid - Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../css/donazione.css">
+  <meta charset="UTF-8">
+  <title>Donazione - Map4Aid</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
 </head>
-<body>
-    <header class="header-bg text-white p-3 d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center">
-            <img src="../imgs/logo.png" alt="Logo Map4Aid" width="60" height="60" class="me-3 rounded-circle">
-            <h1 class="h4 mb-0 ms-3">MAP4AID</h1>
-        </div>
-        <div class="d-flex gap-2" id="auth-buttons"></div>
-    </header>
-
-    <div id = "form_donazione" class="container my-5">
-        <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-            <div class="card-header">
-                <h3 class="text-center">Effettua la tua donazione</h3>
-            </div>
-            <div class="card-body">
-                <form id="loginForm">
-                <div class="mb-3">
-                    <select class="form-select" aria-label="selezione ente" required>
-                        <option selected>Seleziona l'ente</option>
-                        <option value="1">Prova 1</option>
-                        <option value="2">Prova 2</option>
-                        <option value="3">Prova 3</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <input placeholder = "Importo" type="number" class="form-control" data-bs-input id="importo" step="any" required/>
-                </div>
-                <div class="mb-3">
-                    <input placeholder = "Nome del titolare della carta" class="form-control" data-bs-input id="titolare_carta" required/>
-                </div>
-                <div class = "mb-3">
-                    <input id="numero_carta" type="tel" class="form-control" 
-                    inputmode="numeric" pattern="[0-9\s]{13,19}" 
-                    autocomplete="card-number" maxlength="19" 
-                    placeholder="Numero della carta xxxx xxxx xxxx xxxx" required>
-                </div>
-                <div class = "row">
-                    <div class = "col mb-3">
-                        <input type = "text" placeholder = "Data di scadenza" class="form-control" data-bs-input id="scadenza_carta"
-                            onfocus = "(this.type = 'date')" onblur = "(this.type = 'text')" required/>
-                    </div>
-                    <div class = "col mb-3">
-                        <input type="tel" inputmode = "numeric" maxlength = "3" placeholder = "Codice di sicurezza" class = "form-control" required>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-success w-100">Dona</button>
-                </form>
-                <div id="errorMessage" class="mt-3 text-danger" style="display:none;"></div>
-            </div>
-            </div>
-        </div>
-        </div>
+<body class="bg-light">
+  <!-- Header dinamico -->
+  <header class="header-bg text-white p-3 d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+      <img src="../imgs/logo.png" alt="Logo Map4Aid" width="60" height="60" class="me-3 rounded-circle">
+      <h1 class="h4 mb-0 ms-3">MAP4AID</h1>
     </div>
+    <div class="d-flex gap-2" id="auth-buttons"></div>
+  </header>
 
-    <footer class="bg-dark text-white text-center py-3 ">
+  <div class="container my-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="text-center">Effettua la tua donazione</h3>
+          </div>
+          <div class="card-body">
+            <!-- 
+              FORM DI DONAZIONE MONETARIA
+              Conformità ai requisiti:
+                - RF#3: "Qualsiasi utente può effettuare una donazione monetaria"
+                - Use Case: form con dati carta e importo
+              Conformità al backend (DonazioneMonetariaControl.py):
+                - Invia in form-data
+                - Richiede autenticazione (quindi solo utenti loggati)
+                - Campi attesi: ente, importo, numero_carta, titolare_carta, scadenza_carta, cvv
+            -->
+            <form id="donazioneForm">
+              <div class="mb-3">
+                <label for="ente" class="form-label">Seleziona l'ente</label>
+                <select class="form-select" id="ente" name="ente" required>
+                  <option value="">Seleziona un ente</option>
+                  <option value="Caritas Roma">Caritas Roma</option>
+                  <option value="Croce Rossa">Croce Rossa</option>
+                  <option value="Comune di Roma">Comune di Roma</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="importo" class="form-label">Importo (€)</label>
+                <input type="number" class="form-control" id="importo" name="importo" step="0.01" min="1" placeholder="10.00" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="titolare_carta" class="form-label">Nome del titolare della carta</label>
+                <input type="text" class="form-control" id="titolare_carta" name="titolare_carta" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="numero_carta" class="form-label">Numero della carta</label>
+                <input type="text"
+                       id="numero_carta"
+                       name="numero_carta"
+                       class="form-control"
+                       inputmode="numeric"
+                       pattern="[0-9\s]{13,19}"
+                       maxlength="19"
+                       placeholder="1234 5678 9012 3456"
+                       required>
+              </div>
+
+              <div class="row">
+                <div class="col mb-3">
+                  <label for="scadenza_carta" class="form-label">Data di scadenza</label>
+                  <input type="text"
+                         id="scadenza_carta"
+                         name="scadenza_carta"
+                         class="form-control"
+                         placeholder="MM/AA"
+                         pattern="(0[1-9]|1[0-2])\/\d{2}"
+                         required>
+                </div>
+                <div class="col mb-3">
+                  <label for="cvv" class="form-label">CVV</label>
+                  <input type="text"
+                         id="cvv"
+                         name="cvv"
+                         class="form-control"
+                         inputmode="numeric"
+                         maxlength="3"
+                         pattern="[0-9]{3}"
+                         placeholder="123"
+                         required>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-success w-100">Dona</button>
+            </form>
+            <div id="errorMessage" class="mt-3 text-danger" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white text-center py-3 mt-4">
     <p>&copy; 2026 Map4Aid - Progetto Universitario</p>
-    </footer>
+  </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../js/auth.js"></script>
-	<script src="../chatbot/js/loader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    /**
+     * Protezione accesso: solo utenti loggati possono donare
+     * il backend richiede autenticazione (@require_roles), quindi questa pagina è riservata.
+     */
+    if (!sessionStorage.getItem('isLoggedIn')) {
+      alert('Devi effettuare il login per donare');
+      window.location.href = 'login.html';
+    }
 
+    /**
+     * Invio del form di donazione
+     * Coerente con DonazioneMonetariaControl.py:
+     * - Metodo: POST
+     * - Dati: form-data
+     * - Campi richiesti: ente, importo, numero_carta, titolare_carta, scadenza_carta, cvv
+     */
+    document.getElementById('donazioneForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Elaborazione...';
+
+      try {
+        const response = await fetch('/donazioneMonetaria', {
+          method: 'POST',
+          body: formData  //  Il backend  aspetta form-data
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.successo) {
+          alert('Donazione effettuata con successo!');
+          window.location.href = 'home.html';
+        } else {
+          showError('errorMessage', data.errore || 'Errore durante la donazione');
+        }
+      } catch (error) {
+        showError('errorMessage', 'Errore di connessione al server');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    });
+  </script>
+  <script src="../js/auth.js"></script>
 </body>
 </html>

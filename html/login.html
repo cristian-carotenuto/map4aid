@@ -14,6 +14,11 @@
             <h3 class="text-center">Accedi al tuo account</h3>
           </div>
           <div class="card-body">
+            <!-- 
+              FORM DI LOGIN
+              conforme a login_control.py: invia email/password in form-data
+              Il backend ( da rcontrollarr ) restituisce solo {"message": "...", "email": "..."}
+            -->
             <form id="loginForm">
               <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
@@ -32,7 +37,38 @@
     </div>
   </div>
 
+  <!-- modale per il codice 2FA -->
+  <div class="modal fade" id="codiceModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Conferma il tuo accesso</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>Inserisci il codice a 4 cifre inviato alla tua email.</p>
+          <form id="codiceForm">
+            <div class="mb-3">
+              <label for="codice" class="form-label">Codice</label>
+              <input type="text" class="form-control" id="codice" name="codice" maxlength="4" required>
+            </div>
+            <div id="codiceError" class="text-danger" style="display:none;"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+          <button type="button" class="btn btn-primary" id="confermaCodiceBtn">Conferma</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+    /**
+     * invio del form di login
+     * coerente ( per adesso ) con login_control.py ( endpoint /login )
+     */
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -50,22 +86,61 @@
         const data = await response.json();
 
         if (response.ok) {
-          saveLoginState(data.email);
-          window.location.href = 'home.html';
+          // Backend ha inviato codice → mostra modale
+          const modal = new bootstrap.Modal(document.getElementById('codiceModal'));
+          modal.show();
         } else {
-          document.getElementById('errorMessage').textContent = data.error || 'Errore sconosciuto';
-          document.getElementById('errorMessage').style.display = 'block';
+          showError('errorMessage', data.error || 'Errore sconosciuto');
         }
       } catch (error) {
-        document.getElementById('errorMessage').textContent = 'Errore di connessione';
-        document.getElementById('errorMessage').style.display = 'block';
+        showError('errorMessage', 'Errore di connessione');
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
       }
     });
+
+    /**
+     * conferma del codice 2FA
+     * coerente ( per adess ) con two_fa_control.py  ( endpoint /2FALogin )
+     */
+    document.getElementById('confermaCodiceBtn').addEventListener('click', async () => {
+      const codice = document.getElementById('codice').value;
+      if (!codice) {
+        showError('codiceError', 'Inserisci il codice');
+        return;
+      }
+
+      const submitBtn = document.getElementById('confermaCodiceBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Verifica in corso...';
+
+      try {
+        const formData = new FormData();
+        formData.append('codice', codice);
+
+        const response = await fetch('/2FALogin', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          saveLoginState(data.email);
+          bootstrap.Modal.getInstance(document.getElementById('codiceModal')).hide();
+          updateAuthButtons(); // aggiorna header senza ricaricare
+        } else {
+          showError('codiceError', data.error || 'Codice non valido');
+        }
+      } catch (error) {
+        showError('codiceError', 'Errore di connessione');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Conferma';
+      }
+    });
   </script>
-  
   <script src="../js/auth.js"></script>
 </body>
 </html>
