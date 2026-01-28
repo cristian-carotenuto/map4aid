@@ -2,6 +2,7 @@
 from flask import Blueprint, request, jsonify, current_app
 from sqlalchemy import text
 from config import db
+from controllers.permessi import require_roles
 
 api = Blueprint("api_punti", __name__)
 
@@ -163,6 +164,7 @@ def get_punti_distribuzione():
         return jsonify({"error": "db_error", "message": str(e)}), 500
 
 @api.route("/gestione-punto", methods=["POST"])
+@require_roles("ente_erogatore")
 def crea_punto():
     payload = request.get_json(silent=True)
     if not payload:

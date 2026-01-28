@@ -1,8 +1,8 @@
-from flask import Flask, request, session, jsonify, Blueprint
+from flask import request
 
 from controllers.permessi import require_roles
 from controllers.routes import auth_bp
-from controllers.EmailControl import EmailControl
+from controllers.service_email.EmailControl import EmailControl
 from models.models import AccountEnteErogatore
 
 @auth_bp.route("/segnalazione", methods=["POST"])

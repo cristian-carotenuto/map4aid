@@ -1,9 +1,9 @@
 from datetime import timezone, datetime
 
-from flask import request, session, Blueprint
+from flask import request, session
 from controllers.routes import auth_bp
-from models import models, AccountEnteErogatore
-from controllers.EmailControl import EmailControl
+from models import AccountEnteErogatore
+from controllers.service_email.EmailControl import EmailControl
 from controllers.permessi import require_roles
 from config import db
 from models.models import AccountDonatore, DonazioneMonetaria
