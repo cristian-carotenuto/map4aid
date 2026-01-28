@@ -2,6 +2,7 @@ from datetime import timezone, datetime
 
 from flask import request, session
 from controllers.routes import auth_bp
+from controllers.service_email.email_control_adapter import EmailControlAdapter
 from models import AccountEnteErogatore
 from controllers.service_email.EmailControl import EmailControl
 from controllers.permessi import require_roles
@@ -21,6 +22,7 @@ def donazione_monetaria():
     scadenza_str = request.form.get("scadenza")
     scadenza = datetime.strptime(scadenza_str, "%Y-%m-%d").date()
     cvv = request.form.get("cvv")
+    mail_sender = EmailControlAdapter()
 
     importo = 0
     try:
@@ -60,8 +62,7 @@ def donazione_monetaria():
     db.session.commit()
 
     # ---- EMAIL DI CONFERMA ----
-    email_control = EmailControl()
-    email_ok = email_control.invia_email_donazione(
+    email_ok = mail_sender.send_donazione_monetaria(
         email_ente=email_ente,
         nome_ente=nome_ente,
         email_donatore=email_donatore,

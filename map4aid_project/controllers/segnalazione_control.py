@@ -1,8 +1,10 @@
+import email_sender
 from flask import request
 
 from controllers.permessi import require_roles
 from controllers.routes import auth_bp
 from controllers.service_email.EmailControl import EmailControl
+from controllers.service_email.email_control_adapter import EmailControlAdapter
 from models.models import AccountEnteErogatore
 
 @auth_bp.route("/segnalazione", methods=["POST"])
@@ -12,14 +14,19 @@ def segnalazione():
     lat = data["latitudine"]
     lon = data["longitudine"]
     indirizzo = data["indirizzo"]
-    email_control = EmailControl()
+    mail_sender = EmailControlAdapter()
     resoconto = {
         "successo": True,
         "email_non_inviate": []
     }
     enti_erogatori = AccountEnteErogatore.query.all()
     for ente in enti_erogatori:
-        email_ok = email_control.invia_email_segnalazione(ente.email,indirizzo,lat,lon)
+        email_ok = mail_sender.send_segnalazione(
+            email_ente=ente.email,
+            indirizzo=indirizzo,
+            lat=lat,
+            lon=lon
+        )
         if not email_ok:
             resoconto["successo"] = False
             resoconto["email_non_inviate"].append(ente.email)

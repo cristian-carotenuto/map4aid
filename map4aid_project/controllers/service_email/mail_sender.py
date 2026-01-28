@@ -27,3 +27,25 @@ class MailSender(ABC):
         lon: float
     ) -> bool:
         pass
+
+    @abstractmethod
+    def send_donazione_bene_ente(
+            self,
+            email_ente,
+            email_donatore,
+            bene,
+            donazione,
+            punto_bisogno,
+            sottocategoria,
+            indirizzo
+    ) -> bool:
+        pass
+
+    @abstractmethod
+    def send_donazione_bene_donatore(
+            self,
+            email_donatore,
+            email_ente,
+            bene
+    ) -> bool:
+        pass

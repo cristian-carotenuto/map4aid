@@ -39,3 +39,35 @@ class EmailControlAdapter(MailSender):
             lat,
             lon
         )
+
+    def send_donazione_bene_ente(
+            self,
+            email_ente,
+            email_donatore,
+            bene,
+            donazione,
+            punto_bisogno,
+            sottocategoria,
+            indirizzo
+    ) -> bool:
+        return self._email_control.invia_email_donazione_ente(
+            email_ente,
+            email_donatore,
+            bene,
+            donazione,
+            punto_bisogno,
+            sottocategoria,
+            indirizzo
+        )
+
+    def send_donazione_bene_donatore(
+            self,
+            email_donatore,
+            email_ente,
+            bene
+    ) -> bool:
+        return self._email_control.invia_email_donazione_donatore(
+            email_donatore,
+            email_ente,
+            bene
+        )
