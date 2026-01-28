@@ -1,7 +1,7 @@
 import json
 
 def generate_variations():
-    """Genera variazioni di domande e risposte basate sui template dei casi d'uso raffinati."""
+    """Genera variazioni di domande e risposte basate sui template dei casi d'uso raffinati e allineati alla nuova UI."""
     
     templates = [
         {
@@ -18,7 +18,39 @@ def generate_variations():
                 "Posso creare un profilo nuovo?",
                 "Istruzioni per l'iscrizione a Map4Aid."
             ],
-            "answer": "Per registrarti su Map4Aid, vai alla pagina di registrazione e inserisci i tuoi dati (nome, cognome, Codice Fiscale, email e password). Se sei un donatore, puoi aggiungere la Partita IVA. Indica anche eventuali esigenze alimentari se sei un beneficiario."
+            "answer": "Per registrarti su Map4Aid, accedi alla pagina di registrazione cliccando su \"Sign In\", poi dovrai selezionare il ruolo con cui desideri registrarti, scegliendone uno tra: Beneficiario, Donatore e Ente erogatore, poi compila il modulo con i tuoi dati, a seconda del ruolo scelto saranno richiesti dati diversi, in ogni caso serve inserire una E-mail e creare una password. Se si desidera registrarsi come Donatore o come Ente erogatore saranno richiesti anche altri campi come IBAN o Partita IVA, quindi assicurati di aver recuperato queste informazioni prima della registrazione."
+        },
+        {
+            "intent": "password_dimenticata",
+            "questions": [
+                "Cosa succede se dimentico la mia password?",
+                "Ho perso la password, come faccio?",
+                "Non ricordo la password per il login.",
+                "Come resetto la password?",
+                "Password dimenticata, quali sono i passaggi?",
+                "Posso recuperare la chiave di accesso?",
+                "Mi sono scordato la password.",
+                "C'è un modo per cambiare la password persa?",
+                "Reset password Map4Aid.",
+                "Cosa fare se non riesco ad entrare per la password?"
+            ],
+            "answer": "Non preoccuparti! Se dimentichi la password, clicca su 'Password dimenticata' nella pagina di login. Il sistema ti invierà un'email con un link per resettarla. Assicurati che la nuova password rispetti gli standard di sicurezza richiesti."
+        },
+        {
+            "intent": "email_dimenticata",
+            "questions": [
+                "Posso recuperare la mia email se la dimentico?",
+                "Non ricordo quale email ho usato per registrarmi.",
+                "Come trovo l'email del mio account?",
+                "Email dimenticata, come faccio il recupero?",
+                "C'è una procedura per l'email persa?",
+                "Ho scordato l'indirizzo email di Map4Aid.",
+                "Come recupero il mio username email?",
+                "Recupero account tramite numero di telefono.",
+                "Cosa fa il tasto Email dimenticata?",
+                "Come funziona l'OTP per recuperare l'email?"
+            ],
+            "answer": "Sì, puoi recuperare l'email associata al tuo account cliccando su 'Email dimenticata' nella pagina di login. Il sistema invierà un codice temporaneo (OTP) al numero di telefono associato al tuo profilo. Una volta inserito il codice correttamente, l'email ti verrà mostrata a schermo."
         },
         {
             "intent": "tipi_donazione",
@@ -34,7 +66,7 @@ def generate_variations():
                 "Quali tipi di aiuti posso inviare?",
                 "Elenco delle modalità di aiuto disponibili."
             ],
-            "answer": "Su Map4Aid puoi effettuare due tipi di donazioni: donazioni monetarie (fondi destinati agli enti erogatori) e donazioni di beni materiali (oggetti o viveri che vengono poi convalidati e ritirati dall'ente). Puoi scegliere la modalità più adatta a te direttamente dall'interfaccia principale."
+            "answer": "Su Map4Aid puoi effettuare due tipi di donazioni: donazioni monetarie (fondi destinati agli enti erogatori) e donazioni di beni materiali (oggetti o viveri che vengono poi convalidati e ritirati dall'ente). Puoi scegliere la modalità più adatta a te direttamente dall'interfaccia principale, dopo aver selezionato la donazione che preferisci dovrai compilare il modulo richiesto prima di poter ultimare la tua donazione."
         },
         {
             "intent": "donazione_monetaria",
@@ -50,7 +82,23 @@ def generate_variations():
                 "Metodi di pagamento per le donazioni.",
                 "Vorrei supportare economicamente un ente."
             ],
-            "answer": "Puoi fare una donazione monetaria selezionando l'opzione apposita nell'interfaccia. Scegli l'ente destinatario, inserisci l'importo e i dati del metodo di pagamento. Il sistema verificherà la transazione e ti invierà una conferma."
+            "answer": "Effettuare una donazione monetaria è semplice: clicca sul componente 'Donazione monetaria' nell'interfaccia, scegli l'ente erogatore a cui vuoi destinare i fondi e compila il modulo with i dati del tuo metodo di pagamento. Una volta confermata, riceverai una notifica di successo."
+        },
+        {
+            "intent": "donazione_materiale",
+            "questions": [
+                "Posso donare beni materiali invece di denaro?",
+                "Come dono vestiti o cibo?",
+                "Procedura per la donazione di oggetti materiali.",
+                "Voglio regalare dei prodotti agli enti.",
+                "Come funziona il ritiro dei beni donati?",
+                "Donare beni fisici su Map4Aid.",
+                "Modulo per la donazione materiale.",
+                "Cosa succede dopo che propongo una donazione di beni?",
+                "Validazione della donazione materiale.",
+                "Come invio beni materiali agli enti erogatori?"
+            ],
+            "answer": "Certamente! Se sei registrato come donatore, puoi compilare un modulo specifico per la donazione di beni materiali. Dovrai inserire i dettagli degli oggetti che intendi donare; la richiesta verrà inviata all'ente per la validazione. Se approvata, riceverai un'email con le istruzioni per il ritiro."
         },
         {
             "intent": "gestione_scorte",
@@ -63,10 +111,10 @@ def generate_variations():
                 "Un ente come aggiorna il magazzino?",
                 "Procedura per inserire nuovi beni materiali.",
                 "Come vedo cosa è disponibile in magazzino?",
-                "Posso diminuire le scorte manualmente?",
+                "Posso diminuire le scorte manually?",
                 "Gestione inventario per gli enti erogatori."
             ],
-            "answer": "La gestione delle scorte è riservata agli enti erogatori tramite la dashboard dedicata. Le quantità si aggiornano automaticamente in caso di donazioni ricevute o prenotazioni effettuate. È inoltre possibile aggiungere manualmente nuovi beni o incrementare le scorte esistenti, mentre la riduzione manuale non è consentita per garantire la coerenza dei dati."
+            "answer": "La gestione delle scorte è riservata agli enti erogatori tramite la dashboard dedicata. Le quantità si aggiornano automaticamente in caso di donazioni ricevute o prenotazioni effettuate. È tuttavia possibile aggiungere manualmente nuovi beni o incrementare le scorte esistenti, ma la riduzione manuale non è consentita per garantire la coerenza dei dati."
         },
         {
             "intent": "prenotazione_beni",
@@ -82,7 +130,7 @@ def generate_variations():
                 "Cosa devo fare per ricevere un pacco aiuti?",
                 "Prenotazione dei beni di prima necessità."
             ],
-            "answer": "Sulla mappa di Map4Aid trovi i punti di ritiro. Selezionane uno, scegli i beni che ti servono e prenota uno slot orario disponibile. Riceverai una conferma della prenotazione per il ritiro."
+            "answer": "Per prenotare un ritiro, visualizza i punti disponibili sulla mappa di Map4Aid e seleziona quello di tuo interesse. Potrai visualizzare i beni disponibili in ogni punto, dopo aver individuato il punto di tuo interesse potrai prenotare uno slot orario specifico per recarti al punto di ritiro e ricivere il tuo pacco."
         },
         {
             "intent": "mappa_utilita",
@@ -98,7 +146,7 @@ def generate_variations():
                 "La mappa mostra i centri di aiuto?",
                 "Utilità della mappa per l'utente."
             ],
-            "answer": "La mappa presente nella homepage serve per mostrarti i punti di distribuzione, se vuoi puoi prenotare il ritiro di beni cliccando su uno dei punti."
+            "answer": "La mappa presente nella homepage serve per mostrarti i punti di distribuzione, dai quali è possibile ritirare beni di prima necessità, cliccando su uno dei punti potrai visualizzare ciò che è disponibile ritirare in quel punto e prenotare uno slot orario per andarci e ricevere il tuo pacco."
         },
         {
             "intent": "mappa_problemi_geo",
@@ -114,7 +162,7 @@ def generate_variations():
                 "Perché non vedo i punti di ritiro vicini?",
                 "Mappa e permessi di geolocalizzazione."
             ],
-            "answer": "Se la mappa non mostra i punti di ritiro vicino alla tua posizione probabilmente è perché hai negato al sito l'autorizzazione per conoscere la tua posizione; senza quell'autorizzazione non possiamo sapere dove ti trovi. Per risolvere facilmente il problema ti basterà ricaricare la pagina e consentire alla richiesta che ti apparirà in alto a sinistra."
+            "answer": "Se la mappa non mostra i punti di ritiro vicino alla tua posizione probabilmente è perché hai negato al sito l'autorizzazione per conoscere la tua posizione; senza quell'autorizzazione non possiamo sapere dove ti trovi. Per risolvere facilmente il problema ti basterà ricaricare la pagina e cliccare su \"Usa la mia posizione\" in alto a sinistra, dopo di che dovrai anche acconsentire alla richiesta che ti apparirà leggermente più in alto, cliccando su \"Consenti durante la visita al sito\" oppure su \"consenti questa volta\"."
         },
         {
             "intent": "descrizione_progetto",
@@ -162,7 +210,71 @@ def generate_variations():
                 "Ehi, come te la passi?",
                 "Tutto a posto?"
             ],
-            "answer": "Benone sono felice di aiutare i miei utenti :) Fammi sapere se hai qualsiasi domanda sul nostro sito"
+            "answer": "Benone sono felice di aiutare i miei utenti :) Fammi sapere se hai una qualsiasi domanda sul nostro sito"
+        },
+        {
+            "intent": "filtri_mappa",
+            "questions": [
+                "A cosa servono i filtri?",
+                "Come funzionano i filtri della mappa?",
+                "Perché dovrei usare i filtri?",
+                "Spiegami il sistema di filtraggio.",
+                "Cosa succede se clicco su un filtro?",
+                "Come mostro solo certi punti sulla mappa?",
+                "Utilizzo dei filtri in alto a sinistra.",
+                "Filtrare i punti di interesse.",
+                "A cosa serve il menu dei filtri?",
+                "Posso vedere solo le categorie che mi interessano?"
+            ],
+            "answer": "Il sistema di filtraggio che vedi in alto a sinistra serve per mostrare sulla mappa solo i punti di interesse nei quali è possibile ritirari beni di una determinata categoria, cliccando su uno dei filtri veranno visualizzati sulla mappa solo i punti nei quali è possibile ritirare i beni di quella specifica categoria"
+        },
+        {
+            "intent": "categorie_beni",
+            "questions": [
+                "Quali sono le categorie di beni che posso ritirare?",
+                "Che tipi di beni ci sono su Map4Aid?",
+                "Quali categorie di prodotti gestite?",
+                "Elenco delle categorie di beni disponibili.",
+                "Cosa si può trovare nei pacchi aiuti?",
+                "Come sono classificati i beni di prima necessità?",
+                "Quante categorie di beni esistono nel sistema?",
+                "Posso sapere i tipi di prodotti ritirabili?",
+                "Medicinali o vestiti, cosa offrite?",
+                "Categorie di aiuto disponibili."
+            ],
+            "answer": "Sul nostro sito i beni di prima necessità sono classificati secondo 4 categorie: Alimentari, Igiene Personale, Medicinali e Abbigliamento, è possibile filtrare i punti che appaiono sulla mappa per mostrare solo quelli dai quali è possibile ritirare i beni di quella specifica cattegoria"
+        },
+        {
+            "intent": "visualizzare_alimentari",
+            "questions": [
+                "Come faccio a visualizzare i beni alimentari?",
+                "Voglio vedere solo i punti con cibo.",
+                "Come trovo i beni alimentari sulla mappa?",
+                "Procedura per filtrare i beni alimentari.",
+                "Dove sono i centri che distribuiscono cibo?",
+                "Come attivo il filtro alimentare?",
+                "Vedere solo la categoria alimentari sulla mappa.",
+                "C'è un modo per isolare i beni alimentari?",
+                "Mappa dei punti di ritiro cibo.",
+                "Come cerco aiuti alimentari?"
+            ],
+            "answer": "La nostra mappa è fornita di una serie di punti di ritiro che se cliccati mostrano quale categoria di bene è possibile ritirare in quel punto. Se desidere filtrare solo i beni di una determinata categoria puoi usare il sistema di filtraggio in alto a sinistra dal quale potrai selezionare una categoria di beni e la mappa mostrerà automaticamente solo i punti nei quali è possibile ritirare i beni di quella categoria."
+        },
+        {
+            "intent": "scelta_ruolo",
+            "questions": [
+                "Perchè nella registrazione devo scegliere un ruolo?",
+                "Cosa cambia tra i ruoli nella registrazione?",
+                "Perché Map4Aid chiede il mio ruolo?",
+                "Che differenza c'è tra Beneficiario ed Ente?",
+                "Quale ruolo dovrei scegliere per registrarmi?",
+                "Importanza del ruolo nell'account.",
+                "Posso cambiare ruolo dopo la registrazione?",
+                "Perché il donatore ha campi diversi?",
+                "Scelta tra Beneficiario, Donatore ed Ente.",
+                "A cosa servono i 3 ruoli distinti?"
+            ],
+            "answer": "Map4aid mette a disposizione dei suoi utenti registrati 3 ruoli distinti: Il primo è Beneficiario, registrati come tale per poter visualizzare i punti di ritiro e prenotare gli slot orari nei quali recarti nel punto per ricevere il tuo pacco. Puoi anche registrarti come donatore o Ente erogatore nel caso tu abbia interesse a donare beni materiali o monetari piuttosto che usufluire del servizio di aiuti di prima necessità"
         }
     ]
 
