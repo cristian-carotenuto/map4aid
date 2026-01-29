@@ -1,49 +1,42 @@
 import secrets
-from datetime import datetime, timedelta
+
+from flask_login import logout_user, current_user
+
 from config import db
-from flask import request, session, jsonify, Blueprint
-from controllers.EmailControl import EmailControl
+from flask import request, session, jsonify
+from controllers.service_email.EmailControl import EmailControl
 from models.models import Account
 from models.pendingAccounts import PendingAccount
 from controllers.routes import auth_bp
+from controllers.service_email.email_control_adapter import EmailControlAdapter
+from controllers.auth_facade import AuthFacade
 
 @auth_bp.route("/login", methods=["POST"])
 def login():
-    email = request.form.get("email")
-    password = request.form.get("password")
 
-    if not email or not password:
-        return jsonify({"error": "Email e password obbligatorie"}), 400
+    if current_user.is_authenticated:
+        return jsonify({"error": "Già loggato"}), 400
 
-    user = Account.query.filter_by(email=email).first()
+    facade = AuthFacade(EmailControlAdapter())
 
-    if not user:
-        return jsonify({"error": "Credenziali non valide"}), 401
+    try:
+        facade.login_with_otp(
+            request.form.get("email"),
+            request.form.get("password")
+        )
+        return jsonify({"message": "Email inviata"}), 200
 
-    if  not user.check_password(password):
-        return jsonify({"error": "Credenziali non valide"}), 401
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 401
 
-    # Genera codice OTP sicuro a 4 cifre
-    codice = secrets.randbelow(9000) + 1000  # tra 1000 e 9999
-    # Salva nella sessione
-    session["pending_email"] = email
-    puser = PendingAccount(
-        email=email,
-        token=codice
-    )
-    db.session.add(puser)
-    db.session.commit()
-    email_control = EmailControl()
-    email_ok = email_control.invia_email_codice(email,codice)
-    if not email_ok:
-        return jsonify({"error": "Email non inviata"}), 401
-
-    return jsonify({"message": "Email inviata"}), 200
+    except RuntimeError as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @auth_bp.route("/logout", methods=["POST"])
 def logout():
     session.clear()
+    logout_user()
     return jsonify({"message": "Logout effettuato"})
 
 @auth_bp.route("/recuperoPassword", methods=["POST"])

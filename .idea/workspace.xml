@@ -2,12 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="55397952-be6e-4a64-8a4f-522745ebe921" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_rebase_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_rebase__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/EmailControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/EmailControl.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/SegnalazioneControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/segnalazione_control.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/donazione_bene.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/donazione_bene.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/donazione_monetaria_control.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/donazione_monetaria_control.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/segnalazione_control.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/segnalazione_control.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/service_email/email_control_adapter.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/service_email/email_control_adapter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/service_email/mail_sender.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/service_email/mail_sender.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,28 +57,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python.test.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "ai.playground.ignore.import.keys.banner.in.settings": "true",
-    "git-widget-placeholder": "controller",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/Giovanni/Documents/GitHub/progetto-is/map4aid_project/controllers",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.keymap",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;ai.playground.ignore.import.keys.banner.in.settings&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;controller&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Giovanni/Documents/GitHub/progetto-is/map4aid_project/controllers&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\map4aid_project\controllers" />
       <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\map4aid_project" />
       <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\map4aid_project\models" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\map4aid_project\controllers\service_email" />
+      <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\map4aid_project" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -110,6 +114,14 @@
       <workItem from="1769298198366" duration="1578000" />
       <workItem from="1769332953455" duration="54000" />
       <workItem from="1769342328244" duration="3443000" />
+      <workItem from="1769351621565" duration="5072000" />
+      <workItem from="1769385432852" duration="4086000" />
+      <workItem from="1769426941686" duration="2079000" />
+      <workItem from="1769447523955" duration="13740000" />
+      <workItem from="1769511089401" duration="657000" />
+      <workItem from="1769512141790" duration="5121000" />
+      <workItem from="1769541614008" duration="983000" />
+      <workItem from="1769598313622" duration="6605000" />
     </task>
     <servers />
   </component>
@@ -117,6 +129,6 @@
     <option name="version" value="3" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/progetto_is$test.coverage" NAME="test Coverage Results" MODIFIED="1769190857022" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/map4aid_project/models" />
+    <SUITE FILE_PATH="coverage/progetto_is$test.coverage" NAME="test Coverage Results" MODIFIED="1769515357915" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/map4aid_project" />
   </component>
 </project>

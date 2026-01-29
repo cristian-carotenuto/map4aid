@@ -2,13 +2,14 @@ from config import db
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 from datetime import datetime, timezone
+from flask_login import UserMixin
 
 #la classe notifica presente nel RAD non è stata definita
 #la classe segnalazione presente nelle direttive clickUp non è stata definita perchè non presente nel RAD
 
 #  ACCOUNT BASE (POLIMORFISMO)
 
-class Account(db.Model):
+class Account(UserMixin,db.Model):
     __tablename__ = "accounts"
 
     id = db.Column(db.Integer, primary_key=True)
