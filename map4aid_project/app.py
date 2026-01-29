@@ -1,6 +1,9 @@
 import os
 from flask import Flask
+from flask_login import LoginManager
+
 from config import db, migrate
+from models import Account
 from tasks import start_scheduler
 
 
@@ -23,10 +26,23 @@ def create_app():
     from models import models
     from models import pendingAccounts
 
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return Account.query.get(int(user_id))
+
     from controllers.routes import auth_bp
     from controllers import two_fa_contol
     from controllers import autenticazione_control
     from controllers import login_control
+    from controllers import segnalazione_control
+    from controllers import donazione_monetaria_control
+    from controllers import donazione_bene
+    from controllers import permessi
+    from controllers import api_punti
+    app.register_blueprint(api_punti.api, url_prefix="/api")
     app.register_blueprint(auth_bp, url_prefix="/auth")
 
     print(">>>>>Flask root:", os.getcwd())

@@ -3,14 +3,17 @@ from flask import request, session, jsonify, Blueprint
 
 from config import db
 from controllers.routes import auth_bp
-from models.models import AccountBeneficiario, AccountEnteDonatore, AccountEnteErogatore
 from models.pendingAccounts import PendingAccount
+from models.models import AccountBeneficiario, AccountDonatore, AccountEnteErogatore, Account
+from flask_login import login_user
+
 
 
 @auth_bp.route("/2FARegister", methods=["POST"])
 def conferma_codice_registrazione():
     email = session.get("pending_email")
     puser = PendingAccount.query.filter_by(email=email).first()
+
     if not puser:
         return jsonify({"error": "Nessuna registrazionein corso"}), 400
 
@@ -27,28 +30,34 @@ def conferma_codice_registrazione():
             password_hash = puser.password_hash,
             nome = puser.extra_data["nome"],
             cognome = puser.extra_data["cognome"],
-            codice_fiscale = puser.extra_data["codice_fiscale"]
+            data_nascita = puser.extra_data["data_nascita"],
+            patologie = puser.extra_data["patologie"]
         )
 
     # ----DONATORE-----
-    if puser.tipo == "ente_donatore":
-        user = AccountEnteDonatore(
+    if puser.tipo == "donatore":
+        user = AccountDonatore(
             email=email,
             password_hash = puser.password_hash,
             nome_attivita = puser.extra_data["nome_attivita"],
-            partita_iva = puser.extra_data["partita_iva"]
+            partita_iva = puser.extra_data["partita_iva"],
+            indirizzo_sede = puser.extra_data["indirizzo_sede"],
+            nome = puser.extra_data["nome"],
+            cognome = puser.extra_data["cognome"],
+            categoria = puser.extra_data["categoria"]
         )
 
     #--------ENTE EROGATORE--------
-    if puser.tipo == "ente_erogatore":
+    if puser.tipo == "erogatore":
         user = AccountEnteErogatore(
             email=email,
             password_hash = puser.password_hash,
+            nome_organizzazione = puser.extra_data["nome_organizzazione"],
             iban = puser.extra_data["iban"],
             indirizzo_sede = puser.extra_data["indirizzo_sede"],
             tipologia_ente = puser.extra_data["tipologia_ente"]
         )
-    if(user == None):
+    if not user:
         return jsonify({"error": "Nessuna registrazionein corso"}), 400
     db.session.add(user)
     db.session.delete(puser)
@@ -62,6 +71,7 @@ def conferma_codice_registrazione():
 def conferma_codice_login():
     email = session.get("pending_email")
     puser = PendingAccount.query.filter_by(email=email).first()
+    user = Account.query.filter_by(email=email).first()
     if not puser:
         return jsonify({"error": "Nessun login in corso"}), 400
 
@@ -72,8 +82,10 @@ def conferma_codice_login():
     # Codice corretto → consenti login
     session["logged_in"] = True
     session["user_email"] = email
+    login_user(user)
     db.session.delete(puser)
-    session.pop("pendindg_email")
+    db.session.commit()
+    session.pop("pending_email")
     return jsonify({
         "message": "Login effettuato con successo",
         "email": email
