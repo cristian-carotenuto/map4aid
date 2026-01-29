@@ -21,9 +21,12 @@ def train():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     dataset_path = os.path.join(script_dir, "../../data/training_data_expanded.jsonl")
     
-    # Se il file espanso non esiste, usa quello base
+    # Safeguard: Il fine-tuning DEVE usare il dataset espanso.
+    # Se non esiste, fermiamo tutto per evitare di addestrare sul dataset base da 18 campioni.
     if not os.path.exists(dataset_path):
-        dataset_path = os.path.join(script_dir, "../../data/training_data.jsonl")
+        print(f"!! [ERRORE] Dataset espanso non trovato in: {dataset_path}")
+        print("!! Per favore, lancia prima 'python ../../data/dataset_generator.py' per crearlo.")
+        return # Esce dalla funzione senza avviare il training
     
     print(f">> Dataset utilizzato: {dataset_path}")
     print(f">> Inizio preparazione per il fine-tuning di {model_name}")
@@ -54,7 +57,7 @@ def train():
     lora_config = LoraConfig(
         r=16,
         lora_alpha=32,
-        target_modules=["q_proj", "v_proj", "k_proj", "o_proj"], # Layer Qwen specifici
+        target_modules=["q_proj", "v_proj", "k_proj", "o_proj", "gate_proj", "up_proj", "down_proj"], # Layer Qwen inclusi MLP
         lora_dropout=0.05,
         bias="none",
         task_type="CAUSAL_LM",
@@ -71,7 +74,7 @@ def train():
         per_device_train_batch_size=1,
         gradient_accumulation_steps=4,
         learning_rate=2e-4,
-        max_steps=100, # Numero di step per un test veloce
+        max_steps=110, # Numero di step bilanciato (Run #5.3)
         logging_steps=10,
         fp16=True,
         save_strategy="steps",
