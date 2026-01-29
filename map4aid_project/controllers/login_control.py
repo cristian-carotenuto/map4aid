@@ -38,7 +38,7 @@ def login():
     if not email_ok:
         return jsonify({"error": "Email non inviata"}), 401
 
-    return jsonify({"message": "Email inviata"}), 200
+    return jsonify({"message": "Email inviata"}), 401
 
 
 @auth_bp.route("/logout", methods=["POST"])

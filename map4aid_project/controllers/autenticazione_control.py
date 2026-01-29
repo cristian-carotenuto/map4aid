@@ -4,7 +4,7 @@ from flask import request, session, jsonify, Blueprint
 from controllers.EmailControl import EmailControl
 from config import db
 from controllers.routes import auth_bp
-from models.models import Account, AccountBeneficiario, AccountDonatore, AccountEnteErogatore
+from models.models import Account, AccountBeneficiario, AccountEnteDonatore, AccountEnteErogatore
 from models.pendingAccounts import PendingAccount
 
 
@@ -25,24 +25,22 @@ def register():
     if ruolo == "beneficiario":
         nome = request.form.get("nome")
         cognome = request.form.get("cognome")
+        cf = request.form.get("codice_fiscale")
 
-
-        if not all([nome, cognome]):
+        if not all([nome, cognome, cf]):
             return jsonify({"error": "Dati beneficiario incompleti"}), 400
 
         extra_data = {
             "nome": nome,
-            "cognome": cognome
+            "cognome": cognome,
+            "codice_fiscale": cf
         }
 
     # ----- DONATORE -----
     elif ruolo == "donatore":
         partita_iva = request.form.get("partita_iva")
+
         nome_attivita = request.form.get("nome_attivita")
-        indirizzo_sede = request.form.get("indirizzo_sede")
-        nome = request.form.get("nome")
-        cognome = request.form.get("cognome")
-        categoria = request.form.get("categoria")
 
 
         if not all([partita_iva, nome_attivita]):
@@ -51,10 +49,6 @@ def register():
         extra_data = {
             "partita_iva": partita_iva,
             "nome_attivita": nome_attivita,
-            "indirizzo_sede": indirizzo_sede,
-            "nome": nome,
-            "cognome": cognome,
-            "categoria": categoria
         }
 
     # ----- ENTE EROGATORE -----

@@ -3,9 +3,8 @@ from flask import request, session, jsonify, Blueprint
 
 from config import db
 from controllers.routes import auth_bp
+from models.models import AccountBeneficiario, AccountEnteDonatore, AccountEnteErogatore
 from models.pendingAccounts import PendingAccount
-from models.models import AccountBeneficiario, AccountDonatore, AccountEnteErogatore
-
 
 
 @auth_bp.route("/2FARegister", methods=["POST"])
@@ -27,20 +26,17 @@ def conferma_codice_registrazione():
             email=email,
             password_hash = puser.password_hash,
             nome = puser.extra_data["nome"],
-            cognome = puser.extra_data["cognome"]
+            cognome = puser.extra_data["cognome"],
+            codice_fiscale = puser.extra_data["codice_fiscale"]
         )
 
     # ----DONATORE-----
     if puser.tipo == "ente_donatore":
-        user = AccountDonatore(
+        user = AccountEnteDonatore(
             email=email,
             password_hash = puser.password_hash,
             nome_attivita = puser.extra_data["nome_attivita"],
-            partita_iva = puser.extra_data["partita_iva"],
-            indirizzo_sede = puser.extra_data["indirizzo_sede"],
-            nome = puser.extra_data["nome"],
-            cognome = puser.extra_data["cognome"],
-            categoria = puser.extra_data["categoria"]
+            partita_iva = puser.extra_data["partita_iva"]
         )
 
     #--------ENTE EROGATORE--------
@@ -77,8 +73,7 @@ def conferma_codice_login():
     session["logged_in"] = True
     session["user_email"] = email
     db.session.delete(puser)
-    db.session.commit()
-    session.pop("pending_email")
+    session.pop("pendindg_email")
     return jsonify({
         "message": "Login effettuato con successo",
         "email": email
