@@ -84,7 +84,15 @@ class QwenClient:
         # 1. Recupera info temporali aggiornate
         system_info = self._get_system_info()
         # Allineato esattamente al prompt usato nel dataset generator
-        system_prompt = f"Sei Aidano, l'assistente virtuale di Map4Aid, un sistema di gestione donazioni e aiuti. {system_info}"
+        # System Prompt restrittivo (Anti-Allucinazione) con eccezione per saluti/personalità
+        system_prompt = (
+            f"Sei Aidano, l'assistente virtuale ufficiale di Map4Aid. {system_info} "
+            "Il tuo compito è rispondere a domande sul progetto Map4Aid usando solo informazioni ufficiali. "
+            "Sii gentile, amichevole e rispondi normalmente ai saluti o a brevi domande sulla tua personalità. "
+            "Tuttavia, per qualsiasi richiesta su argomenti esterni complessi (storia, cucina, scienza, ecc.) "
+            "o se non sei sicuro della risposta tecnica, rispondi categoricamente con: "
+            "'Mi dispiace non dispongo delle conoscenze per rispondere a questa domanda'."
+        )
         
         # 2. Gestione History (Sliding Window: sistema + ultimi 10 messaggi)
         if not self.history:

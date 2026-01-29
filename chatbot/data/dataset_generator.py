@@ -18,7 +18,7 @@ def generate_variations():
                 "Posso creare un profilo nuovo?",
                 "Istruzioni per l'iscrizione a Map4Aid."
             ],
-            "answer": "Per registrarti su Map4Aid, accedi alla pagina di registrazione cliccando su \"Sign In\", poi dovrai selezionare il ruolo con cui desideri registrarti, scegliendone uno tra: Beneficiario, Donatore e Ente erogatore, poi compila il modulo con i tuoi dati, a seconda del ruolo scelto saranno richiesti dati diversi, in ogni caso serve inserire una E-mail e creare una password. Se si desidera registrarsi come Donatore o come Ente erogatore saranno richiesti anche altri campi come IBAN o Partita IVA, quindi assicurati di aver recuperato queste informazioni prima della registrazione."
+            "answer": "Per registrarti su Map4Aid, accedi alla pagina di registrazione cliccando su \"Sign Up\", poi dovrai selezionare il ruolo con cui desideri registrarti, scegliendone uno tra: Beneficiario, Donatore e Ente erogatore, poi compila il modulo con i tuoi dati. A seconda del ruolo scelto saranno richiesti dati diversi, ma per tutti serve inserire una E-mail e creare una password. Donatori ed Enti dovranno fornire anche IBAN o Partita IVA."
         },
         {
             "intent": "password_dimenticata",
@@ -275,6 +275,38 @@ def generate_variations():
                 "A cosa servono i 3 ruoli distinti?"
             ],
             "answer": "Map4aid mette a disposizione dei suoi utenti registrati 3 ruoli distinti: Il primo è Beneficiario, registrati come tale per poter visualizzare i punti di ritiro e prenotare gli slot orari nei quali recarti nel punto per ricevere il tuo pacco. Puoi anche registrarti come donatore o Ente erogatore nel caso tu abbia interesse a donare beni materiali o monetari piuttosto che usufluire del servizio di aiuti di prima necessità"
+        },
+        {
+            "intent": "notifiche_chiarimento",
+            "questions": [
+                "Perchè ho ricevuto un E-mail?",
+                "Come mai mi è arrivata una mail da Map4Aid?",
+                "Ho ricevuto un messaggio OTP sul telefono, perché?",
+                "Perchè ricevo un SMS da voi?",
+                "Ricevuta mail non richiesta, cosa significa?",
+                "Perché Map4Aid mi manda messaggi sul cellulare?",
+                "Motivi per cui il sito invia notifiche.",
+                "Spiegazione email o SMS ricevuto.",
+                "Qualcuno ha usato il mio numero per errore?",
+                "Ho un messaggio da Map4Aid ma non stavo facendo nulla."
+            ],
+            "answer": "Se hai ricevuto un'email o un SMS da Map4Aid senza aver fatto nulla, probabilmente un altro utente ha inserito per errore i tuoi dati. Solitamente queste comunicazioni servono per confermare operazioni o recuperare l'account. Troverai comunque il motivo specifico spiegato chiaramente all'interno del messaggio ricevuto."
+        },
+        {
+            "intent": "fallback",
+            "questions": [
+                "Qual è la capitale della Francia?",
+                "Come si cucina la pasta alla carbonara?",
+                "Chi ha vinto l'ultimo mondiale di calcio?",
+                "Mi consigli un film da vedere stasera?",
+                "Come posso riparare una lavatrice?",
+                "Qual è la distanza tra la Terra e la Luna?",
+                "Mi scrivi una poesia d'amore?",
+                "Come si dice 'ciao' in giapponese?",
+                "Chi è il presidente degli Stati Uniti?",
+                "Qual è la radice quadrata di 144?"
+            ],
+            "answer": "Mi dispiace non dispongo delle conoscenze per rispondere a questa domanda"
         }
     ]
 
