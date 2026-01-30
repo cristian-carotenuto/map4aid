@@ -4,7 +4,7 @@ from controllers.routes import auth_bp
 
 @auth_bp.route("/register", methods=["POST"])
 def register():
-    from controllers.service_email.email_control_adapter import EmailControlAdapter
+    from controllers.service_email.email_control_bridge import EmailControlAdapter
     from controllers.auth_facade import AuthFacade
 
     facade = AuthFacade(EmailControlAdapter())

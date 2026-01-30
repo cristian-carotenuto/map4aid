@@ -2,6 +2,7 @@ import secrets
 from datetime import datetime
 
 from flask import session
+from werkzeug.security import generate_password_hash
 
 from models import Account
 from models.pendingAccounts import PendingAccount
@@ -32,7 +33,7 @@ class AuthFacade:
             email=email,
             tipo=ruolo,
             extra_data=extra_data,
-            token=codice
+            token=generate_password_hash(str(codice))
         )
         pending.set_password(password)
 
@@ -90,10 +91,9 @@ class AuthFacade:
             raise ValueError("Credenziali non valide")
 
         codice = secrets.randbelow(9000) + 1000
-
         pending = PendingAccount(
             email=email,
-            token=codice,
+            token=generate_password_hash(str(codice)),
         )
 
         PendingAccount.query.filter_by(email=email).delete(synchronize_session=False)

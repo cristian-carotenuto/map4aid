@@ -1,5 +1,6 @@
 from datetime import datetime
 from flask import request, session, jsonify, Blueprint
+from werkzeug.security import check_password_hash
 
 from config import db
 from controllers.routes import auth_bp
@@ -18,7 +19,7 @@ def conferma_codice_registrazione():
         return jsonify({"error": "Nessuna registrazionein corso"}), 400
 
     codice_inserito = request.form.get("codice")
-    if codice_inserito != puser.token:
+    if check_password_hash(puser.token,codice_inserito):
         return jsonify({"error": "Codice non valido"}), 401
 
     # Codice corretto → consenti registrazione
@@ -75,8 +76,8 @@ def conferma_codice_login():
     if not puser:
         return jsonify({"error": "Nessun login in corso"}), 400
 
-    codice_inserito = request.form.get("codice")
-    if codice_inserito != puser.token:
+    codice_inserito = str(request.form.get("codice"))
+    if check_password_hash(puser.token,codice_inserito):
         return jsonify({"error": "Codice non valido"}), 401
 
     # Codice corretto → consenti login

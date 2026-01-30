@@ -1,14 +1,12 @@
-import email_sender
 from flask import request
 
 from controllers.permessi import require_roles
 from controllers.routes import auth_bp
 from controllers.service_email.EmailControl import EmailControl
-from controllers.service_email.email_control_adapter import EmailControlAdapter
+from controllers.service_email.email_control_bridge import EmailControlAdapter
 from models.models import AccountEnteErogatore
 
 @auth_bp.route("/segnalazione", methods=["POST"])
-@require_roles("donatore","beneficiario","ente_erogatore")
 def segnalazione():
     data = request.get_json()
     lat = data["latitudine"]
