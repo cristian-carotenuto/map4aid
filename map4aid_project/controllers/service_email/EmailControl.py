@@ -62,6 +62,7 @@ Map4Aid
 Per favore inserire il seguente codice per confermare l'emaill:
 {codice}
 Il codice scadrà dopo 10 minuti
+Se hai ricevuto questa email senza aver provato a registrarti probabilmente un utente ha inseirito la tua mail per sbaglio
         
 Cordiali saluti,
 Map4Aid"""

@@ -2,7 +2,7 @@ from controllers.service_email.mail_sender import MailSender
 from controllers.service_email.EmailControl import EmailControl
 
 
-class EmailControlAdapter(MailSender):
+class EmailControlBridge(MailSender):
 
     def __init__(self):
         self._email_control = EmailControl()

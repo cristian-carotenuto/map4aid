@@ -44,7 +44,9 @@ class AccountBeneficiario(Account):
     data_nascita = db.Column(db.Date, nullable=True)
     allergeni = db.Column(db.Text, nullable=True)
     patologie = db.Column(db.Text, nullable=True)
-
+    codice_carta_identita = db.Column( db.String(50),unique=True,nullable=False)
+    path_immagine_carta_identita = db.Column(db.String(255),nullable=False)
+    accettato = db.Column(db.Boolean, nullable=False, default=False)
     __mapper_args__ = {
         "polymorphic_identity": "beneficiario"
     }

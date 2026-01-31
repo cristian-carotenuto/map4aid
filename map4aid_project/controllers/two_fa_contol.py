@@ -65,6 +65,8 @@ def conferma_codice_registrazione():
     db.session.commit()
     session.pop("pending_email")  # rimuovi email
 
+    if puser.tipo == "beneficiario":
+        return jsonify({"message": "Codice valido, registrazione in attessa di validazione dall'admin"}), 200
     return jsonify({"message": "Codice valido, registrazione avvenuta"}), 200
 
 
