@@ -1,26 +1,13 @@
 from flask import request, jsonify
-<<<<<<< HEAD
-from controllers.routes import auth_bp
-=======
-
 from config import db
 from controllers.permessi import require_roles
 from controllers.routes import auth_bp
 from models import AccountBeneficiario
->>>>>>> controller
+from flask_login import current_user, login_required
 
 
 @auth_bp.route("/register", methods=["POST"])
 def register():
-<<<<<<< HEAD
-    from controllers.service_email.email_control_adapter import EmailControlAdapter
-    from controllers.auth_facade import AuthFacade
-
-    facade = AuthFacade(EmailControlAdapter())
-
-    try:
-        facade.register_pending_account(request.form)
-=======
     from controllers.service_email.email_control_bridge import EmailControlBridge
     from controllers.auth_facade import AuthFacade
 
@@ -28,16 +15,12 @@ def register():
 
     try:
         facade.register_pending_account(request.form,request.files)
->>>>>>> controller
         return jsonify({"message": "Email inviata. Controlla la tua casella."}), 200
 
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
 
     except RuntimeError as e:
-<<<<<<< HEAD
-        return jsonify({"error": str(e)}), 500
-=======
         return jsonify({"error": str(e)}), 500
 
 @auth_bp.route("/admin_register", methods=["POST"])
@@ -60,4 +43,3 @@ def admin_register():
     db.session.commit()
     return jsonify({"message": "Utente rifiutato dall'admin"}), 200
 
->>>>>>> controller

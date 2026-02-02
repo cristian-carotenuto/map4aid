@@ -141,3 +141,20 @@ class AuthFacade:
             raise RuntimeError("Email non inviata")
 
         return True
+    
+    def validate_email(self, email, current_user=None):
+        email = email.lower().strip()
+
+        #se email coincide ok
+        if current_user and email == current_user.email:
+            return True
+
+        #controllo su account
+        if Account.query.filter_by(email=email).first():
+            raise ValueError("Email già in uso")
+
+        #controllo su pending
+        if PendingAccount.query.filter_by(email=email).first():
+            raise ValueError("Email già in uso (in attesa di conferma)")
+
+        return True
