@@ -1,4 +1,4 @@
-import email_sender
+import controllers.service_email.mail_sender
 from flask import request
 
 from controllers.permessi import require_roles
