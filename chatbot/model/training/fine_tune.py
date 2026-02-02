@@ -74,7 +74,7 @@ def train():
         per_device_train_batch_size=1,
         gradient_accumulation_steps=4,
         learning_rate=2e-4,
-        max_steps=110, # Numero di step bilanciato (Run #5.3)
+        max_steps=100, # Numero di step ottimale per stabilità (Run #6)
         logging_steps=10,
         fp16=True,
         save_strategy="steps",

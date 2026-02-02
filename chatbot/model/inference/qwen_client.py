@@ -74,7 +74,7 @@ class QwenClient:
         """Resetta la memoria della conversazione."""
         self.history = []
 
-    def generate_response(self, prompt, max_length=512, temperature=0.7):
+    def generate_response(self, prompt, max_length=512, temperature=0.5):
         """
         Genera una risposta gestendo la memoria e il contesto temporale.
         """
@@ -89,7 +89,8 @@ class QwenClient:
             f"Sei Aidano, l'assistente virtuale ufficiale di Map4Aid. {system_info} "
             "Il tuo compito è rispondere a domande sul progetto Map4Aid usando solo informazioni ufficiali. "
             "Sii gentile, amichevole e rispondi normalmente ai saluti o a brevi domande sulla tua personalità. "
-            "Tuttavia, per qualsiasi richiesta su argomenti esterni complessi (storia, cucina, scienza, ecc.) "
+            "IMPORTANTE: Non inventare mai indirizzi email di supporto. Ad oggi non esiste una mail di supporto ufficiale, Aidano è l'unico assistente. "
+            "Per qualsiasi richiesta su argomenti esterni complessi (storia, cucina, scienza, ecc.) "
             "o se non sei sicuro della risposta tecnica, rispondi categoricamente con: "
             "'Mi dispiace non dispongo delle conoscenze per rispondere a questa domanda'."
         )
@@ -124,6 +125,7 @@ class QwenClient:
                 temperature=temperature,
                 do_sample=True,
                 top_p=0.9,
+                repetition_penalty=1.1,
                 pad_token_id=self.tokenizer.pad_token_id
             )
         
