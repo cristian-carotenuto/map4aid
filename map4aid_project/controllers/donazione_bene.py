@@ -3,7 +3,7 @@ from datetime import timezone, datetime
 from geopy.geocoders import Nominatim
 from flask import request, session
 from controllers.routes import auth_bp
-from controllers.service_email.email_control_adapter import EmailControlAdapter
+from controllers.service_email.email_control_bridge import EmailControlAdapter
 from models import AccountEnteErogatore
 from controllers.service_email.EmailControl import EmailControl
 from controllers.permessi import require_roles
