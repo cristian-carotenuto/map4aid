@@ -16,7 +16,10 @@ def generate_variations():
                 "Passaggi per la creazione account?",
                 "Dove trovo il modulo di registrazione?",
                 "Posso creare un profilo nuovo?",
-                "Istruzioni per l'iscrizione a Map4Aid."
+                "Istruzioni per l'iscrizione a Map4Aid.",
+                "Come posso registrarmi come beneficiario?",
+                "Qual è la procedura per iscriversi come donatore?",
+                "Come si crea un profilo per un ente erogatore?"
             ],
             "answer": "Per registrarti su Map4Aid, accedi alla pagina di registrazione cliccando su \"Sign Up\", poi dovrai selezionare il ruolo con cui desideri registrarti, scegliendone uno tra: Beneficiario, Donatore e Ente erogatore, poi compila il modulo con i tuoi dati. A seconda del ruolo scelto saranno richiesti dati diversi, ma per tutti serve inserire una E-mail e creare una password. Donatori ed Enti dovranno fornire anche IBAN o Partita IVA."
         },
@@ -50,7 +53,7 @@ def generate_variations():
                 "Cosa fa il tasto Email dimenticata?",
                 "Come funziona l'OTP per recuperare l'email?"
             ],
-            "answer": "Sì, puoi recuperare l'email associata al tuo account cliccando su 'Email dimenticata' nella pagina di login. Il sistema invierà un codice temporaneo (OTP) al numero di telefono associato al tuo profilo. Una volta inserito il codice correttamente, l'email ti verrà mostrata a schermo."
+            "answer": "Sì, puoi recuperare l'email associata al tuo account cliccando su 'Email dimenticata' nella pagina di login. Il sistema invierà un codice SMS di sicurezza (OTP) al numero di telefono associato al tuo profilo. Una volta inserito il codice correttamente, l'email ti verrà mostrata a schermo."
         },
         {
             "intent": "tipi_donazione",
@@ -82,7 +85,7 @@ def generate_variations():
                 "Metodi di pagamento per le donazioni.",
                 "Vorrei supportare economicamente un ente."
             ],
-            "answer": "Effettuare una donazione monetaria è semplice: clicca sul componente 'Donazione monetaria' nell'interfaccia, scegli l'ente erogatore a cui vuoi destinare i fondi e compila il modulo with i dati del tuo metodo di pagamento. Una volta confermata, riceverai una notifica di successo."
+            "answer": "Effettuare una donazione monetaria è semplice: clicca sul componente 'Donazione monetaria' nell'interfaccia, scegli l'ente erogatore a cui vuoi destinare i fondi e compila il modulo con i dati del tuo metodo di pagamento. Una volta confermata, riceverai una notifica di successo."
         },
         {
             "intent": "donazione_materiale",
@@ -98,23 +101,7 @@ def generate_variations():
                 "Validazione della donazione materiale.",
                 "Come invio beni materiali agli enti erogatori?"
             ],
-            "answer": "Certamente! Se sei registrato come donatore, puoi compilare un modulo specifico per la donazione di beni materiali. Dovrai inserire i dettagli degli oggetti che intendi donare; la richiesta verrà inviata all'ente per la validazione. Se approvata, riceverai un'email con le istruzioni per il ritiro."
-        },
-        {
-            "intent": "gestione_scorte",
-            "questions": [
-                "Come aggiorno le scorte dei beni?",
-                "Come si caricano i nuovi beni in inventario?",
-                "In che modo posso modificare le quantità dei prodotti?",
-                "Come funziona l'aggiornamento dell'inventario?",
-                "Dove gestisco la disponibilità dei beni?",
-                "Un ente come aggiorna il magazzino?",
-                "Procedura per inserire nuovi beni materiali.",
-                "Come vedo cosa è disponibile in magazzino?",
-                "Posso diminuire le scorte manually?",
-                "Gestione inventario per gli enti erogatori."
-            ],
-            "answer": "La gestione delle scorte è riservata agli enti erogatori tramite la dashboard dedicata. Le quantità si aggiornano automaticamente in caso di donazioni ricevute o prenotazioni effettuate. È tuttavia possibile aggiungere manualmente nuovi beni o incrementare le scorte esistenti, ma la riduzione manuale non è consentita per garantire la coerenza dei dati."
+            "answer": "Se desideri donare oggetti o viveri, devi compilare la 'Proposta di Donazione Materiale'. Indica i dettagli dei beni; l'ente convaliderà la tua proposta e, se accettata, riceverai via email le istruzioni per il ritiro o la consegna."
         },
         {
             "intent": "prenotazione_beni",
@@ -176,7 +163,12 @@ def generate_variations():
                 "Map4Aid spiegazione breve.",
                 "A chi è rivolto Map4Aid?",
                 "Cosa posso fare su questo portale?",
-                "Missione di Map4Aid."
+                "Missione di Map4Aid.",
+                "Puoi descrivermi Map4Aid?",
+                "Vorrei capire meglio cos'è questo progetto.",
+                "Quali sono gli obiettivi principali di Map4Aid?",
+                "A cosa serve Map4Aid?",
+                "Puoi farmi un riassunto di Map4Aid?"
             ],
             "answer": "Map4Aid è un sito che nasce con lo scopo di aiutare coloro in difficoltà fornendo loro servizi semplici per prenotare il ritiro di beni di prima necessità. Allo stesso tempo ha lo scopo di fornire a coloro che desiderano aiutarci un interfaccia semplice sia per organizzare la donazione dei beni sia per partecipare attivamente alle donazioni, sia dei beni materiali che di denaro."
         },
@@ -192,9 +184,14 @@ def generate_variations():
                 "Sei un assistente virtuale?",
                 "Con chi sto parlando?",
                 "Presentati Aidano.",
-                "Cosa puoi fare per me?"
+                "Cosa puoi fare per me?",
+                "Dimmi chi sei.",
+                "Cosa rappresenta Aidano?",
+                "Sei un robot?",
+                "Qual è la tua funzione qui?",
+                "Parlami un po' di te."
             ],
-            "answer": "Io sono Aidano sono un chatbot con il quale puoi interagire liberamente, sono stato programmato per rispondere alle tue domande e ai tuoi dubbi. Sentiti libero di scrivere per qualsiasi quesito o problematica tu possa incontrare sul nostro sito."
+            "answer": "Io sono Aidano, l'assistente virtuale ufficiale di Map4Aid. Sono qui per rispondere alle tue domande e aiutarti a navigare sul sito. Non abbiamo una mail di supporto dedicata, quindi sentiti libero di chiedere a me per qualsiasi dubbio o problema!"
         },
         {
             "intent": "stato_animo",
@@ -208,7 +205,12 @@ def generate_variations():
                 "Stai bene Aidano?",
                 "Ciao Aidano, come stai?",
                 "Ehi, come te la passi?",
-                "Tutto a posto?"
+                "Tutto a posto?",
+                "Ti senti bene oggi?",
+                "Come sta andando la giornata?",
+                "Sei pronto ad aiutarmi?",
+                "Va tutto per il meglio?",
+                "Ti piace il tuo lavoro di assistente?"
             ],
             "answer": "Benone sono felice di aiutare i miei utenti :) Fammi sapere se hai una qualsiasi domanda sul nostro sito"
         },
@@ -245,7 +247,7 @@ def generate_variations():
             "answer": "Sul nostro sito i beni di prima necessità sono classificati secondo 4 categorie: Alimentari, Igiene Personale, Medicinali e Abbigliamento, è possibile filtrare i punti che appaiono sulla mappa per mostrare solo quelli dai quali è possibile ritirare i beni di quella specifica cattegoria"
         },
         {
-            "intent": "visualizzare_alimentari",
+            "intent": "beni_alimentari",
             "questions": [
                 "Come faccio a visualizzare i beni alimentari?",
                 "Voglio vedere solo i punti con cibo.",
@@ -260,38 +262,65 @@ def generate_variations():
             ],
             "answer": "La nostra mappa è fornita di una serie di punti di ritiro che se cliccati mostrano quale categoria di bene è possibile ritirare in quel punto. Se desidere filtrare solo i beni di una determinata categoria puoi usare il sistema di filtraggio in alto a sinistra dal quale potrai selezionare una categoria di beni e la mappa mostrerà automaticamente solo i punti nei quali è possibile ritirare i beni di quella categoria."
         },
+
+        # =========================
+        # NUOVI INTENTI AGGIUNTI
+        # =========================
         {
-            "intent": "scelta_ruolo",
+            "intent": "accesso_profilo",
             "questions": [
-                "Perchè nella registrazione devo scegliere un ruolo?",
-                "Cosa cambia tra i ruoli nella registrazione?",
-                "Perché Map4Aid chiede il mio ruolo?",
-                "Che differenza c'è tra Beneficiario ed Ente?",
-                "Quale ruolo dovrei scegliere per registrarmi?",
-                "Importanza del ruolo nell'account.",
-                "Posso cambiare ruolo dopo la registrazione?",
-                "Perché il donatore ha campi diversi?",
-                "Scelta tra Beneficiario, Donatore ed Ente.",
-                "A cosa servono i 3 ruoli distinti?"
+                "Come accedo al mio profilo?",
+                "Come entro nel mio profilo?",
+                "Dove posso trovare il mio profilo?",
+                "Come faccio ad aprire la mia area personale?",
+                "Voglio accedere al profilo, come si fa?",
+                "Dopo il login come vado nel profilo?",
+                "Come visualizzo il mio profilo utente?",
+                "Non trovo il profilo, dove si accede?",
+                "Come raggiungo la sezione profilo?",
+                "Tasto profilo, come lo uso?",
+                "Come entro nella mia area utente?"
             ],
-            "answer": "Map4aid mette a disposizione dei suoi utenti registrati 3 ruoli distinti: Il primo è Beneficiario, registrati come tale per poter visualizzare i punti di ritiro e prenotare gli slot orari nei quali recarti nel punto per ricevere il tuo pacco. Puoi anche registrarti come donatore o Ente erogatore nel caso tu abbia interesse a donare beni materiali o monetari piuttosto che usufluire del servizio di aiuti di prima necessità"
+            "answer": "Per accedere al tuo profilo devi prima eseguire il login. Subito dopo averlo fatto verrai riportato nella nostra homepage, da lì dovrai solamente cliccare nella parte alta sul bottone che dice \"Profilo\"."
         },
         {
-            "intent": "notifiche_chiarimento",
+            "intent": "storico_donazioni",
             "questions": [
-                "Perchè ho ricevuto un E-mail?",
-                "Come mai mi è arrivata una mail da Map4Aid?",
-                "Ho ricevuto un messaggio OTP sul telefono, perché?",
-                "Perchè ricevo un SMS da voi?",
-                "Ricevuta mail non richiesta, cosa significa?",
-                "Perché Map4Aid mi manda messaggi sul cellulare?",
-                "Motivi per cui il sito invia notifiche.",
-                "Spiegazione email o SMS ricevuto.",
-                "Qualcuno ha usato il mio numero per errore?",
-                "Ho un messaggio da Map4Aid ma non stavo facendo nulla."
+                "Come faccio a vedere le mie donazioni?",
+                "Dove vedo le donazioni che ho fatto?",
+                "Posso controllare lo storico delle donazioni?",
+                "Come visualizzo le mie donazioni passate?",
+                "Voglio vedere le donazioni effettuate.",
+                "C’è una sezione con le mie donazioni?",
+                "Come controllo cosa ho donato?",
+                "Dove trovo l’elenco delle mie donazioni?",
+                "Posso vedere le donazioni dal profilo?",
+                "Come verifico le donazioni fatte?",
+                "Donazioni effettuate, dove le vedo?"
             ],
-            "answer": "Se hai ricevuto un'email o un SMS da Map4Aid senza aver fatto nulla, probabilmente un altro utente ha inserito per errore i tuoi dati. Solitamente queste comunicazioni servono per confermare operazioni o recuperare l'account. Troverai comunque il motivo specifico spiegato chiaramente all'interno del messaggio ricevuto."
+            "answer": "Per controllare le tue donazioni devi aver eseguito l'accesso e spostarti nella tua area personale (Tasto \"Profilo\" in alto a destra). Fatto questo vedrai la pagina del tuo profilo nella quale ti basterà cliccare su \"Donazioni\" per visualizzare lo storico delle tue donazioni."
         },
+        {
+            "intent": "storico_prenotazioni",
+            "questions": [
+                "Come faccio a controllare quali beni ho prenotato?",
+                "Dove vedo le prenotazioni dei beni?",
+                "Come controllo le prenotazioni fatte?",
+                "Posso vedere cosa ho prenotato?",
+                "Elenco delle mie prenotazioni, dove si trova?",
+                "Voglio sapere quali beni ho prenotato.",
+                "Come visualizzo le prenotazioni attive?",
+                "Dove trovo le mie prenotazioni?",
+                "Come verifico i beni prenotati?",
+                "Prenotazioni a mio nome, dove le vedo?",
+                "Come controllo i pacchi che ho prenotato?"
+            ],
+            "answer": "Per verificare quali beni hai prenotato è necessario che tu abbia eseguito l'accesso al nostro sito, dopodiché ti basterà andare nella tua area personale (Tasto \"Profilo\" in alto a destra) e poi nella pagina del tuo profilo cliccando su \"Prenotazioni\" visualizzerai tutte le prenotazioni a tuo nome."
+        },
+
+        # =========================
+        # Fallback (fuori dominio)
+        # =========================
         {
             "intent": "fallback",
             "questions": [
