@@ -27,7 +27,7 @@ def prenotazione():
         beneficiario = AccountBeneficiario.query.filter_by(email=user_email).first()
         checker = PrenotazioneChecker(beneficiario)
 
-    
+
         mail_sender = EmailControlBridge()
 
         #Check per le prenotazione
@@ -56,15 +56,10 @@ def prenotazione():
                 )
                 db.session.add(prenotazione)
                 pane.quantita -= 1
-                pane.save()
                 pasta.quantita -= 1
-                pasta.save()
                 carne.quantita -= 1
-                carne.save()
                 acqua.quantita -= 1
-                acqua.save()
                 pesce.quantita -= 1
-                pesce.save()
                 db.session.commit()
 
                 email_ok1 = mail_sender.send_prenotazione_beneficiario(
@@ -129,3 +124,44 @@ def prenotazione():
             return jsonify({"message": "Prenotazione effetuata"}), 200
         return jsonify({"error": "Prenotazione effetuata ma email non inviata"}), 400
 
+
+@auth_bp.route("/conferma_prenotazione", methods=["GET"])
+def conferma_prenotazione():
+    id = request.args.get("id_prenotazione")
+    prenotazione = Prenotazione.query.filter_by(id=id).first()
+    prenotazione.stato = "Completata"
+    db.session.commit()
+    return jsonify({"message": "Prenotazione ritirata"}), 200
+
+@auth_bp.route("/cancella_prenotazione", methods=["POST"])
+@require_roles("ente_erogatore")
+def cancella_prenotazione():
+    id = request.form.get("id_prenotazione")
+    prenotazione = Prenotazione.query.filter_by(id=id).first()
+
+    if prenotazione.stato == "Completata":
+        return jsonify({"error": "Impossibile cancellare prenotazione già ritirata"}), 400
+
+    if prenotazione.pacco_id is not None:
+        pacco = PaccoAlimentare.query.filter_by(id=prenotazione.pacco_id).first()
+        pasta = PaccoAlimentare.query.filter_by(id=pacco.pasta).first()
+        pane = PaccoAlimentare.query.filter_by(id=pacco.pane).first()
+        acqua = PaccoAlimentare.query.filter_by(id=pacco.acqua).first()
+        carne = PaccoAlimentare.query.filter_by(id=pacco.carne).first()
+        pesce = PaccoAlimentare.query.filter_by(id=pacco.pesce).first()
+        verdura = PaccoAlimentare.query.filter_by(id=pacco.verdura).first()
+        pasta.quantita += 1
+        pane.quantita += 1
+        acqua.quantita += 1
+        carne.quantita += 1
+        pesce.quantita += 1
+        verdura.quantita += 1
+        db.session.delete(prenotazione)
+        db.session.commit()
+        return jsonify({"message": "Prenotazione cancellata"}), 200
+
+    bene = Bene.query.filter_by(id=prenotazione.bene_id).first()
+    bene.quantita += 1
+    db.session.delete(prenotazione)
+    db.session.commit()
+    return jsonify({"message": "Prenotazione cancellata"}), 200
