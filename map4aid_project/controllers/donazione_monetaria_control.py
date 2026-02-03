@@ -2,7 +2,7 @@ from datetime import timezone, datetime
 
 from flask import request, session
 from controllers.routes import auth_bp
-from controllers.service_email.email_control_bridge import EmailControlAdapter
+from controllers.service_email.email_control_bridge import EmailControlBridge
 from models import AccountEnteErogatore
 from controllers.permessi import require_roles
 from config import db
@@ -21,7 +21,7 @@ def donazione_monetaria():
     scadenza_str = request.form.get("scadenza")
     scadenza = datetime.strptime(scadenza_str, "%Y-%m-%d").date()
     cvv = request.form.get("cvv")
-    mail_sender = EmailControlAdapter()
+    mail_sender = EmailControlBridge()
 
     importo = 0
     try:

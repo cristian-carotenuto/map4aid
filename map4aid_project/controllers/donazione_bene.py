@@ -3,7 +3,7 @@ from datetime import timezone, datetime
 from geopy.geocoders import Nominatim
 from flask import request, session
 from controllers.routes import auth_bp
-from controllers.service_email.email_control_bridge import EmailControlAdapter
+from controllers.service_email.email_control_bridge import EmailControlBridge
 from models import AccountEnteErogatore
 from controllers.service_email.EmailControl import EmailControl
 from controllers.permessi import require_roles
@@ -15,7 +15,7 @@ from models.models import AccountDonatore, PuntoDistribuzione, BeneAlimentare, S
 @auth_bp.route("/donazioneBene", methods=["POST"])
 @require_roles("donatore")
 def donazioneBene():
-    mail_sender = EmailControlAdapter()
+    mail_sender = EmailControlBridge()
     geolocator = Nominatim(user_agent="map4aid_project")#per convertire latitudine e longitudine in indirizzo
     email_donatore = session.get("user_email")
     nome = request.form.get("nome")

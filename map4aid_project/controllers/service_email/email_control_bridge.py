@@ -71,3 +71,41 @@ class EmailControlBridge(MailSender):
             email_ente,
             bene
         )
+
+    def send_prenotazione_beneficiario(
+            self,
+            email_ente,
+            email_beneficiario,
+            indirizzo,
+            lat,
+            lon,
+            prenotazione_id,
+            nome_bene=None
+    ) -> bool:
+        return self._email_control.invia_email_prenotazione_beneficiario(
+            email_ente,
+            email_beneficiario,
+            indirizzo,
+            lat,
+            lon,
+            prenotazione_id,
+            nome_bene
+        )
+
+    def send_prenotazione_ente(
+            self,
+            email_ente,
+            email_beneficiario,
+            indirizzo,
+            lat,
+            lon,
+            nome_bene=None
+    ) -> bool:
+        return self._email_control.invia_email_prenotazione_ente(
+            email_ente,
+            email_beneficiario,
+            indirizzo,
+            lat,
+            lon,
+            nome_bene
+        )

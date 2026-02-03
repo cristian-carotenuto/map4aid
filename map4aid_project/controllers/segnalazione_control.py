@@ -3,7 +3,7 @@ from flask import request
 from controllers.permessi import require_roles
 from controllers.routes import auth_bp
 from controllers.service_email.EmailControl import EmailControl
-from controllers.service_email.email_control_bridge import EmailControlAdapter
+from controllers.service_email.email_control_bridge import EmailControlBridge
 from models.models import AccountEnteErogatore
 
 @auth_bp.route("/segnalazione", methods=["POST"])
@@ -13,7 +13,7 @@ def segnalazione():
     lat = data["latitudine"]
     lon = data["longitudine"]
     indirizzo = data["indirizzo"]
-    mail_sender = EmailControlAdapter()
+    mail_sender = EmailControlBridge()
     resoconto = {
         "successo": True,
         "email_non_inviate": []

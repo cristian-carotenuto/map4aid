@@ -9,7 +9,7 @@ from models.models import Account
 from models.pendingAccounts import PendingAccount
 from controllers.routes import auth_bp
 from controllers.service_email.email_control_bridge import EmailControlBridge
-from controllers.auth_service.auth_facade import AuthFacade
+from controllers.auth_facade import AuthFacade
 
 @auth_bp.route("/login", methods=["POST"])
 def login():
