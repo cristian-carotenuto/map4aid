@@ -304,7 +304,6 @@ class Prenotazione(db.Model):
 
     data_prenotazione = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     stato = db.Column(db.String(50), nullable=False, default="in_attesa")
-    codice_qr = db.Column(db.String(36), unique=True, nullable=False, default=lambda: str(uuid.uuid4()))
 
     beneficiario = db.relationship("AccountBeneficiario", back_populates="prenotazioni")
     bene = db.relationship("Bene", back_populates="prenotazioni")

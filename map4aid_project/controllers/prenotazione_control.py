@@ -1,58 +1,131 @@
 from datetime import timezone, datetime
-from flask import request, session
+from flask import request, session, jsonify
+
+from controllers.prenotazione_checker import PrenotazioneChecker
 from controllers.routes import auth_bp
 from controllers.service_email.email_control_bridge import EmailControlBridge
 from models import AccountEnteErogatore
 from controllers.permessi import require_roles
 from config import db
 from models.models import AccountDonatore, DonazioneMonetaria, BeneAlimentare, Bene, PaccoAlimentare, \
-    PuntoDistribuzione, Prenotazione
+    PuntoDistribuzione, Prenotazione, AccountBeneficiario
+import threading
 
+prenotazione_lock = threading.Lock()
 
 @auth_bp.route("/prenotazione", methods=["POST"])
 @require_roles("beneficiario")
 def prenotazione():
-    id_punto_bisogno = request.form.get("id_punto_bisogno")
-    is_pacco = request.form.get("is_pacco")
-    id_bene = request.form.get("id_bene")
-    user_email = session["user_email"]
+    with prenotazione_lock:  # <-- solo un thread alla volta entra qui
+        id_punto_bisogno = request.form.get("id_punto_bisogno")
+        is_pacco = request.form.get("is_pacco")
+        user_email = session["user_email"]
 
-    punto_distribuzione = PuntoDistribuzione.query.filter_by(id=id_punto_bisogno).first()
-    id_ente = punto_distribuzione.ente_erogatore_id
-    ente = AccountEnteErogatore.query.filter_by(id=id_ente).first()
-    bene = Bene.query.filter_by(id=id_bene).first()
+        punto_distribuzione = PuntoDistribuzione.query.filter_by(id=id_punto_bisogno).first()
+        id_ente = punto_distribuzione.ente_erogatore_id
+        ente = AccountEnteErogatore.query.filter_by(id=id_ente).first()
+        beneficiario = AccountBeneficiario.query.filter_by(email=user_email).first()
+        checker = PrenotazioneChecker(beneficiario)
 
-    mail_sender = EmailControlBridge()
+    
+        mail_sender = EmailControlBridge()
 
-    #Check per le prenotazione
-    if is_pacco == "True":
-        if is_craftable(id_punto_bisogno):
-            pane = BeneAlimentare.query.filter_by(id_punto_bisogno=id_punto_bisogno,sottocategoria_id="pane").first()
-            pasta = BeneAlimentare.query.filter_by(id_punto_bisogno=id_punto_bisogno,sottocategoria_id="pasta").first()
-            carne = BeneAlimentare.query.filter_by(id_punto_bisogno=id_punto_bisogno,sottocategoria_id="carne").first()
-            acqua = BeneAlimentare.query.filter_by(id_punto_bisogno=id_punto_bisogno,sottocategoria_id="acqua").first()
-            pesce = BeneAlimentare.query.filter_by(id_punto_bisogno=id_punto_bisogno,sottocategoria_id="pesce").first()
-            verdura = BeneAlimentare.query.filter_by(id_punto_bisogno=id_punto_bisogno,sottocategoria_id="verdura").first()
-            pacco = PaccoAlimentare(pasta,pane,acqua,carne,pesce,verdura)
-            prenotazione = Prenotazione()
-            pane.quantita -= 1
-            pane.save()
-            pasta.quantita -= 1
-            pasta.save()
-            carne.quantita -= 1
-            carne.save()
-            acqua.quantita -= 1
-            acqua.save()
-            pesce.quantita -= 1
-            pesce.save()
-            db.session.add(pacco)
-            db.session.commit()
+        #Check per le prenotazione
+        if is_pacco == "True":
+            if is_craftable(id_punto_bisogno):
 
-            email_ok1 = mail_sender.send_prenotazione_beneficiario(
-                ente.email,
-                user_email,
-                punto_distribuzione.
-                indirizzo,
-                punto_distribuzione.latitude,
-                punto_distribuzione.longitude,
+                try:
+                    checker.check("pacco")
+                except Exception as e:
+                    return jsonify({"error": str(e)}), 200
+
+                pane = BeneAlimentare.query.filter_by(id_punto_bisogno=id_punto_bisogno,sottocategoria_id="pane").first()
+                pasta = BeneAlimentare.query.filter_by(id_punto_bisogno=id_punto_bisogno,sottocategoria_id="pasta").first()
+                carne = BeneAlimentare.query.filter_by(id_punto_bisogno=id_punto_bisogno,sottocategoria_id="carne").first()
+                acqua = BeneAlimentare.query.filter_by(id_punto_bisogno=id_punto_bisogno,sottocategoria_id="acqua").first()
+                pesce = BeneAlimentare.query.filter_by(id_punto_bisogno=id_punto_bisogno,sottocategoria_id="pesce").first()
+                verdura = BeneAlimentare.query.filter_by(id_punto_bisogno=id_punto_bisogno,sottocategoria_id="verdura").first()
+                pacco = PaccoAlimentare(pasta,pane,acqua,carne,pesce,verdura)
+                db.session.add(pacco)
+                db.session.commit()
+                prenotazione = Prenotazione(
+                    beneficiario_id = beneficiario.id,
+                    bene_id = None,
+                    punto_id = punto_distribuzione.id,
+                    pacco_id = pacco.id,
                 )
+                db.session.add(prenotazione)
+                pane.quantita -= 1
+                pane.save()
+                pasta.quantita -= 1
+                pasta.save()
+                carne.quantita -= 1
+                carne.save()
+                acqua.quantita -= 1
+                acqua.save()
+                pesce.quantita -= 1
+                pesce.save()
+                db.session.commit()
+
+                email_ok1 = mail_sender.send_prenotazione_beneficiario(
+                    ente.email,
+                    user_email,
+                    punto_distribuzione.
+                    indirizzo,
+                    punto_distribuzione.latitude,
+                    punto_distribuzione.longitude,
+                    prenotazione.id
+                    )
+                email_ok2 = mail_sender.send_prenotazione_ente(
+                    ente.email,
+                    user_email,
+                    punto_distribuzione.
+                    indirizzo,
+                    punto_distribuzione.latitude,
+                    prenotazione.id
+                )
+                if email_ok1 and email_ok2:
+                    return jsonify({"message": "Prenotazione effetuata"}), 200
+                return jsonify({"error": "Prenotazione effetuata ma email non inviata"}), 400
+
+            #Il pacco non è disponibile
+            return jsonify({"error": "Prenotazione non effetuata,beni non diponibili"}), 400
+
+        #L'utente ha prenotato un bene
+        id_bene = request.form.get("id_bene")
+        bene = Bene.query.filter_by(id=id_bene).first()
+        prenotazione = Prenotazione(
+            beneficiario_id=beneficiario.id,
+            bene_id=bene.id,
+            punto_id=punto_distribuzione.id,
+            pacco_id=None,
+        )
+        bene.quantita -= 1
+        bene.save()
+        db.session.add(prenotazione)
+        db.session.commit()
+
+        email_ok1 = mail_sender.send_prenotazione_beneficiario(
+            ente.email,
+            user_email,
+            punto_distribuzione.
+            indirizzo,
+            punto_distribuzione.latitude,
+            punto_distribuzione.longitude,
+            prenotazione.id,
+            bene.nome
+        )
+        email_ok2 = mail_sender.send_prenotazione_ente(
+            ente.email,
+            user_email,
+            punto_distribuzione.
+            indirizzo,
+            punto_distribuzione.latitude,
+            prenotazione.id,
+            bene.nome
+        )
+
+        if email_ok1 and email_ok2:
+            return jsonify({"message": "Prenotazione effetuata"}), 200
+        return jsonify({"error": "Prenotazione effetuata ma email non inviata"}), 400
+
