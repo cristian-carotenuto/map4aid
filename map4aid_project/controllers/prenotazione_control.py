@@ -8,7 +8,7 @@ from models import AccountEnteErogatore
 from controllers.permessi import require_roles
 from config import db
 from models.models import AccountDonatore, DonazioneMonetaria, BeneAlimentare, Bene, PaccoAlimentare, \
-    PuntoDistribuzione, Prenotazione, AccountBeneficiario
+    PuntoDistribuzione, Prenotazione, AccountBeneficiario, SottoCategoria
 import threading
 
 prenotazione_lock = threading.Lock()
@@ -167,3 +167,27 @@ def cancella_prenotazione():
         db.session.delete(prenotazione)
         db.session.commit()
         return jsonify({"message": "Prenotazione cancellata"}), 200
+    
+
+
+def is_craftable(id_punto_bisogno):
+    punto = PuntoDistribuzione.query.filter_by(id=id_punto_bisogno).first()
+    if not punto:
+        return False
+
+    SOTTOCATEGORIE_PACCO = ["Pasta", "Pane", "Acqua", "Carne", "Pesce", "Verdura"]
+
+    for nome_sottocateg in SOTTOCATEGORIE_PACCO:
+        sottocateg = SottoCategoria.query.filter_by(nome=nome_sottocateg).first()
+        if not sottocateg:
+            return False
+
+        bene = Bene.query.filter_by(
+            punto_distribuzione_id=id_punto_bisogno,
+            sottocategoria_id=sottocateg.id
+        ).first()
+
+        if not bene or bene.quantita < 1:
+            return False
+
+    return True
