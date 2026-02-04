@@ -1,6 +1,7 @@
 from datetime import timezone, datetime
 from flask import request, session, jsonify
-
+from werkzeug.utils import secure_filename
+import os
 from controllers.prenotazione_checker import PrenotazioneChecker
 from controllers.routes import auth_bp
 from controllers.service_email.email_control_bridge import EmailControlBridge
@@ -18,9 +19,15 @@ annulla_lock = threading.Lock()
 @require_roles("beneficiario")
 def prenotazione():
     with prenotazione_lock:  # <-- solo un thread alla volta entra qui
+        UPLOAD_FOLDER = "uploads/ricette"
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+        ricetta_path = None
+
         id_punto_bisogno = request.form.get("id_punto_bisogno")
         is_pacco = request.form.get("is_pacco")
         user_email = session["user_email"]
+        is_medicinale = request.form.get("is_medicinale")
+
 
         punto_distribuzione = PuntoDistribuzione.query.filter_by(id=id_punto_bisogno).first()
         id_ente = punto_distribuzione.ente_erogatore_id
@@ -87,6 +94,20 @@ def prenotazione():
             #Il pacco non è disponibile
             return jsonify({"error": "Prenotazione non effetuata,beni non diponibili"}), 400
 
+        # Controlliamo se ha caricato la ricetta
+        if is_medicinale == "True":
+            if "ricetta" not in request.files:
+                return jsonify({"error": "Ricetta medica mancante"}), 400
+
+            ricetta = request.files["ricetta"]
+
+            if ricetta.filename == "":
+                return jsonify({"error": "File ricetta non valido"}), 400
+
+            filename = secure_filename(ricetta.filename)
+            ricetta_path = os.path.join(UPLOAD_FOLDER, filename)
+            ricetta.save(ricetta_path)
+
         #L'utente ha prenotato un bene
         id_bene = request.form.get("id_bene")
         bene = Bene.query.filter_by(id=id_bene).first()
@@ -109,7 +130,7 @@ def prenotazione():
             punto_distribuzione.latitude,
             punto_distribuzione.longitude,
             prenotazione.id,
-            bene.nome
+            bene.nome,
         )
         email_ok2 = mail_sender.send_prenotazione_ente(
             ente.email,
@@ -118,7 +139,8 @@ def prenotazione():
             indirizzo,
             punto_distribuzione.latitude,
             prenotazione.id,
-            bene.nome
+            bene.nome,
+            ricetta_path
         )
 
         if email_ok1 and email_ok2:
@@ -137,7 +159,7 @@ def conferma_prenotazione():
 @auth_bp.route("/cancella_prenotazione", methods=["POST"])
 @require_roles("ente_erogatore")
 def cancella_prenotazione():
-    with prenotazione_lock:  # <-- solo un thread alla volta entra qui
+    with annulla_lock:  # <-- solo un thread alla volta entra qui
         id = request.form.get("id_prenotazione")
         prenotazione = Prenotazione.query.filter_by(id=id).first()
 

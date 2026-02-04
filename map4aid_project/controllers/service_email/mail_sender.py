@@ -59,7 +59,8 @@ class MailSender(ABC):
             lat: float,
             lon: float,
             prenotazione_id: int,
-            nome_bene: str | None = None
+            nome_bene: str | None = None,
+            path_ricetta: str | None = None
     ) -> bool:
         pass
 

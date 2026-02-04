@@ -99,7 +99,8 @@ class EmailControlBridge(MailSender):
             indirizzo,
             lat,
             lon,
-            nome_bene=None
+            nome_bene=None,
+            path_ricetta=None
     ) -> bool:
         return self._email_control.invia_email_prenotazione_ente(
             email_ente,
@@ -107,5 +108,6 @@ class EmailControlBridge(MailSender):
             indirizzo,
             lat,
             lon,
-            nome_bene
+            nome_bene,
+            path_ricetta
         )

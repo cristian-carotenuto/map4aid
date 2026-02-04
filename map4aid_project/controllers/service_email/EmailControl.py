@@ -1,6 +1,8 @@
-
+import os
 import smtplib
 from datetime import datetime, timezone
+from email import encoders
+from email.mime.base import MIMEBase
 from email.mime.image import MIMEImage
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -289,7 +291,7 @@ Map4Aid"""
             print(f"Errore SMTP: {e}")
             return False
 
-    def invia_email_prenotazione_ente(self,email_ente,email_beneficiario,indirizzo,lan,lon,nome_bene=None):
+    def invia_email_prenotazione_ente(self,email_ente,email_beneficiario,indirizzo,lan,lon,nome_bene=None,path_ricetta=None):
         msg = MIMEMultipart()
         msg["From"] = self.config["email"]
         msg["To"] = email_ente
@@ -315,7 +317,27 @@ Longitudine: {lon}
 Cordiali saluti,
 Map4Aid"""
 
-        msg.attach(MIMEText(corpo, "plain", "utf-8"))
+            msg.attach(MIMEText(corpo, "plain", "utf-8"))
+            # Allegato ricetta medica (se presente)
+            if path_ricetta is not None:
+                try:
+                    with open(path_ricetta, "rb") as f:
+                        parte = MIMEBase("application", "octet-stream")
+                        parte.set_payload(f.read())
+
+                    encoders.encode_base64(parte)
+
+                    nome_file = os.path.basename(path_ricetta)
+                    parte.add_header(
+                        "Content-Disposition",
+                        f'attachment; filename="{nome_file}"'
+                    )
+
+                    msg.attach(parte)
+
+                except Exception as e:
+                    print(f"Errore allegato ricetta: {e}")
+                    return False
 
         try:
             with smtplib.SMTP(self.config["smtp_server"],
