@@ -182,10 +182,7 @@ def is_craftable(id_punto_bisogno):
         if not sottocateg:
             return False
 
-        bene = Bene.query.filter_by(
-            punto_distribuzione_id=id_punto_bisogno,
-            sottocategoria_id=sottocateg.id
-        ).first()
+        bene = Bene.query.filter_by(punto_distribuzione_id=id_punto_bisogno, sottocategoria_id=sottocateg.id).first()
 
         if not bene or bene.quantita < 1:
             return False
