@@ -12,7 +12,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 class QwenClient:
     """Client per interagire con il modello QWEN."""
     
-    def __init__(self, model_name="Qwen/Qwen2.5-3B-Instruct"):
+    def __init__(self, model_name="Qwen/Qwen2.5-3B-Instruct", use_adapters=True):
         """
         Inizializza il client QWEN.
         """
@@ -37,8 +37,6 @@ class QwenClient:
     def load_model(self):
         """Carica il modello base e gli eventuali adapter del fine-tuning."""
         print(f">> Caricamento modello {self.model_name}...")
-        print(f">> Device: {self.device}")
-        
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         
         quantization_config = BitsAndBytesConfig(
@@ -79,7 +77,7 @@ class QwenClient:
         Genera una risposta gestendo la memoria e il contesto temporale.
         """
         if self.model is None:
-            raise RuntimeError("Modello non caricato. Chiama load_model() prima.")
+            raise RuntimeError("Modello non caricato.")
         
         # 1. Recupera info temporali aggiornate
         system_info = self._get_system_info()

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Prenota Bene - Map4Aid</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .qr-placeholder {
+      width: 200px;
+      height: 200px;
+      background-color: #f8f9fa;
+      border: 2px dashed #dee2e6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <!-- Header dinamico -->
+  <header class="header-bg text-white p-3 d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+      <img src="../imgs/logo.png" alt="Logo Map4Aid" width="60" height="60" class="me-3 rounded-circle">
+      <h1 class="h4 mb-0 ms-3">MAP4AID</h1>
+    </div>
+    <div class="d-flex gap-2" id="auth-buttons"></div>
+  </header>
+
+  <div class="container mt-4">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="mb-0">Prenota un bene</h4>
+          </div>
+          <div class="card-body">
+            <!-- step 1: slezione punto e bene -->
+            <div id="step1">
+              <div class="mb-3">
+                <label for="puntoDistribuzione" class="form-label">Punto di distribuzione</label>
+                <select id="puntoDistribuzione" class="form-select" required>
+                  <option value="">Seleziona un punto...</option>
+                  <option value="1">Centro Colosseo - Via del Colosseo, 1</option>
+                  <option value="2">Centro Termini - Piazza dei Cinquecento</option>
+                  <option value="3">Centro San Giovanni - Via Appia Nuova</option>
+                  <option value="4">Centro EUR - Viale Europa</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="beneDisponibile" class="form-label">Bene disponibile</label>
+                <select id="beneDisponibile" class="form-select" disabled>
+                  <option value="">Seleziona un punto prima</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="slotOrario" class="form-label">Slot orario disponibile</label>
+                <select id="slotOrario" class="form-select" disabled>
+                  <option value="">Seleziona un bene prima</option>
+                </select>
+              </div>
+
+              <button id="btnConfermaPrenotazione" class="btn btn-success w-100" disabled>
+                Conferma prenotazione
+              </button>
+            </div>
+
+            <!-- step 2: QR Code -->
+            <div id="step2" style="display:none;">
+              <div class="text-center mb-4">
+                <h5 class="text-success">Prenotazione confermata!</h5>
+                <p class="text-muted">Presenta questo QR code al punto di distribuzione.</p>
+              </div>
+              
+              <div class="qr-placeholder" id="qrContainer"></div>
+
+              <div class="mt-4">
+                <h6>Dettagli prenotazione</h6>
+                <ul class="list-group">
+                  <li class="list-group-item"><strong>Punto:</strong> <span id="dettaglioPunto"></span></li>
+                  <li class="list-group-item"><strong>Bene:</strong> <span id="dettaglioBene"></span></li>
+                  <li class="list-group-item"><strong>Slot:</strong> <span id="dettaglioSlot"></span></li>
+                  <li class="list-group-item"><strong>Codice prenotazione:</strong> <span id="codicePrenotazione"></span></li>
+                </ul>
+              </div>
+
+              <div class="d-grid gap-2 mt-3">
+                <button class="btn btn-outline-secondary" onclick="window.print()">
+                  Stampa QR Code
+                </button>
+                <button class="btn btn-primary" onclick="location.reload()">
+                  Nuova prenotazione
+                </button>
+              </div>
+            </div>
+
+            <div id="errorMessage" class="mt-3 text-danger" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white text-center py-3 mt-4">
+    <p>&copy; 2026 Map4Aid - Progetto Universitario</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // protezione: solo utenti loggati
+    if (!sessionStorage.getItem('isLoggedIn')) {
+      alert('Devi effettuare il login per prenotare un bene');
+      window.location.href = 'login.html';
+    }
+
+    // DATI SIMULATI PER I PUNTI DI DISTRIBUZIONE
+    // ( da aggiornare con chiamata a /api/punti-distribuzione ) per adesso mock per visualizzazione
+    const datiPunti = {
+      "1": { nome: "Centro Colosseo", indirizzo: "Via del Colosseo, 1", beni: { "pasta": ["10:00-11:00", "14:00-15:00"], "riso": ["11:00-12:00", "15:00-16:00"] } },
+      "2": { nome: "Centro Termini", indirizzo: "Piazza dei Cinquecento", beni: { "paracetamolo": ["09:00-10:00", "13:00-14:00"], "vitamine": ["10:00-11:00", "14:00-15:00"] } },
+      "3": { nome: "Centro San Giovanni", indirizzo: "Via Appia Nuova", beni: { "sapone": ["08:00-09:00", "12:00-13:00"], "shampoo": ["09:00-10:00", "13:00-14:00"] } },
+      "4": { nome: "Centro EUR", indirizzo: "Viale Europa", beni: { "maglie": ["10:00-11:00", "14:00-15:00"], "pantaloni": ["11:00-12:00", "15:00-16:00"] } }
+    };
+
+    // elementi DOM
+    const puntoSelect = document.getElementById('puntoDistribuzione');
+    const beneSelect = document.getElementById('beneDisponibile');
+    const slotSelect = document.getElementById('slotOrario');
+    const btnConferma = document.getElementById('btnConfermaPrenotazione');
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+
+    // leggi l'ID del punto dall'URL (es. ?id=1)
+    function impostaPuntoDaUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const puntoId = urlParams.get('id');
+      if (puntoId && datiPunti[puntoId]) {
+        puntoSelect.value = puntoId;
+        const punto = datiPunti[puntoId];
+        beneSelect.innerHTML = '<option value="">Seleziona un bene...</option>';
+        for (const [bene, slot] of Object.entries(punto.beni)) {
+          const option = document.createElement('option');
+          option.value = bene;
+          option.textContent = bene.charAt(0).toUpperCase() + bene.slice(1);
+          beneSelect.appendChild(option);
+        }
+        beneSelect.disabled = false;
+      }
+    }
+    impostaPuntoDaUrl();
+
+    // eventi per selezione dinamica
+    puntoSelect.addEventListener('change', () => {
+      const puntoId = puntoSelect.value;
+      beneSelect.innerHTML = '<option value="">Seleziona un bene...</option>';
+      slotSelect.innerHTML = '<option value="">Seleziona uno slot...</option>';
+      beneSelect.disabled = !puntoId;
+      slotSelect.disabled = true;
+      btnConferma.disabled = true;
+
+      if (puntoId) {
+        const punto = datiPunti[puntoId];
+        for (const [bene, slot] of Object.entries(punto.beni)) {
+          const option = document.createElement('option');
+          option.value = bene;
+          option.textContent = bene.charAt(0).toUpperCase() + bene.slice(1);
+          beneSelect.appendChild(option);
+        }
+      }
+    });
+
+    beneSelect.addEventListener('change', () => {
+      const puntoId = puntoSelect.value;
+      const bene = beneSelect.value;
+      slotSelect.innerHTML = '<option value="">Seleziona uno slot...</option>';
+      slotSelect.disabled = !(puntoId && bene);
+      btnConferma.disabled = true;
+
+      if (puntoId && bene) {
+        const slotList = datiPunti[puntoId].beni[bene];
+        slotList.forEach(slot => {
+          const option = document.createElement('option');
+          option.value = slot;
+          option.textContent = slot;
+          slotSelect.appendChild(option);
+        });
+      }
+    });
+
+    slotSelect.addEventListener('change', () => {
+      btnConferma.disabled = !(puntoSelect.value && beneSelect.value && slotSelect.value);
+    });
+
+    // conferma prenotazione
+    btnConferma.addEventListener('click', () => {
+      const puntoId = puntoSelect.value;
+      const bene = beneSelect.value;
+      const slot = slotSelect.value;
+
+      if (!puntoId || !bene || !slot) {
+        showError('errorMessage', 'Compila tutti i campi');
+        return;
+      }
+
+      generaQRCode(puntoId, bene, slot);
+    });
+
+    // funzione per generare QR code simulato ( per adesso )
+    function generaQRCode(puntoId, bene, slot) {
+      step1.style.display = 'none';
+      step2.style.display = 'block';
+
+      const punto = datiPunti[puntoId];
+      document.getElementById('dettaglioPunto').textContent = `${punto.nome} - ${punto.indirizzo}`;
+      document.getElementById('dettaglioBene').textContent = bene.charAt(0).toUpperCase() + bene.slice(1);
+      document.getElementById('dettaglioSlot').textContent = slot;
+
+      const codice = 'MAP' + Date.now().toString(36).toUpperCase();
+      document.getElementById('codicePrenotazione').textContent = codice;
+
+      // simula QR code (da  sostituire con base64 da /prenota ( se verra sviluppat) )
+      document.getElementById('qrContainer').innerHTML = `
+        <div class="text-center">
+          <div class="fw-bold mb-2">${codice}</div>
+          <div class="small text-muted">QR Code simulato</div>
+        </div>
+      `;
+    }
+  </script>
+  <script src="../js/auth.js"></script>
+</body>
+</html>
