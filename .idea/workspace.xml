@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="55397952-be6e-4a64-8a4f-522745ebe921" name="Changes" comment="" />
+    <list default="true" id="55397952-be6e-4a64-8a4f-522745ebe921" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/prenotazione_control.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/prenotazione_control.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/service_email/EmailControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/service_email/EmailControl.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/service_email/email_control_bridge.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/service_email/email_control_bridge.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/service_email/mail_sender.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/service_email/mail_sender.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -14,9 +20,32 @@
       </list>
     </option>
   </component>
+  <component name="FlaskConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform)); sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo, NoAppException&#10;for module in [&quot;main.py&quot;, &quot;wsgi.py&quot;, &quot;app.py&quot;]:&#10;    try: locals().update(ScriptInfo(app_import_path=module, create_app=None).load_app().make_shell_context()); print(&quot;\nFlask App: %s&quot; % app.import_name); break&#10;    except NoAppException: pass">
+    <envs>
+      <env key="FLASK_APP" value="app" />
+    </envs>
+    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform)); sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo, NoAppException&#10;for module in [&quot;main.py&quot;, &quot;wsgi.py&quot;, &quot;app.py&quot;]:&#10;    try: locals().update(ScriptInfo(app_import_path=module, create_app=None).load_app().make_shell_context()); print(&quot;\nFlask App: %s&quot; % app.import_name); break&#10;    except NoAppException: pass" />
+    <option name="myEnvs">
+      <map>
+        <entry key="FLASK_APP" value="app" />
+      </map>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;girgio&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/cristian-carotenuto/map4aid.git&quot;,
+    &quot;accountId&quot;: &quot;ac26df4b-dbc5-47f8-91a4-7e31c3885a9b&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -27,23 +56,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "ai.playground.ignore.import.keys.banner.in.settings": "true",
-    "git-widget-placeholder": "Autenticazione",
-    "ignore.virus.scanning.warn.message": "true",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;ai.playground.ignore.import.keys.banner.in.settings&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;controller&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Giovanni/Documents/GitHub/progetto-is/map4aid_project/controllers&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\map4aid_project\controllers" />
+      <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\map4aid_project" />
+      <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\map4aid_project\models" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\map4aid_project\controllers" />
+      <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\map4aid_project\controllers\auth_service" />
+      <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\map4aid_project\controllers\service_email" />
+      <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\map4aid_project" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-PY-253.29346.142" />
         <option value="bundled-python-sdk-f2b7a9f6281b-6e1f45a539f7-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.29346.142" />
       </set>
     </attachedChunks>
@@ -57,10 +102,36 @@
       <updated>1768392214348</updated>
       <workItem from="1768392215557" duration="762000" />
       <workItem from="1768403983401" duration="1338000" />
+      <workItem from="1769186513179" duration="772000" />
+      <workItem from="1769187309856" duration="1206000" />
+      <workItem from="1769188544451" duration="745000" />
+      <workItem from="1769189316896" duration="11798000" />
+      <workItem from="1769251543017" duration="9057000" />
+      <workItem from="1769262208012" duration="1647000" />
+      <workItem from="1769264557209" duration="110000" />
+      <workItem from="1769264717549" duration="344000" />
+      <workItem from="1769265864920" duration="5828000" />
+      <workItem from="1769298198366" duration="1578000" />
+      <workItem from="1769332953455" duration="54000" />
+      <workItem from="1769342328244" duration="3443000" />
+      <workItem from="1769351621565" duration="5072000" />
+      <workItem from="1769385432852" duration="4086000" />
+      <workItem from="1769426941686" duration="2079000" />
+      <workItem from="1769447523955" duration="13740000" />
+      <workItem from="1769511089401" duration="657000" />
+      <workItem from="1769512141790" duration="5121000" />
+      <workItem from="1769541614008" duration="983000" />
+      <workItem from="1769598313622" duration="9772000" />
+      <workItem from="1769679702917" duration="8782000" />
+      <workItem from="1769778445605" duration="4769000" />
+      <workItem from="1769858239139" duration="5599000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/progetto_is$test.coverage" NAME="test Coverage Results" MODIFIED="1769515357915" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/map4aid_project" />
   </component>
 </project>
