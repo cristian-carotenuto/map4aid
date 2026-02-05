@@ -1,60 +1,27 @@
+import os
 import secrets
 from datetime import datetime
-
+from werkzeug.security import generate_password_hash
+from werkzeug.utils import secure_filename
 from flask import session
-
+from werkzeug.security import generate_password_hash
 from models import Account
 from models.pendingAccounts import PendingAccount
 from config import db
 
-class AuthFacade:
+UPLOAD_FOLDER = "controllers/upload/documenti"
 
-    def __init__(self, mail_sender):
-        self.mail_sender = mail_sender
 
-    def register_pending_account(self, form_data):
-        ruolo = form_data.get("ruolo")
-        email = form_data.get("email")
-        email = email.lower().strip()
-        password = form_data.get("password")
-
-        if not ruolo or not email or not password:
-            raise ValueError("Campi obbligatori mancanti")
-
-        if PendingAccount.query.filter_by(email=email).first():
-            raise ValueError("Email già registrata")
-
-        extra_data = self._build_extra_data(ruolo, form_data)
-
-        codice = secrets.randbelow(9000) + 1000
-
-        pending = PendingAccount(
-            email=email,
-            tipo=ruolo,
-            extra_data=extra_data,
-            token=codice
-        )
-        pending.set_password(password)
-
-        PendingAccount.query.filter_by(email=email).delete(synchronize_session=False)
-        db.session.add(pending)
-        db.session.commit()
-        db.session.add(pending)
-        db.session.commit()
-        session["pending_email"] = email
-
-        if not self.mail_sender.send_otp(email, codice):
-            raise RuntimeError("Email non inviata")
-
-        return True
-
-    def _build_extra_data(self, ruolo, data):
+def _build_extra_data(ruolo, data, path_documento):
         if ruolo == "beneficiario":
             return {
                 "nome": data.get("nome"),
                 "cognome": data.get("cognome"),
                 "data_nascita": data.get("data_nascita"),
-                "patologie": data.get("patologie")
+                "allergeni": data.get("allergeni"),
+                "patologie": data.get("patologie"),
+                "codice_carta_identita": data.get("codice_carta_identita"),
+                "path_immagine_carta_identita": path_documento
             }
 
         elif ruolo == "donatore":
@@ -79,6 +46,74 @@ class AuthFacade:
             raise ValueError("Ruolo non valido")
 
 
+class AuthFacade:
+
+    def __init__(self, mail_sender):
+        self.mail_sender = mail_sender
+
+    def register_pending_account(self, form_data, files):
+        ruolo = form_data.get("ruolo")
+        email = form_data.get("email")
+        password = form_data.get("password")
+
+        if not ruolo or not email or not password:
+            raise ValueError("Campi obbligatori mancanti")
+
+        email = email.lower().strip()
+
+        if PendingAccount.query.filter_by(email=email).first():
+            raise ValueError("Email già registrata")
+
+        # -------------------------
+        # Gestione upload documento
+        # -------------------------
+        file_ci = files.get("carta_identita")
+        if not file_ci:
+            raise ValueError("Carta d'identità obbligatoria")
+
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+        filename = secure_filename(file_ci.filename)
+        unique_name = f"{secrets.token_hex(8)}_{filename}"
+        file_path = os.path.join(UPLOAD_FOLDER, unique_name)
+
+        file_ci.save(file_path)
+
+        # -------------------------
+        # Extra data per ruolo
+        # -------------------------
+        extra_data = _build_extra_data(
+            ruolo,
+            form_data,
+            file_path
+        )
+
+        # -------------------------
+        # OTP
+        # -------------------------
+        codice = secrets.randbelow(9000) + 1000
+
+        pending = PendingAccount(
+            email=email,
+            tipo=ruolo,
+            extra_data=extra_data,
+            token=generate_password_hash(str(codice))
+        )
+        pending.set_password(password)
+
+        PendingAccount.query.filter_by(email=email).delete(
+            synchronize_session=False
+        )
+
+        db.session.add(pending)
+        db.session.commit()
+
+        session["pending_email"] = email
+
+        if not self.mail_sender.send_otp(email, codice):
+            raise RuntimeError("Email non inviata")
+
+        return True
 
     def login_with_otp(self, email, password):
         email = email.lower().strip()
@@ -90,10 +125,9 @@ class AuthFacade:
             raise ValueError("Credenziali non valide")
 
         codice = secrets.randbelow(9000) + 1000
-
         pending = PendingAccount(
             email=email,
-            token=codice,
+            token=generate_password_hash(str(codice)),
         )
 
         PendingAccount.query.filter_by(email=email).delete(synchronize_session=False)
@@ -105,5 +139,22 @@ class AuthFacade:
 
         if not self.mail_sender.send_otp(email, codice):
             raise RuntimeError("Email non inviata")
+
+        return True
+    
+    def validate_email(self, email, current_user=None):
+        email = email.lower().strip()
+
+        #se email coincide ok
+        if current_user and email == current_user.email:
+            return True
+
+        #controllo su account
+        if Account.query.filter_by(email=email).first():
+            raise ValueError("Email già in uso")
+
+        #controllo su pending
+        if PendingAccount.query.filter_by(email=email).first():
+            raise ValueError("Email già in uso (in attesa di conferma)")
 
         return True

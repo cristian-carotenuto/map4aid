@@ -44,7 +44,9 @@ class AccountBeneficiario(Account):
     data_nascita = db.Column(db.Date, nullable=True)
     allergeni = db.Column(db.Text, nullable=True)
     patologie = db.Column(db.Text, nullable=True)
-
+    codice_carta_identita = db.Column( db.String(50),unique=True,nullable=False)
+    path_immagine_carta_identita = db.Column(db.String(255),nullable=False)
+    accettato = db.Column(db.Boolean, nullable=False, default=False)
     __mapper_args__ = {
         "polymorphic_identity": "beneficiario"
     }
@@ -296,17 +298,17 @@ class Prenotazione(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     beneficiario_id = db.Column(db.Integer, db.ForeignKey("account_beneficiari.id"), nullable=False)
-    bene_id = db.Column(db.Integer, db.ForeignKey("beni.id"), nullable=False)
+    bene_id = db.Column(db.Integer, db.ForeignKey("beni.id"), nullable=True)
     punto_id = db.Column(db.Integer, db.ForeignKey("punti_distribuzione.id"), nullable=False)       #nel RAD non c'è
+    pacco_id = db.Column(db.Integer, db.ForeignKey("pacchi_alimentari.id"), nullable=True)
 
     data_prenotazione = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     stato = db.Column(db.String(50), nullable=False, default="in_attesa")
-    codice_qr = db.Column(db.String(36), unique=True, nullable=False, default=lambda: str(uuid.uuid4()))
 
     beneficiario = db.relationship("AccountBeneficiario", back_populates="prenotazioni")
     bene = db.relationship("Bene", back_populates="prenotazioni")
     punto = db.relationship("PuntoDistribuzione", back_populates="prenotazioni")
-
+    pacco = db.relationship("PaccoAlimentare")
 
 
 #FEEDBACK
@@ -326,3 +328,21 @@ class Feedback(db.Model):
 
 
 
+
+
+#PACCO ALIMENTARE
+
+class PaccoAlimentare(db.Model):
+    __tablename__= "pacchi_alimentari"
+
+    id= db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(120), nullable=False)
+
+    pasta=db.Column(db.Integer, nullable=False)
+    pane= db.Column(db.Integer, nullable=False)
+    acqua= db.Column(db.Integer, nullable=False)
+    carne=db.Column(db.Integer, nullable=False)
+    pesce=db.Column(db.Integer, nullable=False)
+    verdura=db.Column(db.Integer, nullable=False)
+
+    

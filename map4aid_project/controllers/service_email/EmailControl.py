@@ -1,6 +1,13 @@
+
 import smtplib
+from datetime import datetime, timezone
+from email.mime.image import MIMEImage
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from io import BytesIO
+
+import qrcode
+from flask import request
 
 
 class EmailControl:
@@ -62,6 +69,10 @@ Map4Aid
 Per favore inserire il seguente codice per confermare l'emaill:
 {codice}
 Il codice scadrà dopo 10 minuti
+<<<<<<< HEAD
+=======
+Se hai ricevuto questa email senza aver provato a registrarti probabilmente un utente ha inseirito la tua mail per sbaglio
+>>>>>>> controller
         
 Cordiali saluti,
 Map4Aid"""
@@ -203,6 +214,106 @@ Si aspetti un'email o contatti direttamente {email_donatore}.
 Cordiali saluti,
 Map4Aid
 """
+
+        msg.attach(MIMEText(corpo, "plain", "utf-8"))
+
+        try:
+            with smtplib.SMTP(self.config["smtp_server"],
+                              self.config["smtp_port"]) as server:
+                server.starttls()
+                server.login(
+                    self.config["email"],
+                    self.config["password"]
+                )
+                server.send_message(msg)
+            return True
+
+        except Exception as e:
+            print(f"Errore SMTP: {e}")
+            return False
+
+    def invia_email_prenotazione_beneficiario(self,email_ente,email_beneficiario,indirizzo,lan,lon,prenotazione_id,nome_bene=None):
+        msg = MIMEMultipart()
+        msg["From"] = self.config["email"]
+        msg["To"] = email_beneficiario
+        msg["Subject"] = "Email per conferma prenotazione"
+
+        #Creazione qrCode
+        buffer = BytesIO()
+        url = f"""{request.url_root}auth/conferma_prenotazione?prenotazione_id={prenotazione_id}"""
+        qr = qrcode.make(url)
+        qr.save(buffer, format="PNG")
+        buffer.seek(0)
+
+        if nome_bene == None:
+            corpo = f"""
+E' stata confermata una prenotazione per un pacco alimentare presso il seguente punto di bisogno posseduto da {email_ente} in data {datetime.now(timezone.utc)}.
+L'indirizzo è {indirizzo}
+Latitudine: {lan}
+Longitudine: {lon}
+La preghiamo di ritirare il pacco il prima possibile
+
+Cordiali saluti,
+Map4Aid
+"""
+        else:
+            corpo = f"""
+E' stata confermata una prenotazione per il seguente bene:{nome_bene} presso il seguente punto di bisogno posseduto da {email_ente} in data {datetime.now(timezone.utc)}.
+L'indirizzo è {indirizzo}
+Latitudine: {lan}
+Longitudine: {lon}
+La preghiamo di ritirare il bene il prima possibile
+
+Mostrare il qrCode al punto di bisogno per confermare la prenotazione
+
+Cordiali saluti,
+Map4Aid"""
+
+        msg.attach(MIMEText(corpo, "plain", "utf-8"))
+        img = MIMEImage(buffer.read())
+        img.add_header("Content-ID", "<qrcode>")
+        msg.attach(img)
+
+        try:
+            with smtplib.SMTP(self.config["smtp_server"],
+                              self.config["smtp_port"]) as server:
+                server.starttls()
+                server.login(
+                    self.config["email"],
+                    self.config["password"]
+                )
+                server.send_message(msg)
+            return True
+
+        except Exception as e:
+            print(f"Errore SMTP: {e}")
+            return False
+
+    def invia_email_prenotazione_ente(self,email_ente,email_beneficiario,indirizzo,lan,lon,nome_bene=None):
+        msg = MIMEMultipart()
+        msg["From"] = self.config["email"]
+        msg["To"] = email_ente
+        msg["Subject"] = "Email per conferma prenotazione"
+
+        if nome_bene == None:
+            corpo = f"""
+E' stata confermata una prenotazione per un pacco alimentare presso il seguente punto di bisogno in vostro posseso da parte di {email_beneficiario} in data {datetime.now(timezone.utc)}.
+L'indirizzo è {indirizzo}
+Latitudine: {lan}
+Longitudine: {lon}
+
+Cordiali saluti,
+Map4Aid
+"""
+        else:
+            corpo = f"""
+E' stata confermata una prenotazione per il seguente bene:{nome_bene} presso il seguente punto di bisogno in vostro posseso da parte di {email_beneficiario} in data {datetime.now(timezone.utc)}.
+L'indirizzo è {indirizzo}
+Latitudine: {lan}
+Longitudine: {lon}
+
+Cordiali saluti,
+Map4Aid"""
 
         msg.attach(MIMEText(corpo, "plain", "utf-8"))
 

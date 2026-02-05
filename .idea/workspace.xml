@@ -3,11 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="55397952-be6e-4a64-8a4f-522745ebe921" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/donazione_bene.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/donazione_bene.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/donazione_monetaria_control.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/donazione_monetaria_control.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/segnalazione_control.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/segnalazione_control.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/service_email/email_control_adapter.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/service_email/email_control_adapter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/service_email/mail_sender.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/service_email/mail_sender.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/prenotazione_control.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/prenotazione_control.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,6 +77,8 @@
       <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\map4aid_project\models" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\map4aid_project\controllers" />
+      <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\map4aid_project\controllers\auth_service" />
       <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\map4aid_project\controllers\service_email" />
       <recent name="C:\Users\Giovanni\Documents\GitHub\progetto-is\map4aid_project" />
     </key>
@@ -88,7 +86,6 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-PY-253.29346.142" />
         <option value="bundled-python-sdk-f2b7a9f6281b-6e1f45a539f7-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.29346.142" />
       </set>
     </attachedChunks>
@@ -121,7 +118,10 @@
       <workItem from="1769511089401" duration="657000" />
       <workItem from="1769512141790" duration="5121000" />
       <workItem from="1769541614008" duration="983000" />
-      <workItem from="1769598313622" duration="6605000" />
+      <workItem from="1769598313622" duration="9772000" />
+      <workItem from="1769679702917" duration="8782000" />
+      <workItem from="1769778445605" duration="4769000" />
+      <workItem from="1769858239139" duration="5599000" />
     </task>
     <servers />
   </component>

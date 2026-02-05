@@ -49,3 +49,28 @@ class MailSender(ABC):
             bene
     ) -> bool:
         pass
+
+    @abstractmethod
+    def send_prenotazione_beneficiario(
+            self,
+            email_ente: str,
+            email_beneficiario: str,
+            indirizzo: str,
+            lat: float,
+            lon: float,
+            prenotazione_id: int,
+            nome_bene: str | None = None
+    ) -> bool:
+        pass
+
+    @abstractmethod
+    def send_prenotazione_ente(
+            self,
+            email_ente: str,
+            email_beneficiario: str,
+            indirizzo: str,
+            lat: float,
+            lon: float,
+            nome_bene: str | None = None
+    ) -> bool:
+        pass
