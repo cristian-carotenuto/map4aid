@@ -1,0 +1,13 @@
+--- Python ---
+pycache/
+*.pyc
+*.pyo
+.pyd
+
+--- Virtual environment ---
+map4aid_project/venv/
+map4aid_project/env/
+
+--- Flask instance & DB ---
+map4aid_project/instance/
+map4aid_project/.db

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Profilo - Map4Aid</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <!-- Header dinamico -->
+  <header class="header-bg text-white p-3 d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+      <img src="../imgs/logo.png" alt="Logo Map4Aid" width="60" height="60" class="me-3 rounded-circle">
+      <h1 class="h4 mb-0 ms-3">MAP4AID</h1>
+    </div>
+    <div class="d-flex gap-2" id="auth-buttons"></div>
+  </header>
+
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">Menu Profilo</h5>
+          </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item active">
+              <a href="profilo.html" class="text-decoration-none text-dark d-block">Dati Personali</a>
+            </li>
+            <li class="list-group-item">
+              <a href="storico-prenotazioni.html" class="text-decoration-none text-dark d-block">Prenotazioni</a>
+            </li>
+            <li class="list-group-item">
+              <a href="storico-donazioni.html" class="text-decoration-none text-dark d-block">Donazioni</a>
+            </li>
+            <li class="list-group-item">
+              <a href="#" class="text-decoration-none text-dark d-block">Impostazioni</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-md-9">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="mb-0">Il mio profilo</h4>
+          </div>
+          <div class="card-body">
+            <!-- 
+              DATI ANAGRAFICI
+              il backend nonrestituisce il ruolo dopo il login (solo email)
+              "Ruolo" è mostrato come mock per demo, ma non è reale ( non possibile utilizzarlo per adesso )
+            -->
+            <div class="mb-4">
+              <h5>Dati personali</h5>
+              <table class="table table-borderless">
+                <tr>
+                  <td><strong>Email:</strong></td>
+                  <td id="userEmail">caricamento...</td>
+                </tr>
+                <tr>
+                  <td><strong>Nome:</strong></td>
+                  <td id="userName">Mario</td>
+                </tr>
+                <tr>
+                  <td><strong>Cognome:</strong></td>
+                  <td id="userSurname">Rossi</td>
+                </tr>
+                <tr>
+                  <td><strong>Ruolo:</strong></td>
+                  <td id="userRole">Beneficiario <span class="badge bg-warning">Simulato</span></td>
+                </tr>
+              </table>
+            </div>
+
+            <!-- prenotazioni attive (mock) -->
+            <div class="mb-4">
+              <h5>Prenotazioni attive</h5>
+              <div id="prenotazioniAttive"></div>
+            </div>
+
+            <!-- storico donazioni (mock) -->
+            <div>
+              <h5>Storico donazioni</h5>
+              <div id="storicoDonazioni"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white text-center py-3 mt-4">
+    <p>&copy; 2026 Map4Aid - Progetto Universitario</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // protezione: solo utenti loggati
+    if (!sessionStorage.getItem('isLoggedIn')) {
+      alert('Accesso riservato agli utenti registrati');
+      window.location.href = 'login.html';
+    }
+
+    /**
+     * carica dati profilo (mock per demo)
+     * da sostituire ( se sara possibile ) con chiamata a /api/profilo
+     */
+    function caricaDatiProfilo() {
+      const email = sessionStorage.getItem('userEmail') || 'utente@example.com';
+      document.getElementById('userEmail').textContent = email;
+
+      // dati simulati per demo
+      document.getElementById('userName').textContent = 'Mario';
+      document.getElementById('userSurname').textContent = 'Rossi';
+
+      // simulazione prenotazioni
+      const prenotazioniHTML = `
+        <div class="card mb-2">
+          <div class="card-body">
+            <h6 class="card-title">Prenotazione #123</h6>
+            <p class="card-text">
+              <strong>Bene:</strong> Pasta<br>
+              <strong>Punto:</strong> Centro Colosseo<br>
+              <strong>Data/ora:</strong> 25/01/2026 10:00-11:00<br>
+              <span class="badge bg-success">Confermata</span>
+            </p>
+          </div>
+        </div>
+        <div class="card mb-2">
+          <div class="card-body">
+            <h6 class="card-title">Prenotazione #124</h6>
+            <p class="card-text">
+              <strong>Bene:</strong> Paracetamolo<br>
+              <strong>Punto:</strong> Centro Termini<br>
+              <strong>Data/ora:</strong> 26/01/2026 14:00-15:00<br>
+              <span class="badge bg-warning">In attesa</span>
+            </p>
+          </div>
+        </div>
+      `;
+      document.getElementById('prenotazioniAttive').innerHTML = prenotazioniHTML;
+
+      // simulazione donazioni
+      const donazioniHTML = `
+        <div class="card mb-2">
+          <div class="card-body">
+            <h6 class="card-title">Donazione del 20/01/2026</h6>
+            <p class="card-text">
+              <strong>Importo:</strong> € 50,00<br>
+              <strong>Ente:</strong> Caritas Roma<br>
+              <span class="badge bg-primary">Completata</span>
+            </p>
+          </div>
+        </div>
+      `;
+      document.getElementById('storicoDonazioni').innerHTML = donazioniHTML;
+    }
+
+    // inizializza la pagina
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof updateAuthButtons === 'function') {
+        updateAuthButtons();
+      }
+      caricaDatiProfilo();
+    });
+  </script>
+  <script src="../js/auth.js"></script>
+</body>
+</html>
