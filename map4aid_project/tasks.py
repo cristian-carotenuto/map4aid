@@ -24,13 +24,13 @@ def job(app):
         mail_sender = EmailControlBridge()
         for prenotazione in prenotazioni:
             differenza = (now - prenotazione.data).days
-            if differenza > 30:
+            if differenza >= 30:
                 beneficiario = Account.query.filter_by(id=prenotazione.beneficiario_id).first()
                 punto = PuntoDistribuzione.query.filter_by(id=prenotazione.punto_id).first()
                 ente = Account.query.filter_by(id=punto.ente_erogatore_id).first()
                 esito = cancella_prenotazione(prenotazione)
                 cancella_prenotazione(prenotazione)
-                mail_sender.send_cancellazione_prenotazione_ente(ente.email, beneficiario.email, prenotazione.data,
+                mail_sender.send_cancellazione_prenotazione_beneficiario(ente.email, beneficiario.email, prenotazione.data,
                                                                  punto.indirizzo)
 
 
