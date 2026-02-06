@@ -80,7 +80,8 @@ class EmailControlBridge(MailSender):
             lat,
             lon,
             prenotazione_id,
-            nome_bene=None
+            nome_bene=None,
+            path_ricetta=None
     ) -> bool:
         return self._email_control.invia_email_prenotazione_beneficiario(
             email_ente,
@@ -110,4 +111,32 @@ class EmailControlBridge(MailSender):
             lon,
             nome_bene,
             path_ricetta
+        )
+
+    def send_cancellazione_prenotazione_beneficiario(
+            self,
+            email_ente,
+            email_beneficiario,
+            data,
+            indirizzo
+    ) -> bool:
+        return self._email_control.invia_cancellazione_prenotazione_beneficiario(
+            email_ente,
+            email_beneficiario,
+            data,
+            indirizzo
+        )
+
+    def send_cancellazione_prenotazione_ente(
+            self,
+            email_ente,
+            email_beneficiario,
+            data,
+            indirizzo
+    ) -> bool:
+        return self._email_control.invia_cancellazione_prenotazione_ente(
+            email_ente,
+            email_beneficiario,
+            data,
+            indirizzo
         )
