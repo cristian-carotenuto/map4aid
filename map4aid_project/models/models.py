@@ -310,6 +310,8 @@ class Prenotazione(db.Model):
     punto = db.relationship("PuntoDistribuzione", back_populates="prenotazioni")
     pacco = db.relationship("PaccoAlimentare")
 
+    feedback = db.relationship("Feedback", back_populates="prenotazione", uselist=False)
+
 
 #FEEDBACK
 
@@ -319,14 +321,9 @@ class Feedback(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     recensione = db.Column(db.Text, nullable=True)
     valutazione = db.Column(db.Integer, nullable=False)
+    prenotazione_id = db.Column(db.Integer, db.ForeignKey("prenotazioni.id"), nullable=False, unique=True)
 
-    beneficiario_id = db.Column(db.Integer, db.ForeignKey("account_beneficiari.id"), nullable=False)
-    punto_id = db.Column(db.Integer, db.ForeignKey("punti_distribuzione.id"), nullable=False)
-
-    beneficiario = db.relationship("AccountBeneficiario", back_populates="feedback")
-    punto = db.relationship("PuntoDistribuzione", back_populates="feedback")
-
-
+    prenotazione = db.relationship("Prenotazione", back_populates="feedback")
 
 
 

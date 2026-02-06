@@ -226,6 +226,44 @@ def popola_db():
     db.session.add(pacco)
 
 
+
+    #prenotazioni
+    pren1 = Prenotazione(
+        beneficiario_id=ben1.id,
+        bene_id=beni[0].id,  # esempio: pasta
+        punto_id=punto1.id,
+        pacco_id=pacco.id,
+        stato="ritirata"
+    )
+
+    pren2 = Prenotazione(
+        beneficiario_id=ben2.id,
+        bene_id=beni[1].id,  # esempio: pane
+        punto_id=punto2.id,
+        pacco_id=pacco.id,
+        stato="ritirata"
+    )
+
+    db.session.add_all([pren1, pren2])
+    db.session.flush()
+
+    #feedback
+    fb1 = Feedback(
+        prenotazione_id=pren1.id,
+        valutazione=5,
+        recensione="Servizio impeccabile, personale gentilissimo."
+    )
+
+    fb2 = Feedback(
+        prenotazione_id=pren2.id,
+        valutazione=4,
+        recensione="Tutto ok, ma un po' di attesa."
+    )
+
+    db.session.add_all([fb1, fb2])
+
+
+
     db.session.commit()
     print(">> Database popolato con successo!")
 
