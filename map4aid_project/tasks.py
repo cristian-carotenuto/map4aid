@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timezone
 from apscheduler.schedulers.background import BackgroundScheduler
 from config import db
@@ -6,11 +7,12 @@ from controllers.service_email.email_control_bridge import EmailControlBridge
 from models.models import Prenotazione, Account, PuntoDistribuzione
 from models.pendingAccounts import PendingAccount
 
+
 # --- Job unico che fa tutto ---
 def job(app):
     with app.app_context():
-        now = datetime.now(timezone.utc)
-
+        now = datetime.now().replace(tzinfo=None)
+        print(now)
         # 1️⃣ Pulizia account scaduti
         expired_accounts = PendingAccount.query.filter(PendingAccount.expires_at < now).all()
         if expired_accounts:
@@ -23,14 +25,15 @@ def job(app):
         prenotazioni = Prenotazione.query.all()
         mail_sender = EmailControlBridge()
         for prenotazione in prenotazioni:
-            differenza = (now - prenotazione.data).days
+            data = prenotazione.data_prenotazione
+            differenza = (now - data).days
             if differenza >= 4 and prenotazione.stato == "in_attesa":
                 beneficiario = Account.query.filter_by(id=prenotazione.beneficiario_id).first()
                 punto = PuntoDistribuzione.query.filter_by(id=prenotazione.punto_id).first()
                 ente = Account.query.filter_by(id=punto.ente_erogatore_id).first()
                 esito = cancella_prenotazione(prenotazione)
                 cancella_prenotazione(prenotazione)
-                mail_sender.send_cancellazione_prenotazione_beneficiario(ente.email, beneficiario.email, prenotazione.data,
+                mail_sender.send_cancellazione_prenotazione_beneficiario(ente.email, beneficiario.email, prenotazione.data_prenotazione,
                                                                  punto.indirizzo)
 
 

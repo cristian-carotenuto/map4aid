@@ -19,8 +19,8 @@ class PendingAccount(db.Model):
 
     # dati specifici del tipo (beneficiario, ente, ecc.)
     extra_data = db.Column(db.JSON, nullable=True)
-    expires_at = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc) + timedelta(minutes=10))
-    created_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    expires_at = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now().replace(tzinfo = None) + timedelta(minutes=10))
+    created_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now().replace(tzinfo = None), nullable=False)
 
     # gestione password
     def set_password(self, password):

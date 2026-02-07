@@ -26,13 +26,17 @@ def conferma_codice_registrazione():
     user = None
     #----BENEFICIARIO-----
     if puser.tipo == "beneficiario":
+        data_nascita = datetime.strptime(puser.extra_data["data_nascita"], "%Y-%m-%d").date()
         user = AccountBeneficiario(
             email=email,
             password_hash = puser.password_hash,
             nome = puser.extra_data["nome"],
             cognome = puser.extra_data["cognome"],
-            data_nascita = puser.extra_data["data_nascita"],
-            patologie = puser.extra_data["patologie"]
+            data_nascita = data_nascita,
+            patologie = puser.extra_data["patologie"],
+            allergeni = puser.extra_data["allergeni"],
+            codice_carta_identita = puser.extra_data["codice_carta_identita"],
+            path_immagine_carta_identita = puser.extra_data["path_immagine_carta_identita"]
         )
 
     # ----DONATORE-----

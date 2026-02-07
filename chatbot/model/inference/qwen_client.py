@@ -61,7 +61,7 @@ class QwenClient:
 
     def _get_system_info(self):
         """Recupera informazioni di sistema (data e ora) in italiano."""
-        now = datetime.now()
+        now = datetime.now().replace(tzinfo=None)
         data = now.strftime("%d/%m/%Y")
         ora = now.strftime("%H:%M:%S")
         giorni = {

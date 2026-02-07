@@ -170,7 +170,7 @@ def cancella_prenotazione_ente():
         if not esito:
             return jsonify({"error":"Cancellazione non effetuata,bene già ritirato"}), 400
 
-        email_ok = mail_sender.send_cancellazione_prenotazione_beneficiario(ente.email,beneficiario.email,prenotazione.data,punto.indirizzo)
+        email_ok = mail_sender.send_cancellazione_prenotazione_beneficiario(ente.email,beneficiario.email,prenotazione.data_prenotazione,punto.indirizzo)
 
         if email_ok:
             return jsonify({"message": "Prenotazione cancellata"}), 200
@@ -192,7 +192,7 @@ def cancella_prenotazione_beneficiario():
         if not esito:
             return jsonify({"error":"Cancellazione non effetuata,bene già ritirato"}), 400
 
-        email_ok = mail_sender.send_cancellazione_prenotazione_ente(ente.email,beneficiario.email,prenotazione.data,punto.indirizzo)
+        email_ok = mail_sender.send_cancellazione_prenotazione_ente(ente.email,beneficiario.email,prenotazione.data_prenotazione,punto.indirizzo)
 
         if email_ok:
             return jsonify({"message": "Prenotazione cancellata"}), 200

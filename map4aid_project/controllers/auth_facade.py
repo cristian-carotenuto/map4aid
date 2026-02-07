@@ -5,45 +5,57 @@ from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 from flask import session
 from werkzeug.security import generate_password_hash
-from models import Account
+from models import Account, AccountBeneficiario
 from models.pendingAccounts import PendingAccount
 from config import db
 
 UPLOAD_FOLDER = "controllers/upload/documenti"
 
 
-def _build_extra_data(ruolo, data, path_documento):
-        if ruolo == "beneficiario":
-            return {
-                "nome": data.get("nome"),
-                "cognome": data.get("cognome"),
-                "data_nascita": data.get("data_nascita"),
-                "allergeni": data.get("allergeni"),
-                "patologie": data.get("patologie"),
-                "codice_carta_identita": data.get("codice_carta_identita"),
-                "path_immagine_carta_identita": path_documento
-            }
+def _build_extra_data(ruolo, data, files):
+    # -------------------------
+    # Gestione upload documento
+    # -------------------------
+    file_ci = files.get("carta_identita")
 
-        elif ruolo == "donatore":
-            return {
-                "partita_iva": data.get("partita_iva"),
-                "nome_attivita": data.get("nome_attivita"),
-                "indirizzo_sede": data.get("indirizzo_sede"),
-                "nome": data.get("nome"),
-                "cognome": data.get("cognome"),
-                "categoria": data.get("categoria")
-            }
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-        elif ruolo == "erogatore":
-            return {
-                "nome_organizzazione": data.get("nome_organizzazione"),
-                "indirizzo_sede": data.get("indirizzo_sede"),
-                "tipologia_ente": data.get("tipologia_ente"),
-                "iban": data.get("iban")
-            }
+    filename = secure_filename(file_ci.filename)
+    unique_name = f"{secrets.token_hex(8)}_{filename}"
+    file_path = os.path.join(UPLOAD_FOLDER, unique_name)
 
-        else:
-            raise ValueError("Ruolo non valido")
+    file_ci.save(file_path)
+    if ruolo == "beneficiario":
+        return {
+            "nome": data.get("nome"),
+            "cognome": data.get("cognome"),
+            "data_nascita": data.get("data_nascita"),
+            "allergeni": data.get("allergeni"),
+            "patologie": data.get("patologie"),
+            "codice_carta_identita": data.get("codice_carta_identita"),
+            "path_immagine_carta_identita": file_path
+        }
+
+    elif ruolo == "donatore":
+        return {
+            "partita_iva": data.get("partita_iva"),
+            "nome_attivita": data.get("nome_attivita"),
+            "indirizzo_sede": data.get("indirizzo_sede"),
+            "nome": data.get("nome"),
+            "cognome": data.get("cognome"),
+            "categoria": data.get("categoria")
+        }
+
+    elif ruolo == "erogatore":
+        return {
+            "nome_organizzazione": data.get("nome_organizzazione"),
+            "indirizzo_sede": data.get("indirizzo_sede"),
+            "tipologia_ente": data.get("tipologia_ente"),
+            "iban": data.get("iban")
+        }
+
+    else:
+        raise ValueError("Ruolo non valido")
 
 
 class AuthFacade:
@@ -64,20 +76,6 @@ class AuthFacade:
         if PendingAccount.query.filter_by(email=email).first():
             raise ValueError("Email già registrata")
 
-        # -------------------------
-        # Gestione upload documento
-        # -------------------------
-        file_ci = files.get("carta_identita")
-        if not file_ci:
-            raise ValueError("Carta d'identità obbligatoria")
-
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-        filename = secure_filename(file_ci.filename)
-        unique_name = f"{secrets.token_hex(8)}_{filename}"
-        file_path = os.path.join(UPLOAD_FOLDER, unique_name)
-
-        file_ci.save(file_path)
 
         # -------------------------
         # Extra data per ruolo
@@ -85,7 +83,7 @@ class AuthFacade:
         extra_data = _build_extra_data(
             ruolo,
             form_data,
-            file_path
+            files
         )
 
         # -------------------------
@@ -123,6 +121,11 @@ class AuthFacade:
         user = Account.query.filter_by(email=email).first()
         if not user or not user.check_password(password):
             raise ValueError("Credenziali non valide")
+
+        if user.tipo == "beneficiario":
+            user = AccountBeneficiario.query.filter_by(email=email).first()
+            if not user.accettato:
+                raise ValueError("Account ancora non accettato")
 
         codice = secrets.randbelow(9000) + 1000
         pending = PendingAccount(
