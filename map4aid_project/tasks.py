@@ -24,7 +24,7 @@ def job(app):
         mail_sender = EmailControlBridge()
         for prenotazione in prenotazioni:
             differenza = (now - prenotazione.data).days
-            if differenza >= 30 and prenotazione.stato == "in_attesa":
+            if differenza >= 4 and prenotazione.stato == "in_attesa":
                 beneficiario = Account.query.filter_by(id=prenotazione.beneficiario_id).first()
                 punto = PuntoDistribuzione.query.filter_by(id=prenotazione.punto_id).first()
                 ente = Account.query.filter_by(id=punto.ente_erogatore_id).first()
