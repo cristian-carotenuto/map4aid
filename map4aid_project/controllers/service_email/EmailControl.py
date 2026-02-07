@@ -353,3 +353,67 @@ Map4Aid"""
         except Exception as e:
             print(f"Errore SMTP: {e}")
             return False
+
+
+    def invia_cancellazione_prenotazione_beneficiario(self,email_ente,email_beneficiario,data,indirizzo):
+        msg = MIMEMultipart()
+        msg["From"] = self.config["email"]
+        msg["To"] = email_beneficiario
+        msg["Subject"] = "Email per cancellazione prenotazione"
+
+        corpo = f"""
+Salve,
+questa email è un avviso riguardo la cancellazione della sua prenotazione fatta in data {data} in {indirizzo}.
+La prenotazione potrebbe essere scaduta o stata cancellata dall'ente che possiede il punto di bisgono.
+Per maggiori informazioni contattare {email_ente}
+        
+Cordiali saluti,
+Map4Aid"""
+
+        msg.attach(MIMEText(corpo, "plain", "utf-8"))
+
+        try:
+            with smtplib.SMTP(self.config["smtp_server"],
+                              self.config["smtp_port"]) as server:
+                server.starttls()
+                server.login(
+                    self.config["email"],
+                    self.config["password"]
+                )
+                server.send_message(msg)
+            return True
+
+        except Exception as e:
+            print(f"Errore SMTP: {e}")
+            return False
+
+    def invia_cancellazione_prenotazione_ente(self, email_ente, email_beneficiario, data, indirizzo):
+        msg = MIMEMultipart()
+        msg["From"] = self.config["email"]
+        msg["To"] = email_ente
+        msg["Subject"] = "Email per cancellazione prenotazione"
+
+        corpo = f"""
+Salve,
+questa email è un avviso riguardo la cancellazione della prenotazione fatta in data {data} in {indirizzo} da {email_beneficiario}.
+La prenotazione è stata cancellata dall'utente che possiede questo indirizzo email.
+
+Cordiali saluti,
+Map4Aid"""
+
+        msg.attach(MIMEText(corpo, "plain", "utf-8"))
+
+        try:
+            with smtplib.SMTP(self.config["smtp_server"],
+                              self.config["smtp_port"]) as server:
+                server.starttls()
+                server.login(
+                    self.config["email"],
+                    self.config["password"]
+                )
+                server.send_message(msg)
+            return True
+
+        except Exception as e:
+            print(f"Errore SMTP: {e}")
+            return False

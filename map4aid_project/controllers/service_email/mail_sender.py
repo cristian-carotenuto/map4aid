@@ -75,3 +75,23 @@ class MailSender(ABC):
             nome_bene: str | None = None
     ) -> bool:
         pass
+
+    @abstractmethod
+    def send_cancellazione_prenotazione_beneficiario(
+            self,
+            email_ente: str,
+            email_beneficiario: str,
+            data,
+            indirizzo: str
+    ) -> bool:
+        pass
+
+    @abstractmethod
+    def send_cancellazione_prenotazione_ente(
+            self,
+            email_ente: str,
+            email_beneficiario: str,
+            data,
+            indirizzo: str
+    ) -> bool:
+        pass

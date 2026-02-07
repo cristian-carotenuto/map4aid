@@ -9,7 +9,7 @@ from models import AccountEnteErogatore
 from controllers.permessi import require_roles
 from config import db
 from models.models import AccountDonatore, DonazioneMonetaria, BeneAlimentare, Bene, PaccoAlimentare, \
-    PuntoDistribuzione, Prenotazione, AccountBeneficiario, SottoCategoria
+    PuntoDistribuzione, Prenotazione, AccountBeneficiario, SottoCategoria, Account
 import threading
 
 prenotazione_lock = threading.Lock()
@@ -156,39 +156,78 @@ def conferma_prenotazione():
     db.session.commit()
     return jsonify({"message": "Prenotazione ritirata"}), 200
 
-@auth_bp.route("/cancella_prenotazione", methods=["POST"])
+@auth_bp.route("/cancella_prenotazione_ente", methods=["POST"])
 @require_roles("ente_erogatore")
-def cancella_prenotazione():
-    with annulla_lock:  # <-- solo un thread alla volta entra qui
-        id = request.form.get("id_prenotazione")
-        prenotazione = Prenotazione.query.filter_by(id=id).first()
+def cancella_prenotazione_ente():
+    with annulla_lock:
+        mail_sender = EmailControlBridge()
+        id_prenotazione = request.form.get("id_prenotazione")
+        prenotazione = Prenotazione.query.filter_by(id=id_prenotazione).first()
+        beneficiario = Account.query.filter_by(id=prenotazione.beneficiario_id).first()
+        punto = PuntoDistribuzione.query.filter_by(id=prenotazione.punto_id).first()
+        ente = Account.query.filter_by(id=punto.ente_erogatore_id).first()
+        esito = cancella_prenotazione(prenotazione)
+        if not esito:
+            return jsonify({"error":"Cancellazione non effetuata,bene già ritirato"}), 400
 
-        if prenotazione.stato == "Completata":
-            return jsonify({"error": "Impossibile cancellare prenotazione già ritirata"}), 400
+        email_ok = mail_sender.send_cancellazione_prenotazione_beneficiario(ente.email,beneficiario.email,prenotazione.data,punto.indirizzo)
 
-        if prenotazione.pacco_id is not None:
-            pacco = PaccoAlimentare.query.filter_by(id=prenotazione.pacco_id).first()
-            pasta = PaccoAlimentare.query.filter_by(id=pacco.pasta).first()
-            pane = PaccoAlimentare.query.filter_by(id=pacco.pane).first()
-            acqua = PaccoAlimentare.query.filter_by(id=pacco.acqua).first()
-            carne = PaccoAlimentare.query.filter_by(id=pacco.carne).first()
-            pesce = PaccoAlimentare.query.filter_by(id=pacco.pesce).first()
-            verdura = PaccoAlimentare.query.filter_by(id=pacco.verdura).first()
-            pasta.quantita += 1
-            pane.quantita += 1
-            acqua.quantita += 1
-            carne.quantita += 1
-            pesce.quantita += 1
-            verdura.quantita += 1
-            db.session.delete(prenotazione)
-            db.session.commit()
+        if email_ok:
             return jsonify({"message": "Prenotazione cancellata"}), 200
 
-        bene = Bene.query.filter_by(id=prenotazione.bene_id).first()
-        bene.quantita += 1
+        return jsonify({"error": "Prenotazione cancellata, ma email non inviata"}), 500
+
+
+@auth_bp.route("/cancella_prenotazione_beneficiario", methods=["POST"])
+@require_roles("beneficiario")
+def cancella_prenotazione_beneficiario():
+    with annulla_lock:
+        mail_sender = EmailControlBridge()
+        id_prenotazione = request.form.get("id_prenotazione")
+        prenotazione = Prenotazione.query.filter_by(id=id_prenotazione).first()
+        beneficiario = Account.query.filter_by(id=prenotazione.beneficiario_id).first()
+        punto = PuntoDistribuzione.query.filter_by(id=prenotazione.punto_id).first()
+        ente = Account.query.filter_by(id=punto.ente_erogatore_id).first()
+        esito = cancella_prenotazione(prenotazione)
+        if not esito:
+            return jsonify({"error":"Cancellazione non effetuata,bene già ritirato"}), 400
+
+        email_ok = mail_sender.send_cancellazione_prenotazione_ente(ente.email,beneficiario.email,prenotazione.data,punto.indirizzo)
+
+        if email_ok:
+            return jsonify({"message": "Prenotazione cancellata"}), 200
+
+        return jsonify({"error": "Prenotazione cancellata, ma email non inviata"}), 500
+
+
+def cancella_prenotazione(prenotazione):
+
+    if prenotazione.stato == "Completata":
+        return False
+
+    if prenotazione.pacco_id is not None:
+        pacco = PaccoAlimentare.query.filter_by(id=prenotazione.pacco_id).first()
+        pasta = PaccoAlimentare.query.filter_by(id=pacco.pasta).first()
+        pane = PaccoAlimentare.query.filter_by(id=pacco.pane).first()
+        acqua = PaccoAlimentare.query.filter_by(id=pacco.acqua).first()
+        carne = PaccoAlimentare.query.filter_by(id=pacco.carne).first()
+        pesce = PaccoAlimentare.query.filter_by(id=pacco.pesce).first()
+        verdura = PaccoAlimentare.query.filter_by(id=pacco.verdura).first()
+        pasta.quantita += 1
+        pane.quantita += 1
+        acqua.quantita += 1
+        carne.quantita += 1
+        pesce.quantita += 1
+        verdura.quantita += 1
         db.session.delete(prenotazione)
         db.session.commit()
-        return jsonify({"message": "Prenotazione cancellata"}), 200
+        return True
+
+    bene = Bene.query.filter_by(id=prenotazione.bene_id).first()
+    bene.quantita += 1
+    db.session.delete(prenotazione)
+    db.session.commit()
+    return True
     
 
 
