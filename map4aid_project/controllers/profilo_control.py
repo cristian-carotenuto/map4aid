@@ -5,7 +5,7 @@ from controllers.pdf_service import genera_pdf_storico
 from controllers.auth_facade import AuthFacade
 from controllers.service_email.email_control_bridge import EmailControlBridge
 from config import db
-from models import Prenotazione, DonazioneBene, DonazioneMonetaria, PuntoDistribuzione
+from models.models import Prenotazione, DonazioneBene, DonazioneMonetaria, PuntoDistribuzione
 
 
 @auth_bp.route("/modifica_profilo", methods=["POST"])

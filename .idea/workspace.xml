@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="55397952-be6e-4a64-8a4f-522745ebe921" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/map4aid_project/instance/database.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_project/migrations/README" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_project/migrations/alembic.ini" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_project/migrations/env.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_project/migrations/script.py.mako" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_project/migrations/versions/0edcd725e429_initial_schema.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_project/migrations/versions/41319aaa0ead_initial_schema.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_project/migrations/versions/eeba3067835c_migrazione_iniziale.py" beforeDir="false" />
-    </list>
+    <list default="true" id="55397952-be6e-4a64-8a4f-522745ebe921" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
