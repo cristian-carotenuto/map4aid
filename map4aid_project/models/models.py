@@ -52,7 +52,7 @@ class AccountBeneficiario(Account):
     }
 
     prenotazioni = db.relationship("Prenotazione", back_populates="beneficiario")
-    feedback = db.relationship("Feedback", back_populates="beneficiario")
+
 
 
 
@@ -127,7 +127,7 @@ class PuntoDistribuzione(db.Model):
     ente_erogatore = db.relationship("AccountEnteErogatore", back_populates="punti_distribuzione")
     beni = db.relationship("Bene", back_populates="punto_distribuzione")
     prenotazioni = db.relationship("Prenotazione", back_populates="punto")
-    feedback = db.relationship("Feedback", back_populates="punto")
+
 
 
 
