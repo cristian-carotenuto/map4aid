@@ -15,7 +15,9 @@ from models.models import (
     BeneMobilita,
     DonazioneBene,
     DonazioneMonetaria,
-    PaccoAlimentare
+    PaccoAlimentare,
+    Prenotazione,
+    Feedback
 )
 from datetime import datetime, date, timezone
 

@@ -42,6 +42,9 @@ def create_app():
     from controllers import donazione_bene
     from controllers import permessi
     from controllers import api_punti
+    from controllers import pdf_service
+    from controllers import prenotazione_control
+    from controllers import profilo_control
     app.register_blueprint(api_punti.api, url_prefix="/api")
     app.register_blueprint(auth_bp, url_prefix="/auth")
 
