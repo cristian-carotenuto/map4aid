@@ -232,7 +232,7 @@ Map4Aid
             print(f"Errore SMTP: {e}")
             return False
 
-    def invia_email_prenotazione_beneficiario(self,email_ente,email_beneficiario,indirizzo,lan,lon,prenotazione_id,nome_bene=None):
+    def invia_email_prenotazione_beneficiario(self,email_ente,email_beneficiario,lan,lon,prenotazione_id,nome_bene=None):
         msg = MIMEMultipart()
         msg["From"] = self.config["email"]
         msg["To"] = email_beneficiario
@@ -248,7 +248,6 @@ Map4Aid
         if nome_bene == None:
             corpo = f"""
 E' stata confermata una prenotazione per un pacco alimentare presso il seguente punto di bisogno posseduto da {email_ente} in data {datetime.now(timezone.utc)}.
-L'indirizzo è {indirizzo}
 Latitudine: {lan}
 Longitudine: {lon}
 La preghiamo di ritirare il pacco il prima possibile
@@ -259,7 +258,6 @@ Map4Aid
         else:
             corpo = f"""
 E' stata confermata una prenotazione per il seguente bene:{nome_bene} presso il seguente punto di bisogno posseduto da {email_ente} in data {datetime.now(timezone.utc)}.
-L'indirizzo è {indirizzo}
 Latitudine: {lan}
 Longitudine: {lon}
 La preghiamo di ritirare il bene il prima possibile
@@ -289,7 +287,7 @@ Map4Aid"""
             print(f"Errore SMTP: {e}")
             return False
 
-    def invia_email_prenotazione_ente(self,email_ente,email_beneficiario,indirizzo,lan,lon,nome_bene=None,path_ricetta=None):
+    def invia_email_prenotazione_ente(self,email_ente,email_beneficiario,lan,lon,prenotazione,nome_bene=None,path_ricetta=None):
         msg = MIMEMultipart()
         msg["From"] = self.config["email"]
         msg["To"] = email_ente
@@ -298,7 +296,6 @@ Map4Aid"""
         if nome_bene == None:
             corpo = f"""
 E' stata confermata una prenotazione per un pacco alimentare presso il seguente punto di bisogno in vostro posseso da parte di {email_beneficiario} in data {datetime.now(timezone.utc)}.
-L'indirizzo è {indirizzo}
 Latitudine: {lan}
 Longitudine: {lon}
 
@@ -308,7 +305,6 @@ Map4Aid
         else:
             corpo = f"""
 E' stata confermata una prenotazione per il seguente bene:{nome_bene} presso il seguente punto di bisogno in vostro posseso da parte di {email_beneficiario} in data {datetime.now(timezone.utc)}.
-L'indirizzo è {indirizzo}
 Latitudine: {lan}
 Longitudine: {lon}
 

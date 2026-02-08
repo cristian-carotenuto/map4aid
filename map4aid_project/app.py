@@ -34,6 +34,7 @@ def create_app():
         return Account.query.get(int(user_id))
 
     from controllers.routes import auth_bp
+    from controllers import admin_control
     from controllers import two_fa_contol
     from controllers import autenticazione_control
     from controllers import login_control

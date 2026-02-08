@@ -76,7 +76,6 @@ class EmailControlBridge(MailSender):
             self,
             email_ente,
             email_beneficiario,
-            indirizzo,
             lat,
             lon,
             prenotazione_id,
@@ -86,7 +85,6 @@ class EmailControlBridge(MailSender):
         return self._email_control.invia_email_prenotazione_beneficiario(
             email_ente,
             email_beneficiario,
-            indirizzo,
             lat,
             lon,
             prenotazione_id,
@@ -97,7 +95,6 @@ class EmailControlBridge(MailSender):
             self,
             email_ente,
             email_beneficiario,
-            indirizzo,
             lat,
             lon,
             nome_bene=None,
@@ -106,7 +103,6 @@ class EmailControlBridge(MailSender):
         return self._email_control.invia_email_prenotazione_ente(
             email_ente,
             email_beneficiario,
-            indirizzo,
             lat,
             lon,
             nome_bene,

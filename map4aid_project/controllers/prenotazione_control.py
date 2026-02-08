@@ -41,21 +41,40 @@ def prenotazione():
         #Check per le prenotazione
         if is_pacco == "True":
             if is_craftable(id_punto_bisogno):
-
                 try:
                     checker.check("pacco")
                 except Exception as e:
                     return jsonify({"error": str(e)}), 200
 
-                pane = BeneAlimentare.query.filter_by(id_punto_bisogno=id_punto_bisogno,sottocategoria_id="pane").first()
-                pasta = BeneAlimentare.query.filter_by(id_punto_bisogno=id_punto_bisogno,sottocategoria_id="pasta").first()
-                carne = BeneAlimentare.query.filter_by(id_punto_bisogno=id_punto_bisogno,sottocategoria_id="carne").first()
-                acqua = BeneAlimentare.query.filter_by(id_punto_bisogno=id_punto_bisogno,sottocategoria_id="acqua").first()
-                pesce = BeneAlimentare.query.filter_by(id_punto_bisogno=id_punto_bisogno,sottocategoria_id="pesce").first()
-                verdura = BeneAlimentare.query.filter_by(id_punto_bisogno=id_punto_bisogno,sottocategoria_id="verdura").first()
-                pacco = PaccoAlimentare(pasta,pane,acqua,carne,pesce,verdura)
+
+                sott_pane = SottoCategoria.query.filter_by(nome="Pane").first() 
+                sott_pasta = SottoCategoria.query.filter_by(nome="Pasta").first() 
+                sott_carne = SottoCategoria.query.filter_by(nome="Carne").first() 
+                sott_acqua = SottoCategoria.query.filter_by(nome="Acqua").first() 
+                sott_pesce = SottoCategoria.query.filter_by(nome="Pesce").first() 
+                sott_verdura = SottoCategoria.query.filter_by(nome="Verdura").first()
+
+
+                pane = BeneAlimentare.query.filter_by(punto_distribuzione_id=id_punto_bisogno, sottocategoria_id=sott_pane.id).first()
+                pasta = BeneAlimentare.query.filter_by(punto_distribuzione_id=id_punto_bisogno, sottocategoria_id=sott_pasta.id).first()
+                carne = BeneAlimentare.query.filter_by(punto_distribuzione_id=id_punto_bisogno, sottocategoria_id=sott_carne.id).first()
+                acqua = BeneAlimentare.query.filter_by(punto_distribuzione_id=id_punto_bisogno, sottocategoria_id=sott_acqua.id).first()
+                pesce = BeneAlimentare.query.filter_by(punto_distribuzione_id=id_punto_bisogno, sottocategoria_id=sott_pesce.id).first()
+                verdura = BeneAlimentare.query.filter_by(punto_distribuzione_id=id_punto_bisogno, sottocategoria_id=sott_verdura.id).first()
+                
+                pacco = PaccoAlimentare(
+                    nome = "Pacco standard",
+                    pasta = pasta.id,
+                    pane= pane.id,
+                    acqua= acqua.id, 
+                    carne= carne.id, 
+                    pesce= pesce.id, 
+                    verdura= verdura.id
+                    )
+
                 db.session.add(pacco)
                 db.session.commit()
+
                 prenotazione = Prenotazione(
                     beneficiario_id = beneficiario.id,
                     bene_id = None,
@@ -68,23 +87,21 @@ def prenotazione():
                 carne.quantita -= 1
                 acqua.quantita -= 1
                 pesce.quantita -= 1
+                verdura.quantita -= 1
                 db.session.commit()
 
                 email_ok1 = mail_sender.send_prenotazione_beneficiario(
                     ente.email,
                     user_email,
-                    punto_distribuzione.
-                    indirizzo,
-                    punto_distribuzione.latitude,
-                    punto_distribuzione.longitude,
+                    punto_distribuzione.latitudine,
+                    punto_distribuzione.longitudine,
                     prenotazione.id
                     )
                 email_ok2 = mail_sender.send_prenotazione_ente(
                     ente.email,
                     user_email,
-                    punto_distribuzione.
-                    indirizzo,
-                    punto_distribuzione.latitude,
+                    punto_distribuzione.latitudine,
+                    punto_distribuzione.longitudine,
                     prenotazione.id
                 )
                 if email_ok1 and email_ok2:
@@ -111,6 +128,11 @@ def prenotazione():
         #L'utente ha prenotato un bene
         id_bene = request.form.get("id_bene")
         bene = Bene.query.filter_by(id=id_bene).first()
+        if not bene: 
+            return jsonify({"error": "Bene non trovato"}), 400 
+        if bene.quantita < 1: 
+            return jsonify({"error": "Bene non disponibile"}), 400
+        
         prenotazione = Prenotazione(
             beneficiario_id=beneficiario.id,
             bene_id=bene.id,
@@ -125,19 +147,16 @@ def prenotazione():
         email_ok1 = mail_sender.send_prenotazione_beneficiario(
             ente.email,
             user_email,
-            punto_distribuzione.
-            indirizzo,
-            punto_distribuzione.latitude,
-            punto_distribuzione.longitude,
+            punto_distribuzione.latitudine,
+            punto_distribuzione.longitudine,
             prenotazione.id,
             bene.nome,
         )
         email_ok2 = mail_sender.send_prenotazione_ente(
             ente.email,
             user_email,
-            punto_distribuzione.
-            indirizzo,
-            punto_distribuzione.latitude,
+            punto_distribuzione.latitudine,
+            punto_distribuzione.longitudine,
             prenotazione.id,
             bene.nome,
             ricetta_path
@@ -204,21 +223,23 @@ def cancella_prenotazione(prenotazione):
 
     if prenotazione.stato == "Completata":
         return False
-
+    
     if prenotazione.pacco_id is not None:
-        pacco = PaccoAlimentare.query.filter_by(id=prenotazione.pacco_id).first()
-        pasta = PaccoAlimentare.query.filter_by(id=pacco.pasta).first()
-        pane = PaccoAlimentare.query.filter_by(id=pacco.pane).first()
-        acqua = PaccoAlimentare.query.filter_by(id=pacco.acqua).first()
-        carne = PaccoAlimentare.query.filter_by(id=pacco.carne).first()
-        pesce = PaccoAlimentare.query.filter_by(id=pacco.pesce).first()
-        verdura = PaccoAlimentare.query.filter_by(id=pacco.verdura).first()
-        pasta.quantita += 1
-        pane.quantita += 1
-        acqua.quantita += 1
-        carne.quantita += 1
-        pesce.quantita += 1
-        verdura.quantita += 1
+        pacco = PaccoAlimentare.query.get(prenotazione.pacco_id)
+
+        beni_ids = [ 
+            pacco.pasta, 
+            pacco.pane, 
+            pacco.acqua, 
+            pacco.carne, 
+            pacco.pesce, 
+            pacco.verdura 
+        ] 
+         
+        for bene_id in beni_ids: 
+            bene = Bene.query.get(bene_id) 
+            bene.quantita += 1
+            
         db.session.delete(prenotazione)
         db.session.commit()
         return True

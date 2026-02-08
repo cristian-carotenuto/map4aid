@@ -55,7 +55,6 @@ class MailSender(ABC):
             self,
             email_ente: str,
             email_beneficiario: str,
-            indirizzo: str,
             lat: float,
             lon: float,
             prenotazione_id: int,
@@ -69,9 +68,9 @@ class MailSender(ABC):
             self,
             email_ente: str,
             email_beneficiario: str,
-            indirizzo: str,
             lat: float,
             lon: float,
+            prenotazione_id: int,
             nome_bene: str | None = None
     ) -> bool:
         pass

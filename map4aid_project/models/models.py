@@ -335,11 +335,11 @@ class PaccoAlimentare(db.Model):
     id= db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(120), nullable=False)
 
-    pasta=db.Column(db.Integer, nullable=False)
-    pane= db.Column(db.Integer, nullable=False)
-    acqua= db.Column(db.Integer, nullable=False)
-    carne=db.Column(db.Integer, nullable=False)
-    pesce=db.Column(db.Integer, nullable=False)
-    verdura=db.Column(db.Integer, nullable=False)
+    pasta=db.Column(db.Integer, db.ForeignKey("beni.id"))
+    pane= db.Column(db.Integer, db.ForeignKey("beni.id"))
+    acqua= db.Column(db.Integer, db.ForeignKey("beni.id"))
+    carne=db.Column(db.Integer, db.ForeignKey("beni.id"))
+    pesce=db.Column(db.Integer, db.ForeignKey("beni.id"))
+    verdura=db.Column(db.Integer, db.ForeignKey("beni.id"))
 
     
