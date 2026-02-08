@@ -1,0 +1,11 @@
+.header-bg {
+  background-color: #28a745;
+}
+
+body
+{
+    min-height: 100dvh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: minmax(0, 1fr);
+}
