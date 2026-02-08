@@ -415,3 +415,44 @@ Map4Aid"""
         except Exception as e:
             print(f"Errore SMTP: {e}")
             return False
+
+    def invia_conferma_registrazione(self, email_beneficiario, esito):
+        msg = MIMEMultipart()
+        msg["From"] = self.config["email"]
+        msg["To"] = email_beneficiario
+        msg["Subject"] = "Email per cancellazione prenotazione"
+
+        if esito == "True":
+            corpo = f"""
+Salve,
+la informiamo che la sua registrazione è stata validata e confermata da un nostro amministratore. Da ora può accedere e prenotare beni di prima necessità.
+
+Cordiali saluti,
+Map4Aid"""
+
+        else:
+            corpo = f"""
+            Salve,
+            la informiamo che la sua registrazione è stata rifiutata da un nostro amministratore. Probabilmente ciò è dovuto a carta d'identità non valida o codice non corrispondente.
+            La invitiamo a riprovare prestando attenzione ai dati da lei inseriti. Controlli anche che la carta d'identità non sia scaduta
+
+            Cordiali saluti,
+            Map4Aid"""
+
+
+        msg.attach(MIMEText(corpo, "plain", "utf-8"))
+
+        try:
+            with smtplib.SMTP(self.config["smtp_server"],
+                              self.config["smtp_port"]) as server:
+                server.starttls()
+                server.login(
+                    self.config["email"],
+                    self.config["password"]
+                )
+                server.send_message(msg)
+            return True
+
+        except Exception as e:
+            print(f"Errore SMTP: {e}")
+            return False

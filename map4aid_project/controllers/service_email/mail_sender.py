@@ -95,3 +95,11 @@ class MailSender(ABC):
             indirizzo: str
     ) -> bool:
         pass
+
+    @abstractmethod
+    def send_conferma_registrazione(
+            self,
+            email_beneficiario: str,
+            esito: bool
+    ) -> bool:
+        pass

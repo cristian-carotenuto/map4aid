@@ -2,7 +2,9 @@ from flask import request, session, jsonify
 from controllers.routes import auth_bp
 from controllers.permessi import require_admin
 from functools import wraps
-from config import ADMIN_EMAIL, ADMIN_CODE
+from config import ADMIN_EMAIL, ADMIN_CODE, db
+from controllers.service_email.email_control_bridge import EmailControlBridge
+from models import AccountBeneficiario
 
 
 #login
@@ -44,3 +46,31 @@ def admin_logout():
 @require_admin
 def admin_dashboard():
     return jsonify({"message": "Benvenuto nel pannello admin"}), 200
+
+#funzione per accetare registrazioni
+@auth_bp.route("/admin/conferma_regitrazione", methods=["POST"])
+@require_admin
+def admin_confirm():
+    id_beneficiario = session.get("id_beneficiario")
+    esito = session.get("esito")#True se l'account è stato confermato,altrimenti viene cancellato
+    account = AccountBeneficiario.query.filter_by(id=id_beneficiario).first()
+
+    if esito == "True":
+        account.accettato = True
+        db.session.commit()
+    else:
+        db.session.delete(account)
+        db.session.commit()
+
+    mail_sender = EmailControlBridge()
+    email_ok=mail_sender.send_conferma_registrazione(account.email,esito)
+
+
+    if email_ok:
+        return jsonify({"message": "Email inviata"}), 200
+    return jsonify({"error": "Email non inviata"}), 400
+
+
+
+
+

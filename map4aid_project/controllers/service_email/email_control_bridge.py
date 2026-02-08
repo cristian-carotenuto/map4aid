@@ -140,3 +140,13 @@ class EmailControlBridge(MailSender):
             data,
             indirizzo
         )
+
+    def send_conferma_registrazione(
+            self,
+            email_beneficiario,
+            esito
+    ) -> bool:
+        return self._email_control.invia_conferma_registrazione(
+            email_beneficiario,
+            esito
+        )
