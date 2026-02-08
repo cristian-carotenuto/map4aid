@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
   <meta charset="UTF-8">
   <title>Storico Prenotazioni - Map4Aid</title>
@@ -9,16 +10,19 @@
       font-size: 0.85em;
       padding: 0.4em 0.6em;
     }
+
     .prenotazione-card {
       border-left: 4px solid #28a745;
       transition: transform 0.2s;
     }
+
     .prenotazione-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
   </style>
 </head>
+
 <body class="bg-light">
   <!-- Header dinamico -->
   <header class="header-bg text-white p-3 d-flex justify-content-between align-items-center">
@@ -97,58 +101,13 @@
       window.location.href = 'login.html';
     }
 
-    // DATI SIMULATI PER LA DEMO
-    // questi dati verranno sostituiti  ( forse ) con una chiamata a /api/profilo
-    const prenotazioniSimulate = [
-      {
-        id: "123",
-        data: "25/01/2026",
-        ora: "10:00-11:00",
-        punto: "Centro Colosseo",
-        indirizzo: "Via del Colosseo, 1",
-        bene: "Pasta",
-        quantita: 2,
-        stato: "confermata"
-      },
-      {
-        id: "124",
-        data: "26/01/2026",
-        ora: "14:00-15:00",
-        punto: "Centro Termini",
-        indirizzo: "Piazza dei Cinquecento",
-        bene: "Paracetamolo",
-        quantita: 1,
-        stato: "in_attesa"
-      },
-      {
-        id: "125",
-        data: "20/01/2026",
-        ora: "09:00-10:00",
-        punto: "Centro San Giovanni",
-        indirizzo: "Via Appia Nuova",
-        bene: "Sapone",
-        quantita: 3,
-        stato: "ritirata"
-      },
-      {
-        id: "126",
-        data: "15/01/2026",
-        ora: "11:00-12:00",
-        punto: "Centro EUR",
-        indirizzo: "Viale Europa",
-        bene: "Maglie",
-        quantita: 1,
-        stato: "scaduta"
-      }
-    ];
-
     /**
      * mappa lo stato a una classe Bootstrap per il badge
      * @param {string} stato - Stato della prenotazione
      * @returns {string} Classe CSS per il badge
      */
     function getBadgeClass(stato) {
-      switch(stato) {
+      switch (stato) {
         case 'confermata': return 'bg-success';
         case 'in_attesa': return 'bg-warning text-dark';
         case 'ritirata': return 'bg-info';
@@ -204,23 +163,41 @@
     }
 
     /**
-     * carica le prenotazioni (con o senza filtro)
+     * Carica le prenotazioni dall'API
      * @param {string} filtro - Stato da filtrare (opzionale)
      */
-    function caricaPrenotazioni(filtro = '') {
+    async function caricaPrenotazioni(filtro = '') {
       const container = document.getElementById('listaPrenotazioni');
-      
-      if (filtro === '') {
-        // mostra tutte le prenotazioni simulate
-        container.innerHTML = prenotazioniSimulate.map(generaCardPrenotazione).join('');
-      } else {
-        // filtra per stato
-        const filtrate = prenotazioniSimulate.filter(p => p.stato === filtro);
-        if (filtrate.length === 0) {
-          container.innerHTML = '<div class="alert alert-info">Nessuna prenotazione con questo stato.</div>';
-        } else {
-          container.innerHTML = filtrate.map(generaCardPrenotazione).join('');
+      container.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Caricamento...</span></div></div>';
+
+      try {
+        const response = await fetch('/auth/prenotazioni');
+
+        if (!response.ok) {
+          throw new Error('Errore nel caricamento prenotazioni');
         }
+
+        const prenotazioni = await response.json();
+
+        if (prenotazioni.length === 0) {
+          container.innerHTML = '<div class="alert alert-info">Non hai ancora effettuato prenotazioni.</div>';
+          return;
+        }
+
+        // Filtra per stato se specificato
+        let prenotazioniFiltrate = filtro === '' ? prenotazioni : prenotazioni.filter(p => p.stato === filtro);
+
+        if (prenotazioniFiltrate.length === 0) {
+          container.innerHTML = '<div class="alert alert-info">Nessuna prenotazione con questo stato.</div>';
+          return;
+        }
+
+        // Genera HTML per tutte le prenotazioni filtrate
+        container.innerHTML = prenotazioniFiltrate.map(generaCardPrenotazione).join('');
+
+      } catch (error) {
+        console.error('Errore caricamento prenotazioni:', error);
+        container.innerHTML = '<div class="alert alert-danger">Errore nel caricamento delle prenotazioni. Riprova più tardi.</div>';
       }
     }
 
@@ -240,4 +217,5 @@
   </script>
   <script src="../js/auth.js"></script>
 </body>
+
 </html>
