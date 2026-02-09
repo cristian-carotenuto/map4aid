@@ -1,4 +1,6 @@
 from datetime import timezone, datetime
+
+from django.contrib.sessions.models import Session
 from flask import request, session, jsonify
 from werkzeug.utils import secure_filename
 import os
@@ -204,10 +206,15 @@ def prenotazione():
 
 
 @auth_bp.route("/conferma_prenotazione", methods=["GET"])
+@require_roles("ente_erogatore")
 def conferma_prenotazione():
     id = request.args.get("id_prenotazione")
     prenotazione = Prenotazione.query.filter_by(id=id).first()
-    prenotazione.stato = "Completata"
+    punto = PuntoDistribuzione.query.filter_by(id=prenotazione.punto_id).first()
+    ente = Account.query.filter_by(id=punto.ente_erogatore_id).first()
+    if ente.email != session["user_email"]:
+        return jsonify({"error": "Non hai i permessi per confermare la prenotazione"}), 401
+    prenotazione.stato = "ritirata"
     db.session.commit()
     return jsonify({"message": "Prenotazione ritirata"}), 200
 

@@ -244,31 +244,33 @@ Map4Aid
         msg["Subject"] = "Email per conferma prenotazione"
 
         buffer = BytesIO()
-        url = f"""{request.url_root}auth/conferma_prenotazione?prenotazione_id={prenotazione_id}"""
+        url = f"""{request.url_root}auth/conferma_prenotazione?id_prenotazione={prenotazione_id}"""
         qr = qrcode.make(url)
         qr.save(buffer, format="PNG")
         buffer.seek(0)
 
         if nome_bene is None:
             corpo = f"""
-E' stata confermata una prenotazione per un pacco alimentare presso il seguente punto di bisogno posseduto da {email_ente} in data {datetime.now(timezone.utc)}.
+E' stata confermata una prenotazione per un pacco alimentare presso il seguente punto di bisogno posseduto da {email_ente} in data {datetime.now(timezone.utc).day}/{datetime.now(timezone.utc).month}/{datetime.now(timezone.utc).day}/{datetime.now(timezone.utc).year}.
 Indirizzo: {indirizzo}   
 Latitudine: {lan}
 Longitudine: {lon}
-La preghiamo di ritirare il pacco il prima possibile
+La preghiamo di ritirare il pacco il prima possibile.
+Se il pacco non verrà ritirato entro 4 giorni, la prenotazione verrà cancellata
 
 Cordiali saluti,
 Map4Aid
 """
         else:
             corpo = f"""
-E' stata confermata una prenotazione per il seguente bene: {nome_bene} presso il seguente punto di bisogno posseduto da {email_ente} in data {datetime.now(timezone.utc)}.
+E' stata confermata una prenotazione per il seguente bene: {nome_bene} presso il seguente punto di bisogno posseduto da {email_ente} in data {datetime.now(timezone.utc).day}/{datetime.now(timezone.utc).month}/{datetime.now(timezone.utc).day}/{datetime.now(timezone.utc).year}..
 Indirizzo: {indirizzo}     
 Latitudine: {lan}
 Longitudine: {lon}
 La preghiamo di ritirare il bene il prima possibile
 
-Mostrare il qrCode al punto di bisogno per confermare la prenotazione
+Mostrare il qrCode al punto di bisogno per confermare la prenotazione.
+Se il bene non verrà ritirato entro 4 giorni, la prenotazione verrà cancellata.
 
 Cordiali saluti,
 Map4Aid"""
