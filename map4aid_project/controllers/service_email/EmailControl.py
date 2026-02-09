@@ -14,7 +14,6 @@ from flask import request
 
 class EmailControl:
 
-
     def __init__(self):
         self.config = {
             "smtp_server": "smtp.gmail.com",
@@ -61,7 +60,7 @@ Map4Aid
             print(f"Errore SMTP: {e}")
             return False
 
-    def invia_email_codice(self, email_utente,codice):
+    def invia_email_codice(self, email_utente, codice):
         msg = MIMEMultipart()
         msg["From"] = self.config["email"]
         msg["To"] = email_utente
@@ -94,7 +93,7 @@ Map4Aid"""
             print(f"Errore SMTP: {e}")
             return False
 
-    def invia_email_segnalazione(self,email_ente,indirizzo,lan,lon):
+    def invia_email_segnalazione(self, email_ente, indirizzo, lan, lon):
         msg = MIMEMultipart()
         msg["From"] = self.config["email"]
         msg["To"] = email_ente
@@ -126,7 +125,8 @@ Map4Aid
             print(f"Errore SMTP: {e}")
             return False
 
-    def invia_email_donazione_ente(self, email_ente, email_donatore,bene,donazione,punto_bisogno,sottocategoria,indirizzo):
+    def invia_email_donazione_ente(self, email_ente, email_donatore, bene,
+                                   donazione, punto_bisogno, sottocategoria, indirizzo):
         msg = MIMEMultipart()
         msg["From"] = self.config["email"]
         msg["To"] = email_ente
@@ -149,14 +149,12 @@ allergeni: {bene.allergeni}
 """
             corpo += extra_data
 
-        # Bene per l'igiene
         elif bene.tipo == "igiene":
             extra_data = f"""
 destinatari: {bene.destinatari}
 """
             corpo += extra_data
 
-        # Medicinale
         elif bene.tipo == "medicinale":
             extra_data = f"""
 tipo medicinale: {bene.tipo_medicinale}
@@ -164,8 +162,6 @@ scadenza: {bene.scadenza}
 """
             corpo += extra_data
 
-
-        # Beni per la mobilità
         elif bene.tipo == "mobilità":
             extra_data = f"""
 tipo mobilita: {bene.tipo_mobilita}
@@ -173,7 +169,6 @@ stato: {bene.stato}
 """
             corpo += extra_data
 
-        # Vestiti
         elif bene.tipo == "vestiario":
             extra_data = f"""
 taglia: {bene.taglia}
@@ -202,7 +197,7 @@ Map4Aid"""
             print(f"Errore SMTP: {e}")
             return False
 
-    def invia_email_donazione_donatore(self,email_donatore,email_ente,bene):
+    def invia_email_donazione_donatore(self, email_donatore, email_ente, bene):
         msg = MIMEMultipart()
         msg["From"] = self.config["email"]
         msg["To"] = email_donatore
@@ -232,22 +227,32 @@ Map4Aid
             print(f"Errore SMTP: {e}")
             return False
 
-    def invia_email_prenotazione_beneficiario(self,email_ente,email_beneficiario,lan,lon,prenotazione_id,nome_bene=None):
+    def invia_email_prenotazione_beneficiario(
+        self,
+        email_ente,
+        email_beneficiario,
+        indirizzo,        
+        lan,
+        lon,
+        prenotazione_id,
+        nome_bene=None,
+        path_ricetta=None   
+    ):
         msg = MIMEMultipart()
         msg["From"] = self.config["email"]
         msg["To"] = email_beneficiario
         msg["Subject"] = "Email per conferma prenotazione"
 
-        #Creazione qrCode
         buffer = BytesIO()
         url = f"""{request.url_root}auth/conferma_prenotazione?prenotazione_id={prenotazione_id}"""
         qr = qrcode.make(url)
         qr.save(buffer, format="PNG")
         buffer.seek(0)
 
-        if nome_bene == None:
+        if nome_bene is None:
             corpo = f"""
 E' stata confermata una prenotazione per un pacco alimentare presso il seguente punto di bisogno posseduto da {email_ente} in data {datetime.now(timezone.utc)}.
+Indirizzo: {indirizzo}   
 Latitudine: {lan}
 Longitudine: {lon}
 La preghiamo di ritirare il pacco il prima possibile
@@ -257,7 +262,8 @@ Map4Aid
 """
         else:
             corpo = f"""
-E' stata confermata una prenotazione per il seguente bene:{nome_bene} presso il seguente punto di bisogno posseduto da {email_ente} in data {datetime.now(timezone.utc)}.
+E' stata confermata una prenotazione per il seguente bene: {nome_bene} presso il seguente punto di bisogno posseduto da {email_ente} in data {datetime.now(timezone.utc)}.
+Indirizzo: {indirizzo}     
 Latitudine: {lan}
 Longitudine: {lon}
 La preghiamo di ritirare il bene il prima possibile
@@ -287,15 +293,26 @@ Map4Aid"""
             print(f"Errore SMTP: {e}")
             return False
 
-    def invia_email_prenotazione_ente(self,email_ente,email_beneficiario,lan,lon,prenotazione,nome_bene=None,path_ricetta=None):
+    def invia_email_prenotazione_ente(
+        self,
+        email_ente,
+        email_beneficiario,
+        indirizzo,
+        lan,
+        lon,
+        prenotazione_id,    
+        nome_bene=None,
+        path_ricetta=None
+    ):
         msg = MIMEMultipart()
         msg["From"] = self.config["email"]
         msg["To"] = email_ente
         msg["Subject"] = "Email per conferma prenotazione"
 
-        if nome_bene == None:
+        if nome_bene is None:
             corpo = f"""
 E' stata confermata una prenotazione per un pacco alimentare presso il seguente punto di bisogno in vostro posseso da parte di {email_beneficiario} in data {datetime.now(timezone.utc)}.
+Indirizzo: {indirizzo}     
 Latitudine: {lan}
 Longitudine: {lon}
 
@@ -304,34 +321,35 @@ Map4Aid
 """
         else:
             corpo = f"""
-E' stata confermata una prenotazione per il seguente bene:{nome_bene} presso il seguente punto di bisogno in vostro posseso da parte di {email_beneficiario} in data {datetime.now(timezone.utc)}.
+E' stata confermata una prenotazione per il seguente bene: {nome_bene} presso il seguente punto di bisogno in vostro posseso da parte di {email_beneficiario} in data {datetime.now(timezone.utc)}.
+Indirizzo: {indirizzo}    
 Latitudine: {lan}
 Longitudine: {lon}
 
 Cordiali saluti,
 Map4Aid"""
 
-            msg.attach(MIMEText(corpo, "plain", "utf-8"))
-            # Allegato ricetta medica (se presente)
-            if path_ricetta is not None:
-                try:
-                    with open(path_ricetta, "rb") as f:
-                        parte = MIMEBase("application", "octet-stream")
-                        parte.set_payload(f.read())
+        msg.attach(MIMEText(corpo, "plain", "utf-8"))
 
-                    encoders.encode_base64(parte)
+        if path_ricetta is not None:
+            try:
+                with open(path_ricetta, "rb") as f:
+                    parte = MIMEBase("application", "octet-stream")
+                    parte.set_payload(f.read())
 
-                    nome_file = os.path.basename(path_ricetta)
-                    parte.add_header(
-                        "Content-Disposition",
-                        f'attachment; filename="{nome_file}"'
-                    )
+                encoders.encode_base64(parte)
 
-                    msg.attach(parte)
+                nome_file = os.path.basename(path_ricetta)
+                parte.add_header(
+                    "Content-Disposition",
+                    f'attachment; filename="{nome_file}"'
+                )
 
-                except Exception as e:
-                    print(f"Errore allegato ricetta: {e}")
-                    return False
+                msg.attach(parte)
+
+            except Exception as e:
+                print(f"Errore allegato ricetta: {e}")
+                return False
 
         try:
             with smtplib.SMTP(self.config["smtp_server"],
@@ -348,8 +366,7 @@ Map4Aid"""
             print(f"Errore SMTP: {e}")
             return False
 
-
-    def invia_cancellazione_prenotazione_beneficiario(self,email_ente,email_beneficiario,data,indirizzo):
+    def invia_cancellazione_prenotazione_beneficiario(self, email_ente, email_beneficiario, data, indirizzo):
         msg = MIMEMultipart()
         msg["From"] = self.config["email"]
         msg["To"] = email_beneficiario
@@ -425,7 +442,6 @@ la informiamo che la sua registrazione è stata validata e confermata da un nost
 
 Cordiali saluti,
 Map4Aid"""
-
         else:
             corpo = f"""
             Salve,
@@ -434,7 +450,6 @@ Map4Aid"""
 
             Cordiali saluti,
             Map4Aid"""
-
 
         msg.attach(MIMEText(corpo, "plain", "utf-8"))
 
