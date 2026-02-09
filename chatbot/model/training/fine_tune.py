@@ -1,13 +1,12 @@
 """
-Fine-tuning Qwen 2.5-3B con QLoRA "a tranche" SENZA resume dei checkpoint Trainer.
+Fine-tuning Qwen 2.5-3B con QLoRA "a tranche" (25 step per run),
+MA con 2 fasi nello stesso run:
+1) Intent classification (label-only)
+2) Answerable classification (label-only)
 
-Obiettivo: evitare il resume (optimizer/scheduler .pt) che richiede torch>=2.6 (CVE torch.load).
-Strategia:
-- Ogni run fa +STEP_PER_RUN step.
-- A fine run salva SOLO l'adapter LoRA in una cartella incrementale (stage-00025, stage-00050, ...).
-- Alla run successiva, carica base model + ultimo adapter e continua (optimizer reset, ma i pesi LoRA restano).
-- Logging ogni LOG_EVERY_STEPS step.
-- Riduce warning principali dove possibile.
+Obiettivo:
+- Addestrare SOLO il riconoscimento (etichette), non la generazione di risposte.
+- Salvare un SOLO adapter per run (stage-00025, stage-00050, ...).
 """
 
 import os
@@ -36,36 +35,38 @@ from datasets import load_dataset
 MODEL_NAME = "Qwen/Qwen2.5-3B-Instruct"
 
 # Tranche
-STEP_PER_RUN = 25          # 25 step per run
-TARGET_TOTAL_STEPS = 100   # obiettivo totale
-LOG_EVERY_STEPS = 5
+STEP_PER_RUN = 26
+TARGET_TOTAL_STEPS = 104
+LOG_EVERY_STEPS = 4
+
+# Split per run: devono sommare a STEP_PER_RUN
+INTENT_STEPS = 13
+ANSWERABLE_STEPS = 13
 
 # Salvataggi adapter
 ADAPTERS_DIR = "./qwen-aidano-adapters"   # stage-00025, stage-00050, ...
-FINAL_DIR = "./qwen-aidano-final"         # ultimo adapter “finale”
+FINAL_DIR = "./qwen-aidano-final"
+
+# Dataset (devono essere generati dal tuo dataset_generator)
+INTENT_DATASET_NAME = "training_intent.jsonl"
+ANSWERABLE_DATASET_NAME = "training_answerable.jsonl"
 
 # Training
-MAX_SEQ_LEN = 320
+MAX_SEQ_LEN = 256
 BATCH_SIZE = 1
 GRAD_ACCUM = 4
 LR = 2e-4
 
 
 def _find_last_stage_steps(adapters_dir: str) -> int:
-    """
-    Cerca la cartella stage-XXXXX più recente e restituisce XXXXX come int.
-    Se non esiste, ritorna 0.
-    """
     if not os.path.isdir(adapters_dir):
         return 0
-
     pat = re.compile(r"^stage-(\d{5})$")
     last = 0
     for name in os.listdir(adapters_dir):
         m = pat.match(name)
         if m:
-            steps = int(m.group(1))
-            last = max(last, steps)
+            last = max(last, int(m.group(1)))
     return last
 
 
@@ -73,41 +74,102 @@ def _stage_path(adapters_dir: str, steps: int) -> str:
     return os.path.join(adapters_dir, f"stage-{steps:05d}")
 
 
+def _load_jsonl_dataset(dataset_path: str):
+    return load_dataset("json", data_files=dataset_path, split="train")
+
+
+def train_phase(model, tokenizer, dataset, max_steps: int):
+    """
+    Esegue una fase di training (max_steps) sul dataset passato.
+    Ritorna il modello aggiornato (stesso oggetto, ma per chiarezza lo ritorniamo).
+    """
+    def formatting_prompts_func(example):
+        output_texts = []
+        for i in range(len(example["messages"])):
+            messages = example["messages"][i]
+            text = tokenizer.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=False
+            )
+            output_texts.append(text)
+        return output_texts
+
+    training_args = TrainingArguments(
+        output_dir="./tmp-trainer-output",
+        per_device_train_batch_size=BATCH_SIZE,
+        gradient_accumulation_steps=GRAD_ACCUM,
+        learning_rate=LR,
+        max_steps=max_steps,
+        logging_steps=LOG_EVERY_STEPS,
+        fp16=True,
+        save_strategy="no",
+        report_to="none",
+    )
+
+    trainer = SFTTrainer(
+        model=model,
+        train_dataset=dataset,
+        # ok anche se model è già PeftModel
+        peft_config=None,
+        max_seq_length=MAX_SEQ_LEN,
+        tokenizer=tokenizer,
+        args=training_args,
+        formatting_func=formatting_prompts_func,
+    )
+
+    trainer.train()
+    return model
+
+
 def train():
-    # Riduci warning verbosi non utili (non nasconde errori reali)
+    if INTENT_STEPS + ANSWERABLE_STEPS != STEP_PER_RUN:
+        print("!! [ERRORE] INTENT_STEPS + ANSWERABLE_STEPS deve essere = STEP_PER_RUN")
+        return
+
     warnings.filterwarnings("ignore", message="`tokenizer` is deprecated")
     warnings.filterwarnings("ignore", message="`torch_dtype` is deprecated")
     warnings.filterwarnings("ignore", message="The tokenizer has new PAD/BOS/EOS tokens")
 
-    # Percorso dataset robusto
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    dataset_path = os.path.join(script_dir, "../../data/training_data_expanded.jsonl")
+    data_dir = os.path.join(script_dir, "../../data")
 
-    if not os.path.exists(dataset_path):
-        print(f"!! [ERRORE] Dataset non trovato: {dataset_path}")
-        print("!! Lancia prima: python ../../data/dataset_generator.py")
+    intent_path = os.path.join(data_dir, INTENT_DATASET_NAME)
+    answerable_path = os.path.join(data_dir, ANSWERABLE_DATASET_NAME)
+
+    if not os.path.exists(intent_path):
+        print(f"!! [ERRORE] Dataset intent non trovato: {intent_path}")
+        print("!! Assicurati che dataset_generator produca training_intent.jsonl")
+        return
+
+    if not os.path.exists(answerable_path):
+        print(f"!! [ERRORE] Dataset answerable non trovato: {answerable_path}")
+        print("!! Assicurati che dataset_generator produca training_answerable.jsonl")
         return
 
     os.makedirs(ADAPTERS_DIR, exist_ok=True)
 
-    # Calcola da dove ripartire (in termini di "step totali" target)
     last_total_steps = _find_last_stage_steps(ADAPTERS_DIR)
-
     if last_total_steps >= TARGET_TOTAL_STEPS:
         print(f">> Hai già raggiunto {last_total_steps} step (>= {TARGET_TOTAL_STEPS}).")
         print(f">> Ultimo adapter: {_stage_path(ADAPTERS_DIR, last_total_steps)}")
-        print(f">> Se vuoi, copia quello in {FINAL_DIR} oppure usa direttamente lo stage.")
         return
 
     next_total_steps = min(last_total_steps + STEP_PER_RUN, TARGET_TOTAL_STEPS)
     steps_this_run = next_total_steps - last_total_steps
 
-    print(f">> Dataset utilizzato: {dataset_path}")
+    # se l’ultimo run è “parziale” (quando TARGET_TOTAL_STEPS non è multiplo di STEP_PER_RUN)
+    # ridistribuiamo mantenendo priorità su intent
+    intent_steps = min(INTENT_STEPS, steps_this_run)
+    answerable_steps = max(0, steps_this_run - intent_steps)
+
+    print(f">> Dataset intent:      {intent_path}")
+    print(f">> Dataset answerable:  {answerable_path}")
     if last_total_steps == 0:
-        print(f">> Nessun adapter precedente. Avvio da base model e farò {steps_this_run} step (totale {next_total_steps}).")
+        print(f">> Nessun adapter precedente. Avvio da base model e farò {steps_this_run} step (Intent {intent_steps} + Answerable {answerable_steps}) (totale {next_total_steps}).")
     else:
         print(f">> Trovato adapter: {_stage_path(ADAPTERS_DIR, last_total_steps)}")
-        print(f">> Carico base+adapter e farò altri {steps_this_run} step (totale {next_total_steps}).")
+        print(f">> Carico base+adapter e farò altri {steps_this_run} step (Intent {intent_steps} + Answerable {answerable_steps}) (totale {next_total_steps}).")
 
     # =========================
     # Quantizzazione 4-bit
@@ -119,26 +181,19 @@ def train():
         bnb_4bit_use_double_quant=True,
     )
 
-    # Tokenizer
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "right"
 
-    # Modello base (usa dtype invece di torch_dtype)
     model = AutoModelForCausalLM.from_pretrained(
         MODEL_NAME,
         quantization_config=bnb_config,
         device_map="auto",
-        dtype=torch.float16,
+        torch_dtype=torch.float16
     )
-
-    # Evita warning/use_cache incompatibile con gradient checkpointing
     model.config.use_cache = False
-
-    # Preparazione QLoRA
     model = prepare_model_for_kbit_training(model)
 
-    # Config LoRA
     lora_config = LoraConfig(
         r=8,
         lora_alpha=16,
@@ -148,59 +203,31 @@ def train():
         task_type="CAUSAL_LM",
     )
 
-    # =========================
-    # Adapter: crea o carica
-    # =========================
     stage_path = _stage_path(ADAPTERS_DIR, last_total_steps)
-
     if last_total_steps == 0:
-        # Prima tranche: crea adapter
         model = get_peft_model(model, lora_config)
     else:
-        # Tranche successive: carica adapter ESISTENTE (evita "multiple adapters")
         model = PeftModel.from_pretrained(model, stage_path, is_trainable=True)
 
     # =========================
-    # Dataset
+    # Dataset load
     # =========================
-    dataset = load_dataset("json", data_files=dataset_path, split="train")
-
-    def formatting_prompts_func(example):
-        output_texts = []
-        for i in range(len(example["messages"])):
-            messages = example["messages"][i]
-            text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=False)
-            output_texts.append(text)
-        return output_texts
+    intent_ds = _load_jsonl_dataset(intent_path)
+    answerable_ds = _load_jsonl_dataset(answerable_path)
 
     # =========================
-    # TrainingArguments
+    # Phase 1: intent
     # =========================
-    training_args = TrainingArguments(
-        output_dir="./tmp-trainer-output",     # non usato per resume
-        per_device_train_batch_size=BATCH_SIZE,
-        gradient_accumulation_steps=GRAD_ACCUM,
-        learning_rate=LR,
-        max_steps=steps_this_run,              # step SOLO di questa run
-        logging_steps=LOG_EVERY_STEPS,
-        fp16=True,
-        save_strategy="no",                    # niente checkpoint trainer (evita torch.load al resume)
-        report_to="none",
-    )
+    if intent_steps > 0:
+        print(f">> Phase 1/2: Intent training ({intent_steps} step)...")
+        model = train_phase(model, tokenizer, intent_ds, intent_steps)
 
-    trainer = SFTTrainer(
-        model=model,
-        train_dataset=dataset,
-        # peft_config qui va bene anche se model è già PeftModel: non crea adapter nuovi
-        peft_config=lora_config,
-        max_seq_length=MAX_SEQ_LEN,
-        tokenizer=tokenizer,
-        args=training_args,
-        formatting_func=formatting_prompts_func,
-    )
-
-    print(">> Avvio addestramento...")
-    trainer.train()
+    # =========================
+    # Phase 2: answerable
+    # =========================
+    if answerable_steps > 0:
+        print(f">> Phase 2/2: Answerable training ({answerable_steps} step)...")
+        model = train_phase(model, tokenizer, answerable_ds, answerable_steps)
 
     # =========================
     # Salvataggio adapter "stage-XXXXX"
@@ -208,15 +235,14 @@ def train():
     stage_out = _stage_path(ADAPTERS_DIR, next_total_steps)
     os.makedirs(stage_out, exist_ok=True)
     model.save_pretrained(stage_out)
-    print(f"[OK] Tranche completata. Adapter salvato in: {stage_out}")
+    print(f"[OK] Run completata. Adapter salvato in: {stage_out}")
 
-    # Se abbiamo raggiunto il target, salva anche in FINAL_DIR
     if next_total_steps >= TARGET_TOTAL_STEPS:
         os.makedirs(FINAL_DIR, exist_ok=True)
         model.save_pretrained(FINAL_DIR)
         print(f"[OK] Target raggiunto ({next_total_steps} step). Adapter finale salvato in: {FINAL_DIR}")
     else:
-        print(f">> Quando vuoi continuare, rilancia lo script: farà altri {STEP_PER_RUN} step (fino a {TARGET_TOTAL_STEPS}).")
+        print(f">> Rilancia lo script quando vuoi: farà altri {STEP_PER_RUN} step (fino a {TARGET_TOTAL_STEPS}).")
 
 
 if __name__ == "__main__":

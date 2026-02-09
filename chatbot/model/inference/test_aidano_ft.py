@@ -40,8 +40,8 @@ def main():
             print("  /esci   -> termina il programma")
             continue
 
-        # Genera risposta (il client usa max_new_tokens=160 e do_sample=False internamente)
-        response = client.generate_response_gated(user_input)
+        # Genera risposta
+        response = client.respond_fixed_gated(user_input)
         print(f"Aidano: {response}")
 
 
