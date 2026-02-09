@@ -1,8 +1,8 @@
 from functools import wraps
-from flask import jsonify
+from flask import jsonify, session
 from flask_login import current_user
 
-
+#permessi su ruolo db
 def require_roles(*roles):
     def decorator(f):
         @wraps(f)
@@ -16,3 +16,13 @@ def require_roles(*roles):
             return f(*args, **kwargs)
         return wrapper
     return decorator
+
+
+#permessi admin su sessione
+def require_admin(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if not session.get("is_admin"):
+            return jsonify({"error": "Accesso non autorizzato"}), 403
+        return f(*args, **kwargs)
+    return wrapper

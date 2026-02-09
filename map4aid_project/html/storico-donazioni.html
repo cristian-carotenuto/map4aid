@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
   <meta charset="UTF-8">
   <title>Storico Donazioni - Map4Aid</title>
@@ -9,12 +10,14 @@
       border-left: 4px solid #17a2b8;
       transition: transform 0.2s;
     }
+
     .donazione-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
   </style>
 </head>
+
 <body class="bg-light">
   <!-- Header dinamico -->
   <header class="header-bg text-white p-3 d-flex justify-content-between align-items-center">
@@ -78,31 +81,6 @@
       window.location.href = 'login.html';
     }
 
-    // dati simulati per lo storico donazioni
-    const donazioniSimulate = [
-      {
-        id: "D001",
-        data: "20/01/2026",
-        importo: "50,00",
-        ente: "Caritas Roma",
-        stato: "completata"
-      },
-      {
-        id: "D002",
-        data: "15/01/2026",
-        importo: "100,00",
-        ente: "Croce Rossa",
-        stato: "completata"
-      },
-      {
-        id: "D003",
-        data: "10/01/2026",
-        importo: "25,00",
-        ente: "Comune di Roma",
-        stato: "completata"
-      }
-    ];
-
     // genera HTML per una donazione
     function generaCardDonazione(donazione) {
       return `
@@ -112,7 +90,7 @@
               <div>
                 <h6 class="card-title mb-1">Donazione #${donazione.id}</h6>
                 <p class="card-text mb-1">
-                  <strong>Importo:</strong> € ${donazione.importo}
+                  ${donazione.tipo === 'monetaria' ? `<strong>Importo:</strong> € ${donazione.importo}` : `<strong>Bene:</strong> ${donazione.bene}`}
                 </p>
                 <p class="card-text text-muted small mb-1">
                   Ente: ${donazione.ente}
@@ -128,10 +106,34 @@
       `;
     }
 
-    // carica tutte le donazioni
-    function caricaDonazioni() {
+    /**
+     * Carica donazioni dall'API
+     */
+    async function caricaDonazioni() {
       const container = document.getElementById('listaDonazioni');
-      container.innerHTML = donazioniSimulate.map(generaCardDonazione).join('');
+      container.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Caricamento...</span></div></div>';
+
+      try {
+        const response = await fetch('/auth/donazioni');
+
+        if (!response.ok) {
+          throw new Error('Errore nel caricamento donazioni');
+        }
+
+        const donazioni = await response.json();
+
+        if (donazioni.length === 0) {
+          container.innerHTML = '<div class="alert alert-info">Non hai ancora effettuato donazioni.</div>';
+          return;
+        }
+
+        // Genera HTML per tutte le donazioni
+        container.innerHTML = donazioni.map(generaCardDonazione).join('');
+
+      } catch (error) {
+        console.error('Errore caricamento donazioni:', error);
+        container.innerHTML = '<div class="alert alert-danger">Errore nel caricamento delle donazioni. Riprova più tardi.</div>';
+      }
     }
 
     // inizializza la pagina
@@ -144,4 +146,5 @@
   </script>
   <script src="../js/auth.js"></script>
 </body>
+
 </html>

@@ -34,6 +34,7 @@ def create_app():
         return Account.query.get(int(user_id))
 
     from controllers.routes import auth_bp
+    from controllers import admin_control
     from controllers import two_fa_contol
     from controllers import autenticazione_control
     from controllers import login_control
@@ -45,6 +46,9 @@ def create_app():
     from controllers import pdf_service
     from controllers import prenotazione_control
     from controllers import profilo_control
+    from controllers import feedback_control
+    from controllers.feedback_control import feedback_bp
+    app.register_blueprint(feedback_bp)
     app.register_blueprint(api_punti.api, url_prefix="/api")
     app.register_blueprint(auth_bp, url_prefix="/auth")
 

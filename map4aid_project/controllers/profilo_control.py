@@ -8,6 +8,126 @@ from config import db
 from models.models import Prenotazione, DonazioneBene, DonazioneMonetaria, PuntoDistribuzione
 
 
+@auth_bp.route("/profilo", methods=["GET"])
+@login_required
+def get_profilo():
+    """
+    Restituisce i dati del profilo dell'utente autenticato
+    """
+    user = current_user
+    
+    # Dati base comuni a tutti
+    profilo = {
+        "email": user.email,
+        "tipo": user.tipo
+    }
+    
+    # Dati specifici per tipo di account
+    if user.tipo == "beneficiario":
+        profilo.update({
+            "nome": user.nome,
+            "cognome": user.cognome,
+            "data_nascita": user.data_nascita.strftime('%d/%m/%Y') if user.data_nascita else None,
+            "allergeni": user.allergeni,
+            "patologie": user.patologie
+        })
+    elif user.tipo == "donatore":
+        if user.categoria == "privato":
+            profilo.update({
+                "nome": user.nome,
+                "cognome": user.cognome,
+                "categoria": user.categoria
+            })
+        else:  # azienda
+            profilo.update({
+                "nome_attivita": user.nome_attivita,
+                "partita_iva": user.partita_iva,
+                "indirizzo_sede": user.indirizzo_sede,
+                "categoria": user.categoria
+            })
+    elif user.tipo == "ente_erogatore":
+        profilo.update({
+            "nome_organizzazione": user.nome_organizzazione,
+            "tipologia_ente": user.tipologia_ente,
+            "indirizzo_sede": user.indirizzo_sede,
+            "iban": user.iban
+        })
+    
+    return jsonify(profilo), 200
+
+
+@auth_bp.route("/prenotazioni", methods=["GET"])
+@login_required
+def get_prenotazioni():
+    """
+    Restituisce tutte le prenotazioni dell'utente autenticato (solo beneficiari)
+    """
+    user = current_user
+    
+    if user.tipo != "beneficiario":
+        return jsonify({"error": "Solo i beneficiari hanno prenotazioni"}), 403
+    
+    prenotazioni = Prenotazione.query.filter_by(beneficiario_id=user.id).all()
+    
+    risultato = []
+    for p in prenotazioni:
+        risultato.append({
+            "id": p.id,
+            "data": p.data_prenotazione.strftime('%d/%m/%Y'),
+            "ora": p.data_prenotazione.strftime('%H:%M'),
+            "punto": p.punto.nome if p.punto else "",
+            "indirizzo": p.punto.latitudine if p.punto else "",  # placeholder, potresti aggiungere un campo indirizzo
+            "bene": p.bene.nome if p.bene else (p.pacco.nome if p.pacco else "N/A"),
+            "quantita": 1,  # puoi aggiungere un campo quantità al model se necessario
+            "stato": p.stato
+        })
+    
+    return jsonify(risultato), 200
+
+
+@auth_bp.route("/donazioni", methods=["GET"])
+@login_required
+def get_donazioni():
+    """
+    Restituisce tutte le donazioni dell'utente autenticato (solo donatori)
+    """
+    user = current_user
+    
+    if user.tipo != "donatore":
+        return jsonify({"error": "Solo i donatori hanno donazioni"}), 403
+    
+    risultato = []
+    
+    # Donazioni di beni
+    don_beni = DonazioneBene.query.filter_by(donatore_id=user.id).all()
+    for d in don_beni:
+        risultato.append({
+            "id": f"DB{d.id}",
+            "tipo": "bene",
+            "data": d.data.strftime('%d/%m/%Y'),
+            "bene": d.bene.nome if d.bene else "N/A",
+            "ente": d.ente_erogatore.nome_organizzazione if d.ente_erogatore else "N/A",
+            "stato": "completata"
+        })
+    
+    # Donazioni monetarie
+    don_money = DonazioneMonetaria.query.filter_by(donatore_id=user.id).all()
+    for d in don_money:
+        risultato.append({
+            "id": f"DM{d.id}",
+            "tipo": "monetaria",
+            "data": d.data.strftime('%d/%m/%Y'),
+            "importo": f"{d.importo:.2f}",
+            "ente": d.ente.nome_organizzazione if d.ente else "N/A",
+            "stato": "completata"
+        })
+    
+    # Ordina per data (più recenti prima)
+    risultato.sort(key=lambda x: x['data'], reverse=True)
+    
+    return jsonify(risultato), 200
+
+
 @auth_bp.route("/modifica_profilo", methods=["POST"])
 @login_required
 def modifica_profilo():

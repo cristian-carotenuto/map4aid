@@ -9,10 +9,10 @@ from models.models import AccountEnteErogatore
 @auth_bp.route("/segnalazione", methods=["POST"])
 @require_roles("donatore","beneficiario","ente_erogatore")
 def segnalazione():
-    data = request.get_json()
-    lat = data["latitudine"]
-    lon = data["longitudine"]
-    indirizzo = data["indirizzo"]
+    lat = request.form.get("latitudine")
+    lon = request.form.get("longitudine")
+    indirizzo = request.form.get("indirizzo")
+
     mail_sender = EmailControlBridge()
     resoconto = {
         "successo": True,

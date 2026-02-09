@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from config import db
-from controllers.permessi import require_roles
+from controllers.permessi import require_admin
 from controllers.routes import auth_bp
 from models import AccountBeneficiario
 from flask_login import current_user, login_required
@@ -24,22 +24,26 @@ def register():
         return jsonify({"error": str(e)}), 500
 
 @auth_bp.route("/admin_register", methods=["POST"])
-#@require_roles("admin")
+@require_admin
 def admin_register():
-    id_utente = int(request.form.get("id_utente"))
-    utente = AccountBeneficiario.query.filter_by(id=id_utente).first()
+    id_utente = request.form.get("id_utente")
     accettato = request.form.get("accettato")
+
+    if not id_utente or accettato is None:
+        return jsonify({"error": "Campi mancanti"}), 400
+
+    utente = AccountBeneficiario.query.filter_by(id=id_utente).first()
 
     if not utente:
         return jsonify({"error": "Utente non trovato"}), 404
 
     if accettato == "True":
         utente.accettato = True
-        db.session.add(utente)
         db.session.commit()
-        return jsonify({"message": "Utente registrato"}), 200
+        return jsonify({"message": "Utente approvato"}), 200
 
+    # Rifiuto → elimino l’utente
     db.session.delete(utente)
     db.session.commit()
-    return jsonify({"message": "Utente rifiutato dall'admin"}), 200
+    return jsonify({"message": "Utente rifiutato"}), 200
 
