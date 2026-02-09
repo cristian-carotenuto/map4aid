@@ -1,6 +1,4 @@
 from datetime import timezone, datetime
-
-from django.contrib.sessions.models import Session
 from flask import request, session, jsonify
 from werkzeug.utils import secure_filename
 import os
@@ -174,9 +172,10 @@ def prenotazione():
             bene_id=bene.id,
             punto_id=punto_distribuzione.id,
             pacco_id=None,
+            stato="in_validazione"
         )
+
         bene.quantita -= 1
-        bene.save()
         db.session.add(prenotazione)
         db.session.commit()
 
@@ -188,7 +187,9 @@ def prenotazione():
             punto_distribuzione.longitudine,
             prenotazione.id,
             bene.nome,
+            ricetta_path
         )
+        
         email_ok2 = mail_sender.send_prenotazione_ente(
             ente.email,
             user_email,
@@ -210,10 +211,18 @@ def prenotazione():
 def conferma_prenotazione():
     id = request.args.get("id_prenotazione")
     prenotazione = Prenotazione.query.filter_by(id=id).first()
+
+    if not prenotazione: 
+        return jsonify({"error": "Prenotazione non trovata"}), 404
+    
     punto = PuntoDistribuzione.query.filter_by(id=prenotazione.punto_id).first()
     ente = Account.query.filter_by(id=punto.ente_erogatore_id).first()
     if ente.email != session["user_email"]:
         return jsonify({"error": "Non hai i permessi per confermare la prenotazione"}), 401
+    
+    if prenotazione.stato != "in_attesa": 
+        return jsonify({"error": "La prenotazione non è pronta per il ritiro"}), 400
+    
     prenotazione.stato = "ritirata"
     db.session.commit()
     return jsonify({"message": "Prenotazione ritirata"}), 200
@@ -283,6 +292,46 @@ def cancella_prenotazione_beneficiario():
             return jsonify({"message": "Prenotazione cancellata"}), 200
 
         return jsonify({"error": "Prenotazione cancellata, ma email non inviata"}), 500
+
+
+
+
+@auth_bp.route("/approva_ricetta", methods=["GET"])
+@require_roles("ente_erogatore")
+def approva_ricetta():
+    mail_sender = EmailControlBridge()
+    id = request.args.get("id_prenotazione", type=int)
+    prenotazione = Prenotazione.query.filter_by(id=id).first()
+
+    if not prenotazione:
+        return jsonify({"error": "Prenotazione non trovata"}), 404
+
+    punto = PuntoDistribuzione.query.filter_by(id=prenotazione.punto_id).first()
+    ente = Account.query.filter_by(id=punto.ente_erogatore_id).first()
+
+    if ente.email != session["user_email"]:
+        return jsonify({"error": "Non hai i permessi per approvare"}), 401
+
+    if prenotazione.stato != "in_validazione":
+        return jsonify({"error": "La prenotazione non è in validazione"}), 400
+
+    beneficiario = Account.query.filter_by(id=prenotazione.beneficiario_id).first()
+    bene = Bene.query.filter_by(id=prenotazione.bene_id).first()
+
+    prenotazione.stato = "in_attesa"
+    db.session.commit()
+
+    email_ok = mail_sender.send_validazione_medicinale(
+        beneficiario.email,   
+        ente.email,           
+        bene.nome             
+    )
+
+    if email_ok:
+        return jsonify({"message": "Ricetta approvata. Il beneficiario è stato avvisato."}), 200
+
+    return jsonify({"message": "Ricetta approvata, ma email non inviata"}), 200
+
 
 
 def cancella_prenotazione(prenotazione):

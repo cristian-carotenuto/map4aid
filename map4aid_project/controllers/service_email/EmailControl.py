@@ -251,7 +251,7 @@ Map4Aid
 
         if nome_bene is None:
             corpo = f"""
-E' stata confermata una prenotazione per un pacco alimentare presso il seguente punto di bisogno posseduto da {email_ente} in data {datetime.now(timezone.utc).day}/{datetime.now(timezone.utc).month}/{datetime.now(timezone.utc).day}/{datetime.now(timezone.utc).year}.
+E' stata confermata una prenotazione per un pacco alimentare presso il seguente punto di bisogno posseduto da {email_ente} in data {datetime.now(timezone.utc).day}/{datetime.now(timezone.utc).month}/{datetime.now(timezone.utc).year}..
 Indirizzo: {indirizzo}   
 Latitudine: {lan}
 Longitudine: {lon}
@@ -261,9 +261,24 @@ Se il pacco non verrà ritirato entro 4 giorni, la prenotazione verrà cancellat
 Cordiali saluti,
 Map4Aid
 """
+        elif path_ricetta is not None:
+            corpo = f"""
+E' stata confermata una prenotazione per un pacco alimentare presso il seguente punto di bisogno posseduto da {email_ente} in data {datetime.now(timezone.utc).day}/{datetime.now(timezone.utc).month}/{datetime.now(timezone.utc).year}..
+Indirizzo: {indirizzo}   
+Latitudine: {lan}
+Longitudine: {lon}
+La sua prenotazione è in attesa di validazione,poicè il bene prenotato è di tipologia medicinale.
+L'esito della validazione voi verrà comunicato via email, se avrà esito positivo recatevi entro 4 giorni nel punto di ritiro sopra citato. Mostrare infine il qrCode allegato per ritirare il bene
+
+Cordiali saluti,
+Map4Aid
+"""
+
+
+
         else:
             corpo = f"""
-E' stata confermata una prenotazione per il seguente bene: {nome_bene} presso il seguente punto di bisogno posseduto da {email_ente} in data {datetime.now(timezone.utc).day}/{datetime.now(timezone.utc).month}/{datetime.now(timezone.utc).day}/{datetime.now(timezone.utc).year}..
+E' stata confermata una prenotazione per il seguente bene: {nome_bene} presso il seguente punto di bisogno posseduto da {email_ente} in data {datetime.now(timezone.utc).day}/{datetime.now(timezone.utc).month}/{datetime.now(timezone.utc).year}.
 Indirizzo: {indirizzo}     
 Latitudine: {lan}
 Longitudine: {lon}
@@ -313,7 +328,7 @@ Map4Aid"""
 
         if nome_bene is None:
             corpo = f"""
-E' stata confermata una prenotazione per un pacco alimentare presso il seguente punto di bisogno in vostro posseso da parte di {email_beneficiario} in data {datetime.now(timezone.utc)}.
+E' stata confermata una prenotazione per un pacco alimentare presso il seguente punto di bisogno in vostro posseso da parte di {email_beneficiario} in data {datetime.now(timezone.utc).day}/{datetime.now(timezone.utc).month}/{datetime.now(timezone.utc).year}..
 Indirizzo: {indirizzo}     
 Latitudine: {lan}
 Longitudine: {lon}
@@ -323,7 +338,7 @@ Map4Aid
 """
         else:
             corpo = f"""
-E' stata confermata una prenotazione per il seguente bene: {nome_bene} presso il seguente punto di bisogno in vostro posseso da parte di {email_beneficiario} in data {datetime.now(timezone.utc)}.
+E' stata confermata una prenotazione per il seguente bene: {nome_bene} presso il seguente punto di bisogno in vostro posseso da parte di {email_beneficiario} in data {datetime.now(timezone.utc).day}/{datetime.now(timezone.utc).month}/{datetime.now(timezone.utc).year}..
 Indirizzo: {indirizzo}    
 Latitudine: {lan}
 Longitudine: {lon}
@@ -435,7 +450,7 @@ Map4Aid"""
         msg = MIMEMultipart()
         msg["From"] = self.config["email"]
         msg["To"] = email_beneficiario
-        msg["Subject"] = "Email per cancellazione prenotazione"
+        msg["Subject"] = "Email per esito prenotazione"
 
         if esito == "True":
             corpo = f"""
@@ -452,6 +467,38 @@ Map4Aid"""
 
             Cordiali saluti,
             Map4Aid"""
+
+        msg.attach(MIMEText(corpo, "plain", "utf-8"))
+
+        try:
+            with smtplib.SMTP(self.config["smtp_server"],
+                              self.config["smtp_port"]) as server:
+                server.starttls()
+                server.login(
+                    self.config["email"],
+                    self.config["password"]
+                )
+                server.send_message(msg)
+            return True
+
+        except Exception as e:
+            print(f"Errore SMTP: {e}")
+            return False
+
+    def invia_validazione_medicinale(self, email_beneficiario, email_ente,nome_bene):
+        msg = MIMEMultipart()
+        msg["From"] = self.config["email"]
+        msg["To"] = email_beneficiario
+        msg["Subject"] = "Email per validazione prenotazione"
+
+
+        corpo = f"""
+Salve,
+la informiamo che la sua prenotazione per il seguente medicinale:{nome_bene} è stata validata e confermata da {email_ente}. Da ora in poi ha 4 giorni per ritirare il medicinale prenotato.
+
+Cordiali saluti,
+Map4Aid"""
+
 
         msg.attach(MIMEText(corpo, "plain", "utf-8"))
 
