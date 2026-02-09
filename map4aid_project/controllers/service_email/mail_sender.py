@@ -105,3 +105,12 @@ class MailSender(ABC):
         esito: bool
     ) -> bool:
         pass
+
+    @abstractmethod
+    def send_validazione_medicinale(
+            self,
+            email_beneficiario: str,
+            email_ente: str,
+            nome_bene: str
+    ) -> bool:
+        pass

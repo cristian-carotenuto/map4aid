@@ -153,3 +153,15 @@ class EmailControlBridge(MailSender):
             email_beneficiario,
             esito
         )
+
+    def send_validazione_medicinale(
+            self,
+            email_beneficiario,
+            email_ente,
+            nome_bene
+    ) -> bool:
+        return self._email_control.invia_validazione_medicinale(
+            email_beneficiario,
+            email_ente,
+            nome_bene
+        )

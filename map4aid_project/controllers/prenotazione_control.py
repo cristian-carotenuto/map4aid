@@ -188,6 +188,7 @@ def prenotazione():
             punto_distribuzione.longitudine,
             prenotazione.id,
             bene.nome,
+            ricetta_path
         )
         email_ok2 = mail_sender.send_prenotazione_ente(
             ente.email,
