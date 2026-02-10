@@ -5,6 +5,7 @@ from functools import wraps
 from config import ADMIN_EMAIL, ADMIN_CODE, db
 from controllers.service_email.email_control_bridge import EmailControlBridge
 from models import AccountBeneficiario
+from models.models import PuntoDistribuzione
 
 
 #login
@@ -70,7 +71,15 @@ def admin_confirm():
         return jsonify({"message": "Email inviata"}), 200
     return jsonify({"error": "Email non inviata"}), 400
 
-
-
-
-
+@auth_bp.route("/admin/accetta_punto", methods=["POST"])
+@require_admin
+def admin_accetta_punto():
+    punto_id = request.form.get("punto_id")
+    if not punto_id:
+        return jsonify({"error": "ID del punto mancante"}), 400
+    punto = PuntoDistribuzione.query.filter_by(id=punto_id).first()
+    if not punto:
+        return jsonify({"error": "Punto non trovato"}), 404
+    punto.accettato = True
+    db.session.commit()
+    return jsonify({"message": f"Punto '{punto.nome}' accettato con successo"}), 200
