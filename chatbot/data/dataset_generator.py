@@ -255,6 +255,7 @@ def generate_variations(seed: int = 42):
         {
             "intent": "identita_bot",
             "questions": [
+                "Ciao chi sei?",
                 "Chi sei tu?",
                 "Come ti chiami?",
                 "Sei un'intelligenza artificiale?",
@@ -281,7 +282,7 @@ def generate_variations(seed: int = 42):
             "questions": [
                 "Come stai?",
                 "Tutto bene?",
-                "Come va?",
+                "Hey come va?",
                 "Aidano, come ti senti oggi?",
                 "Sei in forma?",
                 "Come procede il tuo lavoro?",
@@ -432,8 +433,6 @@ def generate_variations(seed: int = 42):
         {
             "intent": "non_disponibile",
             "questions": [
-                "Esistono dei QR code in questo sito?",
-                "Utilizzo dei QR code",
                 "Ci sono dei piani della zona?",
                 "Esiste un piano della zona?",
                 "Quali requisiti sanitari servono?",
@@ -501,19 +500,29 @@ def generate_variations(seed: int = 42):
 
     # Intent confondibili: genera negativi più “difficili”
     confusable: Dict[str, List[str]] = {
-        "donazione_di_beni": ["prenotazione_beni", "tipi_donazione"],
-        "prenotazione_beni": ["donazione_di_beni", "mappa_utilita"],
-        "storico_donazioni": ["storico_prenotazioni", "accesso_profilo"],
-        "storico_prenotazioni": ["storico_donazioni", "accesso_profilo"],
-        "mappa_utilita": ["mappa_problemi", "prenotazione_beni"],
-        "mappa_problemi": ["mappa_utilita", "prenotazione_beni"],
-        "problemi_login": ["password_dimenticata", "email_dimenticata", "accesso_profilo"],
-        "password_dimenticata": ["problemi_login", "email_dimenticata"],
-        "email_dimenticata": ["problemi_login", "password_dimenticata"],
-        "identita_bot": ["stato_animo", "descrizione_progetto"],
-        "stato_animo": ["identita_bot"],
-        "descrizione_progetto": ["identita_bot"],
-    }
+    "donazione_di_beni": ["prenotazione_beni", "tipi_donazione", "categorie_beni", "donazione_monetaria"],
+    "donazione_monetaria": ["tipi_donazione", "donazione_di_beni", "categorie_beni"],
+    "tipi_donazione": ["donazione_di_beni", "donazione_monetaria", "categorie_beni"],
+    "categorie_beni": ["tipi_donazione", "donazione_di_beni", "donazione_monetaria"],
+
+    "prenotazione_beni": ["donazione_di_beni", "mappa_utilita"],
+    "storico_donazioni": ["storico_prenotazioni", "accesso_profilo"],
+    "storico_prenotazioni": ["storico_donazioni", "accesso_profilo"],
+
+    # Famiglia MAPPA: qui c'era la confusione reale dai log
+    "mappa_utilita": ["filtri_mappa", "mappa_problemi", "prenotazione_beni", "descrizione_progetto"],
+    "filtri_mappa": ["mappa_utilita", "mappa_problemi"],
+    "mappa_problemi": ["mappa_utilita", "filtri_mappa", "prenotazione_beni"],
+
+    "problemi_login": ["password_dimenticata", "email_dimenticata", "accesso_profilo"],
+    "password_dimenticata": ["problemi_login", "email_dimenticata"],
+    "email_dimenticata": ["problemi_login", "password_dimenticata"],
+
+    "identita_bot": ["stato_animo", "descrizione_progetto"],
+    "stato_animo": ["identita_bot"],
+    "descrizione_progetto": ["identita_bot", "mappa_utilita"],
+}
+
 
     # Sanity check: confusable deve riferirsi a intent esistenti
     all_intents = set(intent_to_answers.keys())
