@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="it">
-
 <head>
   <meta charset="UTF-8">
   <title>Login - Map4Aid</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../css/login.css">
+  <link rel="stylesheet" href="../css/style.css">
 </head>
-
 <body class="bg-light">
   <!-- Header dinamico -->
   <header class="header-bg text-white p-3 d-flex justify-content-between align-items-center">
@@ -25,11 +23,6 @@
             <h3 class="text-center">Accedi al tuo account</h3>
           </div>
           <div class="card-body">
-            <!-- 
-              FORM DI LOGIN
-              conforme a login_control.py: invia email/password in form-data
-              Il backend ( da rcontrollarr ) restituisce solo {"message": "...", "email": "..."}
-            -->
             <form id="loginForm">
               <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
@@ -53,7 +46,7 @@
     </div>
   </div>
 
-  <!-- modale per il codice 2FA -->
+  <!-- Modale per il codice 2FA -->
   <div class="modal fade" id="codiceModal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -85,10 +78,11 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/auth.js"></script>
   <script>
     /**
-     * invio del form di login
-     * coerente ( per adesso ) con login_control.py ( endpoint /login )
+     * Invio del form di login
+     * Coerente con login_control.py → endpoint login
      */
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -99,6 +93,7 @@
 
       try {
         const formData = new FormData(e.target);
+        // ✅ CORRETTO: usa /login
         const response = await fetch('/login', {
           method: 'POST',
           body: formData
@@ -107,14 +102,14 @@
         const data = await response.json();
 
         if (response.ok) {
-          // Backend ha inviato codice → mostra modale
+          // Mostra modale 2FA
           const modal = new bootstrap.Modal(document.getElementById('codiceModal'));
           modal.show();
         } else {
           showError('errorMessage', data.error || 'Errore sconosciuto');
         }
       } catch (error) {
-        showError('errorMessage', 'Errore di connessione');
+        showError('errorMessage', 'Errore di connessione al server');
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
@@ -122,8 +117,8 @@
     });
 
     /**
-     * conferma del codice 2FA
-     * coerente ( per adess ) con two_fa_control.py  ( endpoint /2FALogin )
+     * Conferma del codice 2FA
+     * Coerente con two_fa_control.py → endpoint /auth/2FALogin
      */
     document.getElementById('confermaCodiceBtn').addEventListener('click', async () => {
       const codice = document.getElementById('codice').value;
@@ -140,6 +135,7 @@
         const formData = new FormData();
         formData.append('codice', codice);
 
+        // ✅ CORRETTO: usa /auth/2FALogin
         const response = await fetch('/2FALogin', {
           method: 'POST',
           body: formData
@@ -149,20 +145,21 @@
 
         if (response.ok) {
           saveLoginState(data.email);
+          // Chiude modale e reindirizza
           bootstrap.Modal.getInstance(document.getElementById('codiceModal')).hide();
-          updateAuthButtons(); // aggiorna header senza ricaricare
+          window.location.href = 'home.html';
         } else {
           showError('codiceError', data.error || 'Codice non valido');
         }
       } catch (error) {
-        showError('codiceError', 'Errore di connessione');
+        showError('codiceError', 'Errore di connessione al server');
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Conferma';
       }
     });
   </script>
-  <script src="../js/auth.js"></script>
+  <!-- ✅ Chatbot integrato -->
+  <script src="../chatbot/js/loader.js"></script>
 </body>
-
 </html>

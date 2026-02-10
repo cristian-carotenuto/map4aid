@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="it">
-
 <head>
   <meta charset="UTF-8">
   <title>Profilo - Map4Aid</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
 </head>
-
 <body class="bg-light">
   <!-- Header dinamico -->
   <header class="header-bg text-white p-3 d-flex justify-content-between align-items-center">
@@ -17,74 +16,54 @@
     <div class="d-flex gap-2" id="auth-buttons"></div>
   </header>
 
-  <div class="container mt-4">
+  <div class="container mt-5">
     <div class="row">
+      <!-- Sidebar -->
       <div class="col-md-3">
-        <div class="card">
-          <div class="card-header">
-            <h5 class="mb-0">Menu Profilo</h5>
-          </div>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item active">
-              <a href="profilo.html" class="text-decoration-none text-dark d-block">Dati Personali</a>
-            </li>
-            <li class="list-group-item">
-              <a href="storico-prenotazioni.html" class="text-decoration-none text-dark d-block">Prenotazioni</a>
-            </li>
-            <li class="list-group-item">
-              <a href="storico-donazioni.html" class="text-decoration-none text-dark d-block">Donazioni</a>
-            </li>
-            <li class="list-group-item">
-              <a href="#" class="text-decoration-none text-dark d-block">Impostazioni</a>
-            </li>
-          </ul>
+        <div class="list-group">
+          <a href="profilo.html" class="list-group-item list-group-item-action active">Profilo</a>
+          <a href="storico-prenotazioni.html" class="list-group-item list-group-item-action">Storico Prenotazioni</a>
+          <a href="storico-donazioni.html" class="list-group-item list-group-item-action">Storico Donazioni</a>
         </div>
       </div>
 
+      <!-- Contenuto principale -->
       <div class="col-md-9">
         <div class="card">
           <div class="card-header">
-            <h4 class="mb-0">Il mio profilo</h4>
+            <h3 class="text-center">Il mio profilo</h3>
           </div>
           <div class="card-body">
-            <!-- 
-              DATI ANAGRAFICI
-              il backend nonrestituisce il ruolo dopo il login (solo email)
-              "Ruolo" è mostrato come mock per demo, ma non è reale ( non possibile utilizzarlo per adesso )
-            -->
-            <div class="mb-4">
-              <h5>Dati personali</h5>
+            <div id="profiloContent" style="display:none;">
               <table class="table table-borderless">
                 <tr>
-                  <td><strong>Email:</strong></td>
-                  <td id="userEmail">caricamento...</td>
+                  <th>Email:</th>
+                  <td id="emailUtente"></td>
                 </tr>
                 <tr>
-                  <td><strong>Nome:</strong></td>
-                  <td id="userName">Mario</td>
+                  <th>Ruolo:</th>
+                  <td id="ruoloUtente"></td>
                 </tr>
                 <tr>
-                  <td><strong>Cognome:</strong></td>
-                  <td id="userSurname">Rossi</td>
+                  <th>Nome:</th>
+                  <td id="nomeUtente"></td>
                 </tr>
                 <tr>
-                  <td><strong>Ruolo:</strong></td>
-                  <td id="userRole">Caricamento...</td>
+                  <th>Cognome:</th>
+                  <td id="cognomeUtente"></td>
+                </tr>
+                <tr>
+                  <th>IBAN:</th>
+                  <td id="ibanUtente"></td>
+                </tr>
+                <tr>
+                  <th>Partita IVA:</th>
+                  <td id="pivaUtente"></td>
                 </tr>
               </table>
             </div>
-
-            <!-- prenotazioni attive (mock) -->
-            <div class="mb-4">
-              <h5>Prenotazioni attive</h5>
-              <div id="prenotazioniAttive"></div>
-            </div>
-
-            <!-- storico donazioni (mock) -->
-            <div>
-              <h5>Storico donazioni</h5>
-              <div id="storicoDonazioni"></div>
-            </div>
+            <div id="loadingMessage" class="text-center">Caricamento profilo...</div>
+            <div id="errorMessage" class="mt-3 text-danger" style="display:none;"></div>
           </div>
         </div>
       </div>
@@ -97,173 +76,36 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // protezione: solo utenti loggati
-    if (!sessionStorage.getItem('isLoggedIn')) {
-      alert('Accesso riservato agli utenti registrati');
-      window.location.href = 'login.html';
-    }
-
-    /**
-     * Carica dati profilo dall'API
-     */
-    async function caricaDatiProfilo() {
-      try {
-        // Chiamata all'endpoint reale
-        const response = await fetch('/auth/profilo');
-
-        if (!response.ok) {
-          throw new Error('Errore nel caricamento del profilo');
-        }
-
-        const profilo = await response.json();
-
-        // Mostra email
-        document.getElementById('userEmail').textContent = profilo.email || 'N/A';
-
-        // Mostra nome e cognome basati sul tipo di account
-        if (profilo.tipo === 'beneficiario' || (profilo.tipo === 'donatore' && profilo.categoria === 'privato')) {
-          document.getElementById('userName').textContent = profilo.nome || 'N/A';
-          document.getElementById('userSurname').textContent = profilo.cognome || 'N/A';
-        } else if (profilo.tipo === 'donatore' && profilo.categoria !== 'privato') {
-          document.getElementById('userName').textContent = profilo.nome_attivita || 'N/A';
-          document.getElementById('userSurname').textContent = '-';
-        } else if (profilo.tipo === 'ente_erogatore') {
-          document.getElementById('userName').textContent = profilo.nome_organizzazione || 'N/A';
-          document.getElementById('userSurname').textContent = '-';
-        }
-
-        // Mostra ruolo (capitalizza prima lettera)
-        const ruolo = profilo.tipo ? profilo.tipo.charAt(0).toUpperCase() + profilo.tipo.slice(1).replace('_', ' ') : 'N/A';
-        document.getElementById('userRole').textContent = ruolo;
-
-        // Carica prenotazioni se beneficiario
-        if (profilo.tipo === 'beneficiario') {
-          await caricaPrenotazioni();
-        } else {
-          document.getElementById('prenotazioniAttive').innerHTML = '<p class="text-muted">Non disponibile per questo tipo di account</p>';
-        }
-
-        // Carica donazioni se donatore
-        if (profilo.tipo === 'donatore') {
-          await caricaDonazioni();
-        } else {
-          document.getElementById('storicoDonazioni').innerHTML = '<p class="text-muted">Non disponibile per questo tipo di account</p>';
-        }
-
-      } catch (error) {
-        console.error('Errore caricamento profilo:', error);
-        document.getElementById('userEmail').textContent = sessionStorage.getItem('userEmail') || 'Errore';
-        document.getElementById('userName').textContent = 'Errore nel caricamento';
-        document.getElementById('userSurname').textContent = '-';
-      }
-    }
-
-    /**
-     * Carica prenotazioni attive dall'API
-     */
-    async function caricaPrenotazioni() {
-      try {
-        const response = await fetch('/auth/prenotazioni');
-
-        if (!response.ok) {
-          throw new Error('Errore nel caricamento prenotazioni');
-        }
-
-        const prenotazioni = await response.json();
-        const container = document.getElementById('prenotazioniAttive');
-
-        if (prenotazioni.length === 0) {
-          container.innerHTML = '<p class="text-muted">Nessuna prenotazione attiva</p>';
-          return;
-        }
-
-        // Mostra solo prenotazioni attive (non ritirate o scadute)
-        const attive = prenotazioni.filter(p => p.stato !== 'ritirata' && p.stato !== 'scaduta');
-
-        if (attive.length === 0) {
-          container.innerHTML = '<p class="text-muted">Nessuna prenotazione attiva</p>';
-          return;
-        }
-
-        let html = '';
-        attive.slice(0, 3).forEach(p => {  // Mostra solo le prime 3
-          const badgeClass = p.stato === 'confermata' ? 'bg-success' : 'bg-warning';
-          html += `
-            <div class="card mb-2">
-              <div class="card-body">
-                <h6 class="card-title">Prenotazione #${p.id}</h6>
-                <p class="card-text">
-                  <strong>Bene:</strong> ${p.bene}<br>
-                  <strong>Punto:</strong> ${p.punto}<br>
-                  <strong>Data/ora:</strong> ${p.data} ${p.ora}<br>
-                  <span class="badge ${badgeClass}">${p.stato}</span>
-                </p>
-              </div>
-            </div>
-          `;
-        });
-
-        container.innerHTML = html;
-
-      } catch (error) {
-        console.error('Errore caricamento prenotazioni:', error);
-        document.getElementById('prenotazioniAttive').innerHTML = '<p class="text-danger">Errore nel caricamento</p>';
-      }
-    }
-
-    /**
-     * Carica donazioni dall'API
-     */
-    async function caricaDonazioni() {
-      try {
-        const response = await fetch('/auth/donazioni');
-
-        if (!response.ok) {
-          throw new Error('Errore nel caricamento donazioni');
-        }
-
-        const donazioni = await response.json();
-        const container = document.getElementById('storicoDonazioni');
-
-        if (donazioni.length === 0) {
-          container.innerHTML = '<p class="text-muted">Nessuna donazione effettuata</p>';
-          return;
-        }
-
-        let html = '';
-        donazioni.slice(0, 3).forEach(d => {  // Mostra solo le prime 3
-          html += `
-            <div class="card mb-2">
-              <div class="card-body">
-                <h6 class="card-title">Donazione del ${d.data}</h6>
-                <p class="card-text">
-                  ${d.tipo === 'monetaria' ? `<strong>Importo:</strong> € ${d.importo}` : `<strong>Bene:</strong> ${d.bene}`}<br>
-                  <strong>Ente:</strong> ${d.ente}<br>
-                  <span class="badge bg-primary">${d.stato}</span>
-                </p>
-              </div>
-            </div>
-          `;
-        });
-
-        container.innerHTML = html;
-
-      } catch (error) {
-        console.error('Errore caricamento donazioni:', error);
-        document.getElementById('storicoDonazioni').innerHTML = '<p class="text-danger">Errore nel caricamento</p>';
-      }
-    }
-
-    // inizializza la pagina
-    document.addEventListener('DOMContentLoaded', () => {
-      if (typeof updateAuthButtons === 'function') {
-        updateAuthButtons();
-      }
-      caricaDatiProfilo();
-    });
-  </script>
   <script src="../js/auth.js"></script>
+  <script>
+    // Protezione: solo utenti loggati
+    if (!sessionStorage.getItem('isLoggedIn')) {
+      showError('errorMessage', 'Devi effettuare il login per accedere al profilo');
+      setTimeout(() => window.location.href = 'login.html', 2000);
+    } else {
+      // Carica dati profilo
+      fetch('/profilo')
+        .then(response => {
+          if (!response.ok) throw new Error('Errore nel caricamento del profilo');
+          return response.json();
+        })
+        .then(data => {
+          document.getElementById('emailUtente').textContent = data.email || '—';
+          document.getElementById('ruoloUtente').textContent = data.ruolo || '—';
+          document.getElementById('nomeUtente').textContent = data.nome || '—';
+          document.getElementById('cognomeUtente').textContent = data.cognome || '—';
+          document.getElementById('ibanUtente').textContent = data.iban || '—';
+          document.getElementById('pivaUtente').textContent = data.partita_iva || '—';
+          document.getElementById('loadingMessage').style.display = 'none';
+          document.getElementById('profiloContent').style.display = 'table';
+        })
+        .catch(error => {
+          document.getElementById('loadingMessage').style.display = 'none';
+          showError('errorMessage', 'Impossibile caricare il profilo. Riprova più tardi.');
+        });
+    }
+  </script>
+  <!-- ✅ Chatbot integrato -->
+  <script src="../chatbot/js/loader.js"></script>
 </body>
-
 </html>

@@ -7,27 +7,14 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="../css/style.css">
   <style>
-    /* miglioramento accessibilità: contrasto e dimensioni */
-    .leaflet-popup-content {
-      font-size: 1.05rem;
-      line-height: 1.5;
-    }
-    .leaflet-popup .btn {
-      min-height: 2.5rem;
-      font-size: 1rem;
-    }
-    /* nascondi visivamente ma mantieni per screen reader ( accessibiltà ) */
+    .leaflet-popup-content { font-size: 1.05rem; line-height: 1.5; }
+    .leaflet-popup .btn { min-height: 2.5rem; font-size: 1rem; }
     .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
     }
+    #routeInfo { display: none; }
+    #routeInfo.active { display: block; }
   </style>
 </head>
 <body>
@@ -40,14 +27,14 @@
     <div class="d-flex gap-2" id="auth-buttons"></div>
   </header>
 
-  <!-- area nascsta per feedack accessibilità (RF#12) -->
+  <!-- Area nascosta per feedback accessibilità (RF#12) -->
   <div id="a11y-status" aria-live="polite" class="sr-only"></div>
 
   <main class="container-fluid mt-3">
     <div class="row">
       <div class="col-md-3">
         <div class="sidebar">
-          <!-- filtro categorie (requisito RF#6) -->
+          <!-- Filtro categorie (RF#6) -->
           <div class="mb-4">
             <label for="filtroCategoria" class="form-label fw-bold">Filtra per categoria</label>
             <select id="filtroCategoria" class="form-select">
@@ -60,9 +47,24 @@
           </div>
 
           <!-- Pulsante geolocalizzazione -->
-          <button id="btnGeolocalizza" class="btn btn-success w-100 mb-4">Usa la mia posizione</button>
+          <button id="btnGeolocalizza" class="btn btn-success w-100 mb-3">Usa la mia posizione</button>
 
-          <!-- accordion informativo (da mettere anche nel footer per niche del sito ) -->
+          <!-- Pulsante segnalazione punto -->
+          <a href="segnalazione.html" class="btn btn-warning w-100 mb-3">📍 Segnala un punto di raccolta</a>
+
+          <!-- Pulsante calcolo percorso AI -->
+          <button id="btnCalcolaPercorso" class="btn btn-primary w-100 mb-3" style="display:none;">
+            🤖 Calcola percorso AI ottimale
+          </button>
+
+          <!-- Info percorso -->
+          <div id="routeInfo" class="alert alert-info mb-3">
+            <h6 class="mb-1">📍 Percorso AI calcolato</h6>
+            <p class="mb-1" id="routeDetails"></p>
+            <button class="btn btn-sm btn-outline-danger" id="btnRimuoviPercorso">Rimuovi percorso</button>
+          </div>
+
+          <!-- Accordion informativo -->
           <div class="accordion" id="menuAccordion">
             <div class="accordion-item">
               <h2 class="accordion-header">
@@ -71,9 +73,7 @@
                 </button>
               </h2>
               <div id="chiSiamo" class="accordion-collapse collapse" data-bs-parent="#menuAccordion">
-                <div class="accordion-body">
-                  Siamo un'organizzazione che aiuta chi ha bisogno.
-                </div>
+                <div class="accordion-body">Siamo un'organizzazione che aiuta chi ha bisogno.</div>
               </div>
             </div>
             <div class="accordion-item">
@@ -83,9 +83,7 @@
                 </button>
               </h2>
               <div id="missione" class="accordion-collapse collapse" data-bs-parent="#menuAccordion">
-                <div class="accordion-body">
-                  Aiutare chi ha bisogno di beni primari.
-                </div>
+                <div class="accordion-body">Aiutare chi ha bisogno di beni primari.</div>
               </div>
             </div>
             <div class="accordion-item">
@@ -95,9 +93,7 @@
                 </button>
               </h2>
               <div id="partner" class="accordion-collapse collapse" data-bs-parent="#menuAccordion">
-                <div class="accordion-body">
-                  Croce Rossa, Caritas, Comuni, ecc.
-                </div>
+                <div class="accordion-body">Croce Rossa, Caritas, Comuni, ecc.</div>
               </div>
             </div>
           </div>
@@ -107,19 +103,26 @@
       <div class="col-md-9">
         <div id="map"></div>
         <div id="mappaStatus" class="mt-2 text-muted"></div>
+        <div id="errorMessage" class="mt-2 text-danger" style="display:none;"></div>
       </div>
     </div>
   </main>
+<<<<<<< HEAD
   <script src="../../chatbot/js/loader.js"></script>
   <!-- Footer ( oviamente ) -->
+=======
+
+  <!-- Footer -->
+>>>>>>> 74119fae10b68d158f93a6ed977814df03143aa5
   <footer class="bg-dark text-white text-center py-3 mt-4">
     <p>&copy; 2026 Map4Aid - Progetto Universitario</p>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="../js/auth.js"></script>
   <script>
-    // inizializza la mappa con opzioni accessibili (tastiera, zoom)
+    // ====== MAPPA ======
     const map = L.map('map', {
       keyboard: true,
       keyboardPanOffset: 80,
@@ -130,122 +133,73 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
-    // DATI SIMULATI (fallback se l'API non è disponibile ( per testing ) )
+    // ====== DATI SIMULATI ======
     const puntiSimulati = [
-      {
-        id: 1,
-        nome: "Centro Colosseo",
-        indirizzo: "Via del Colosseo, 1, Roma",
-        lat: 41.8902,
-        lng: 12.4922,
-        categoria: "alimentari",
-        beni: ["Pasta", "Riso", "Olio"]
-      },
-      {
-        id: 2,
-        nome: "Centro Termini",
-        indirizzo: "Piazza dei Cinquecento, Roma",
-        lat: 41.9009,
-        lng: 12.5027,
-        categoria: "medicinali",
-        beni: ["Paracetamolo", "Vitamine", "Cerotti"]
-      },
-      {
-        id: 3,
-        nome: "Centro San Giovanni",
-        indirizzo: "Via Appia Nuova, Roma",
-        lat: 41.8756,
-        lng: 12.5258,
-        categoria: "igiene",
-        beni: ["Sapone", "Shampoo", "Dentifricio"]
-      },
-      {
-        id: 4,
-        nome: "Centro EUR",
-        indirizzo: "Viale Europa, Roma",
-        lat: 41.8330,
-        lng: 12.4680,
-        categoria: "abbigliamento",
-        beni: ["Maglie", "Pantaloni", "Giacche"]
-      }
+      { id: 1, nome: "Centro Colosseo", indirizzo: "Via del Colosseo, 1, Roma", lat: 41.8902, lng: 12.4922, categoria: "alimentari", beni: ["Pasta", "Riso", "Olio"] },
+      { id: 2, nome: "Centro Termini", indirizzo: "Piazza dei Cinquecento, Roma", lat: 41.9009, lng: 12.5027, categoria: "medicinali", beni: ["Paracetamolo", "Vitamine", "Cerotti"] },
+      { id: 3, nome: "Centro San Giovanni", indirizzo: "Via Appia Nuova, Roma", lat: 41.8756, lng: 12.5258, categoria: "igiene", beni: ["Sapone", "Shampoo", "Dentifricio"] },
+      { id: 4, nome: "Centro EUR", indirizzo: "Viale Europa, Roma", lat: 41.8330, lng: 12.4680, categoria: "abbigliamento", beni: ["Maglie", "Pantaloni", "Giacche"] }
     ];
 
     let markerCorrenti = [];
+    let puntiCaricati = [];
+    let posizioneUtente = null;
+    let routeLayer = null;
 
-    /**
-     * aggiunge marker accessibili alla mappa
-     * coerente con RF#12 (accessibilità per disabilità motorie/visive)
-     */
+    // ====== MARKER ACCESSIBILI ======
     function aggiungiMarker(punti) {
-      markerCorrenti.forEach(marker => map.removeLayer(marker));
+      markerCorrenti.forEach(m => map.removeLayer(m));
       markerCorrenti = [];
+      puntiCaricati = punti;
 
       punti.forEach(punto => {
         const marker = L.marker([punto.lat, punto.lng], {
           keyboard: true,
-          alt: `Punto di distribuzione: ${punto.nome}`
+          alt: 'Punto di distribuzione: ' + punto.nome
         }).addTo(map);
 
-        // apri popup con Enter/Space (accessibilità tastiera ( funziona,  ma da rivedere meglio ) ) 
         marker.on('keypress', function(e) {
-          if (e.originalEvent.key === 'Enter' || e.originalEvent.key === ' ') {
-            this.openPopup();
-          }
+          if (e.originalEvent.key === 'Enter' || e.originalEvent.key === ' ') this.openPopup();
         });
 
-        // popup con struttura semantica e aria-label
         marker.bindPopup(`
           <div role="region" aria-labelledby="popup-title-${punto.id}">
             <h3 id="popup-title-${punto.id}">${punto.nome}</h3>
             <p>${punto.indirizzo}</p>
             <p><strong>Categoria:</strong> ${punto.categoria}</p>
             <p><strong>Beni disponibili:</strong> ${punto.beni.join(', ')}</p>
-            <button 
-              class="btn btn-sm btn-primary mt-2"
-              aria-label="Prenota bene al ${punto.nome}"
-              onclick="apriPrenotazione(${punto.id})">
-              Prenota
-            </button>
+            <button class="btn btn-sm btn-primary mt-2" onclick="apriPrenotazione(${punto.id})">Prenota</button>
+            <button class="btn btn-sm btn-outline-primary mt-2 ms-1" onclick="calcolaPercorsoVerso(${punto.lat},${punto.lng},'${punto.nome.replace(/'/g, "\\'")}')">🗺️ Percorso</button>
           </div>
         `);
-
         markerCorrenti.push(marker);
       });
+
+      document.getElementById('btnCalcolaPercorso').style.display =
+        (posizioneUtente && punti.length > 0) ? 'block' : 'none';
     }
 
-    /**
-     * apre la pagina di prenotazione per un punto specifico
-     * se non loggato, mostra errore e reindirizza al login
-     */
+    // ====== APRI PRENOTAZIONE ======
     function apriPrenotazione(idPunto) {
-      document.getElementById('a11y-status').textContent = 
-        `Apertura modulo prenotazione per il punto ID: ${idPunto}`;
-
+      document.getElementById('a11y-status').textContent = `Apertura modulo prenotazione per il punto ID: ${idPunto}`;
       if (!sessionStorage.getItem('isLoggedIn')) {
         showError('mappaStatus', 'Devi effettuare il login per prenotare un bene');
-        setTimeout(() => {
-          window.location.href = 'login.html';
-        }, 2000);
+        setTimeout(() => { window.location.href = 'login.html'; }, 2000);
         return;
       }
       window.location.href = `prenotazione.html?id=${idPunto}`;
     }
 
-    /**
-     * carica i punti di distribuzione dall'API o dal mock
-     */
+    // ====== CARICA PUNTI ======
     async function caricaPunti() {
       try {
-        // chiamata all'endpoint reale ( esiste in api_punti.py ( per adesso ) )
         const response = await fetch('/api/punti-distribuzione');
         if (!response.ok) throw new Error('API non disponibile');
-        
         const data = await response.json();
-        // mappa i dati dell'API al formato atteso
         return data.data.map(p => ({
           id: p.id,
           nome: p.nome || 'Punto senza nome',
-          indirizzo: `${p.citta || ''}, ${p.regione || ''}`.trim() || 'Indirizzo non disponibile',
+          indirizzo: ((p.citta || '') + ', ' + (p.regione || '')).trim() || 'Indirizzo non disponibile',
           lat: p.latitudine,
           lng: p.longitudine,
           categoria: "generico",
@@ -257,25 +211,17 @@
       }
     }
 
-    // inizializza la mappa con i punti
-    caricaPunti().then(punti => {
-      aggiungiMarker(punti);
-    });
+    caricaPunti().then(punti => aggiungiMarker(punti));
 
-    // gestione filtro categorie
+    // ====== FILTRO CATEGORIE ======
     document.getElementById('filtroCategoria').addEventListener('change', (e) => {
-      const categoria = e.target.value;
+      const cat = e.target.value;
       caricaPunti().then(punti => {
-        if (categoria === '') {
-          aggiungiMarker(punti);
-        } else {
-          const filtrati = punti.filter(p => p.categoria === categoria);
-          aggiungiMarker(filtrati);
-        }
+        aggiungiMarker(cat === '' ? punti : punti.filter(p => p.categoria === cat));
       });
     });
 
-    // geolocalizzazione con gestione errori
+    // ====== GEOLOCALIZZAZIONE ======
     document.getElementById('btnGeolocalizza').addEventListener('click', () => {
       const statusDiv = document.getElementById('mappaStatus');
       statusDiv.innerHTML = '<div class="text-center">Ricerca della tua posizione...</div>';
@@ -289,10 +235,23 @@
         (position) => {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
+          posizioneUtente = { lat, lng };
           map.setView([lat, lng], 14);
+
+          L.marker([lat, lng], {
+            icon: L.divIcon({
+              className: 'bg-primary rounded-circle border border-white',
+              iconSize: [16, 16]
+            })
+          }).addTo(map).bindPopup('<strong>La tua posizione</strong>');
+
           statusDiv.innerHTML = `✅ Posizione trovata: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
-          document.getElementById('a11y-status').textContent = 
+          document.getElementById('a11y-status').textContent =
             `Mappa centrata sulla tua posizione: latitudine ${lat.toFixed(4)}, longitudine ${lng.toFixed(4)}`;
+
+          if (puntiCaricati.length > 0) {
+            document.getElementById('btnCalcolaPercorso').style.display = 'block';
+          }
         },
         (error) => {
           let msg = 'Impossibile ottenere la posizione.';
@@ -301,14 +260,146 @@
           }
           showError('mappaStatus', msg);
         },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 60000
-        }
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
       );
     });
+
+    // ====== PERCORSO AI (con fallback mock frontend) ======
+    document.getElementById('btnCalcolaPercorso').addEventListener('click', async () => {
+      if (!posizioneUtente) {
+        showError('errorMessage', 'Prima utilizza "Usa la mia posizione" per geolocalizzarti');
+        return;
+      }
+      if (puntiCaricati.length === 0) {
+        showError('errorMessage', 'Nessun punto di distribuzione disponibile');
+        return;
+      }
+
+      const btn = document.getElementById('btnCalcolaPercorso');
+      btn.disabled = true;
+      btn.textContent = '⏳ Calcolo in corso...';
+
+      try {
+        const response = await fetch('/api/percorso-ai', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            origine: posizioneUtente,
+            punti: puntiCaricati.map(p => ({ id: p.id, nome: p.nome, lat: p.lat, lng: p.lng, categoria: p.categoria })),
+            preferenza: document.getElementById('filtroCategoria').value || 'tutti'
+          })
+        });
+
+        const data = await response.json();
+        if (response.ok && data.percorso) {
+          disegnaPercorso(data.percorso, data.info);
+        } else {
+          throw new Error('API non disponibile');
+        }
+      } catch (error) {
+        // ✅ Fallback: calcolo percorso mock lato frontend (nearest-neighbor greedy)
+        console.warn('Fallback a calcolo percorso locale:', error);
+        const catFiltro = document.getElementById('filtroCategoria').value;
+        let puntiFiltrati = catFiltro ? puntiCaricati.filter(p => p.categoria === catFiltro) : [...puntiCaricati];
+
+        if (puntiFiltrati.length === 0) {
+          showError('errorMessage', 'Nessun punto disponibile per la categoria selezionata');
+          btn.disabled = false;
+          btn.textContent = '🤖 Calcola percorso AI ottimale';
+          return;
+        }
+
+        // Algoritmo greedy nearest-neighbor
+        const percorso = [[posizioneUtente.lat, posizioneUtente.lng]];
+        let corrente = { lat: posizioneUtente.lat, lng: posizioneUtente.lng };
+        const visitati = new Set();
+        let distanzaTotale = 0;
+
+        while (visitati.size < puntiFiltrati.length) {
+          let minDist = Infinity;
+          let prossimo = null;
+          let prossimoIdx = -1;
+
+          puntiFiltrati.forEach((p, i) => {
+            if (!visitati.has(i)) {
+              const d = calcolaDistanzaKm(corrente.lat, corrente.lng, p.lat, p.lng);
+              if (d < minDist) { minDist = d; prossimo = p; prossimoIdx = i; }
+            }
+          });
+
+          if (prossimo) {
+            visitati.add(prossimoIdx);
+            percorso.push([prossimo.lat, prossimo.lng]);
+            distanzaTotale += minDist;
+            corrente = { lat: prossimo.lat, lng: prossimo.lng };
+          }
+        }
+
+        disegnaPercorso(percorso, {
+          descrizione: 'Percorso ottimale (calcolo locale)',
+          distanza_totale_km: distanzaTotale.toFixed(2),
+          n_tappe: puntiFiltrati.length
+        });
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🤖 Calcola percorso AI ottimale';
+      }
+    });
+
+    // ====== PERCORSO SINGOLO ======
+    function calcolaPercorsoVerso(lat, lng, nome) {
+      if (!posizioneUtente) {
+        showError('errorMessage', 'Prima utilizza "Usa la mia posizione" per geolocalizzarti');
+        return;
+      }
+      const percorso = [[posizioneUtente.lat, posizioneUtente.lng], [lat, lng]];
+      disegnaPercorso(percorso, {
+        distanza_totale_km: calcolaDistanzaKm(posizioneUtente.lat, posizioneUtente.lng, lat, lng).toFixed(2),
+        descrizione: 'Percorso verso ' + nome,
+        n_tappe: 1
+      });
+    }
+
+    // ====== DISEGNA PERCORSO ======
+    function disegnaPercorso(percorso, info) {
+      if (routeLayer) map.removeLayer(routeLayer);
+      routeLayer = L.polyline(percorso, {
+        color: '#0d6efd',
+        weight: 5,
+        opacity: 0.8,
+        dashArray: '10, 8',
+        lineJoin: 'round'
+      }).addTo(map);
+      map.fitBounds(routeLayer.getBounds(), { padding: [40, 40] });
+
+      const routeInfoDiv = document.getElementById('routeInfo');
+      routeInfoDiv.classList.add('active');
+      document.getElementById('routeDetails').innerHTML =
+        `<strong>${info.descrizione || 'Percorso ottimale'}</strong><br>` +
+        `📏 Distanza (in linea d’aria): ~${info.distanza_totale_km} km` +
+        (info.n_tappe ? `<br>📍 Tappe: ${info.n_tappe}` : '');
+    }
+
+    // ====== RIMUOVI PERCORSO ======
+    document.getElementById('btnRimuoviPercorso').addEventListener('click', () => {
+      if (routeLayer) map.removeLayer(routeLayer);
+      routeLayer = null;
+      document.getElementById('routeInfo').classList.remove('active');
+    });
+
+    // ====== UTILITÀ ======
+    function calcolaDistanzaKm(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
   </script>
-  <script src="../js/auth.js"></script>
+
+  <!-- Chatbot Aidano -->
+  <script src="../chatbot/js/loader.js"></script>
 </body>
 </html>

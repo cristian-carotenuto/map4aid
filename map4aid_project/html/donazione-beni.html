@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Donazione Beni - Map4Aid</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="bg-light">
+  <!-- Header dinamico -->
+  <header class="header-bg text-white p-3 d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+      <img src="../imgs/logo.png" alt="Logo Map4Aid" width="60" height="60" class="me-3 rounded-circle">
+      <h1 class="h4 mb-0 ms-3">MAP4AID</h1>
+    </div>
+    <div class="d-flex gap-2" id="auth-buttons"></div>
+  </header>
+
+  <div class="container my-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="text-center">Dona un bene</h3>
+          </div>
+          <div class="card-body">
+            <p class="text-muted">
+              Compila il modulo per donare beni materiali a un punto di distribuzione.
+              Seleziona il punto, la categoria e descrivi il bene che intendi donare.
+            </p>
+
+            <form id="donazioneBeniForm">
+              <!-- Selezione punto di distribuzione -->
+              <div class="mb-3">
+                <label for="punto_distribuzione" class="form-label">Punto di distribuzione</label>
+                <select class="form-select" id="punto_distribuzione" name="punto_distribuzione" required>
+                  <option value="">Seleziona un punto</option>
+                  <!-- TODO: popolare dinamicamente dal backend -->
+                  <option value="1">Centro Colosseo - Via del Colosseo, 1, Roma</option>
+                  <option value="2">Centro Termini - Piazza dei Cinquecento, Roma</option>
+                  <option value="3">Centro San Giovanni - Via Appia Nuova, Roma</option>
+                  <option value="4">Centro EUR - Viale Europa, Roma</option>
+                </select>
+              </div>
+
+              <!-- Categoria del bene -->
+              <div class="mb-3">
+                <label for="categoria_bene" class="form-label">Categoria del bene</label>
+                <select class="form-select" id="categoria_bene" name="categoria_bene" required>
+                  <option value="">Seleziona una categoria</option>
+                  <option value="alimentari">Alimentari</option>
+                  <option value="medicinali">Medicinali</option>
+                  <option value="igiene">Igiene Personale</option>
+                  <option value="abbigliamento">Abbigliamento</option>
+                  <option value="altro">Altro</option>
+                </select>
+              </div>
+
+              <!-- Nome del bene -->
+              <div class="mb-3">
+                <label for="nome_bene" class="form-label">Nome del bene</label>
+                <input type="text" class="form-control" id="nome_bene" name="nome_bene" placeholder="Es. Pasta, Coperte, Sapone..." required>
+              </div>
+
+              <!-- Descrizione -->
+              <div class="mb-3">
+                <label for="descrizione" class="form-label">Descrizione (opzionale)</label>
+                <textarea class="form-control" id="descrizione" name="descrizione" rows="3" placeholder="Descrivi brevemente il bene che vuoi donare..."></textarea>
+              </div>
+
+              <!-- Quantità -->
+              <div class="mb-3">
+                <label for="quantita" class="form-label">Quantità</label>
+                <input type="number" class="form-control" id="quantita" name="quantita" min="1" value="1" required>
+              </div>
+
+              <!-- Data di disponibilità per il ritiro -->
+              <div class="mb-3">
+                <label for="data_disponibilita" class="form-label">Data di disponibilità per il ritiro</label>
+                <input type="date" class="form-control" id="data_disponibilita" name="data_disponibilita" required>
+              </div>
+
+              <!-- Upload foto (opzionale) -->
+              <div class="mb-3">
+                <label for="foto_bene" class="form-label">Foto del bene (opzionale)</label>
+                <input type="file" class="form-control" id="foto_bene" name="foto_bene" accept="image/*">
+                <div class="form-text">Formato accettato: JPG, PNG. Max 5MB.</div>
+              </div>
+
+              <!-- Contatto -->
+              <div class="mb-3">
+                <label for="contatto" class="form-label">Recapito telefonico (opzionale)</label>
+                <input type="tel" class="form-control" id="contatto" name="contatto" placeholder="Es. +39 333 1234567">
+              </div>
+
+              <button type="submit" class="btn btn-success w-100">Invia donazione bene</button>
+            </form>
+
+            <div id="errorMessage" class="mt-3 text-danger" style="display:none;"></div>
+            <div id="successMessage" class="mt-3 text-success" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white text-center py-3 mt-4">
+    <p>&copy; 2026 Map4Aid - Progetto Universitario</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    // Protezione: solo utenti loggati possono donare beni
+    if (!sessionStorage.getItem('isLoggedIn')) {
+      showError('errorMessage', 'Devi effettuare il login per donare un bene');
+      setTimeout(() => window.location.href = 'login.html', 2000);
+    }
+
+    // Imposta data minima = oggi
+    document.getElementById('data_disponibilita').min = new Date().toISOString().split('T')[0];
+
+    // Carica punti di distribuzione dal backend (con fallback ai dati statici)
+    async function caricaPuntiSelect() {
+      try {
+        const response = await fetch('/api/punti-distribuzione');
+        if (!response.ok) throw new Error('API non disponibile');
+        const data = await response.json();
+        const select = document.getElementById('punto_distribuzione');
+        // Rimuovi le opzioni statiche (tranne la prima)
+        while (select.options.length > 1) select.remove(1);
+        data.data.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value = p.id;
+          opt.textContent = `${p.nome || 'Punto'} - ${p.citta || ''}, ${p.regione || ''}`;
+          select.appendChild(opt);
+        });
+      } catch (error) {
+        console.warn('Fallback a punti statici:', error);
+        // I punti statici sono già nel select HTML
+      }
+    }
+    caricaPuntiSelect();
+
+    // Invio form donazione bene
+    document.getElementById('donazioneBeniForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Invio in corso...';
+
+      const formData = new FormData(e.target);
+
+      try {
+        // ✅ Endpoint per donazione beni (TODO: da collegare al backend reale)
+        const response = await fetch('/donazioneBene', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok && (data.messaggio || data.successo)) {
+          showSuccess('successMessage', 'Donazione bene registrata con successo! Grazie per il tuo contributo.');
+          document.getElementById('donazioneBeniForm').reset();
+          setTimeout(() => window.location.href = 'home.html', 2500);
+        } else {
+          showError('errorMessage', data.errore || data.error || 'Errore durante l\'invio della donazione');
+        }
+      } catch (error) {
+        // ✅ Fallback mock: simuliamo il successo per la view
+        console.warn('Backend non disponibile, simulazione successo:', error);
+        showSuccess('successMessage', 'Donazione bene registrata con successo! Grazie per il tuo contributo.');
+        document.getElementById('donazioneBeniForm').reset();
+        setTimeout(() => window.location.href = 'home.html', 2500);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    });
+  </script>
+  <!-- ✅ Chatbot integrato -->
+  <script src="../chatbot/js/loader.js"></script>
+</body>
+</html>
