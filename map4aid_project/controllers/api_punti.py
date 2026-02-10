@@ -170,7 +170,18 @@ def crea_punto():
     if not payload:
         return jsonify({"error": "invalid_request", "message": "JSON body richiesto"}), 400
 
-    candidate_cols = ["nome", "regione", "citta", "latitudine", "longitudine", "ente_erogatore_id", "accettato"]
+    candidate_cols = [
+        "nome",
+        "regione",
+        "citta",
+        "giorni_apertura",
+        "orario_apertura",
+        "orario_chiusura",
+        "latitudine",
+        "longitudine",
+        "ente_erogatore_id",
+        "accettato"
+    ]
     try:
         with db.engine.connect() as conn:
             pragma = pragma_table_info(conn, "punti_distribuzione")
