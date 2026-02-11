@@ -20,11 +20,12 @@ def _build_extra_data(ruolo, data, files):
 
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-    filename = secure_filename(file_ci.filename)
-    unique_name = f"{secrets.token_hex(8)}_{filename}"
-    file_path = os.path.join(UPLOAD_FOLDER, unique_name)
+    if file_ci:
+        filename = secure_filename(file_ci.filename)
+        unique_name = f"{secrets.token_hex(8)}_{filename}"
+        file_path = os.path.join(UPLOAD_FOLDER, unique_name)
+        file_ci.save(file_path)
 
-    file_ci.save(file_path)
     if ruolo == "beneficiario":
         return {
             "nome": data.get("nome"),
@@ -74,7 +75,7 @@ class AuthFacade:
         email = email.lower().strip()
 
         if PendingAccount.query.filter_by(email=email).first():
-            raise ValueError("Email già registrata")
+            raise ValueError("Email già in fase di registraione")
 
 
         # -------------------------

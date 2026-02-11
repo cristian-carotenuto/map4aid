@@ -9,7 +9,7 @@ from flask_login import current_user, login_required
 @auth_bp.route("/register", methods=["POST"])
 def register():
     from controllers.service_email.email_control_bridge import EmailControlBridge
-    from controllers.auth_facade import AuthFacade
+    from controllers.auth_facade import (AuthFacade)
 
     facade = AuthFacade(EmailControlBridge())
 
