@@ -62,9 +62,31 @@ Il sistema verifica che i campi latitudine, longitudine e indirizzo non siano vu
 
 Se i dati sono validi, il sistema recupera la lista di tutti gli enti erogatori dal database.
 
-Il sistema tenta di inviare una email di segnalazione  a ciascun ente con i dettagli della posizione.
+Il sistema tenta di inviare una e-mail di segnalazione  a ciascun ente con i dettagli della posizione.
 
 Al termine, il sistema conferma l'avvenuta segnalazione all'utente.
+
+**UC 09 Storico attività e reportistica**
+
+Un utente autenticato accede alla sezione dedicata al suo profilo
+
+L’utente richiede la generazione del PDF dello storico
+
+Il sistema verifica che l’utente sia autenticato.
+
+Il sistema recupera dal database le attività associate all’utente in base al suo ruolo:
+
+- prenotazioni (per beneficiario)
+
+- donazioni di beni e monetarie (per donatore)
+
+- prenotazioni e donazioni legate ai punti dell’ente (per ente erogatore)
+
+Il sistema genera dinamicamente un file in formato PDF contenente lo storico delle attività recuperate
+
+Il PDF viene restituito come file scaricabile con nome storico.pdf
+
+Se lo storico risulta vuoto il sistema genera comunque il PDF e contiene le sezioni previste ma risulta vuoto
 
 # 
 
@@ -300,6 +322,62 @@ Al termine, il sistema conferma l'avvenuta segnalazione all'utente.
 
 ## 
 
+**UC 09 Storico attività e reportistica**
+
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Parametro</strong></th>
+<th><strong>Categoria</strong></th>
+<th><strong>Vincoli e proprietà</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Sessione_Utente</td>
+<td>Autenticato (<strong>AU</strong>)</td>
+<td><p>1. L’utente è autenticato <strong>[Proprietà AU_OK]</strong></p>
+<p>2. L’utente non è autenticato <strong>[ERR]</strong></p></td>
+</tr>
+<tr class="even">
+<td>Ruolo_Utente</td>
+<td>Ruolo (<strong>RU</strong>)</td>
+<td><p>1. L’utente è Beneficiario <strong>[IF AU_OK][Proprietà RU_BEN]</strong></p>
+<p>2. L’utente è Donatore <strong>[IF AU_OK][Proprietà RU_DON]</strong></p>
+<p>3. L’utente è Ente erogatore <strong>[IF AU_OK][Proprietà RU_ENT]</strong></p></td>
+</tr>
+<tr class="odd">
+<td>Storico_Prenotazioni</td>
+<td>Presenza (<strong>PR</strong>)</td>
+<td><p>1. Esistono prenotazioni associate <strong>[IF RU_BEN OR RU_ENT][Proprietà PR_HAS]</strong></p>
+<p>2. Nessuna prenotazione <strong>[IF RU_BEN OR RU_ENT][Proprietà PR_0]</strong></p></td>
+</tr>
+<tr class="even">
+<td>Storico_Donazioni_Beni</td>
+<td>Presenza (<strong>DB</strong>)</td>
+<td><p>1. Esistono donazioni beni <strong>[IF RU_DON OR RU_ENT][Proprietà DB_HAS]</strong></p>
+<p>2. Nessuna donazione beni <strong>[IF RU_DON OR RU_ENT][Proprietà DB_0]</strong></p></td>
+</tr>
+<tr class="odd">
+<td>storico_donazioni_monetarie</td>
+<td>Presenza (<strong>DM</strong>)</td>
+<td><p>1. Esistono donazioni monetarie <strong>[IF RU_DON OR RU_ENT][Proprietà DM_HAS]</strong></p>
+<p>2. Nessuna donazione monetaria <strong>[IF RU_DON OR RU_ENT][Proprietà DM_0]</strong></p></td>
+</tr>
+<tr class="even">
+<td>generazione_pdf</td>
+<td>Esito (<strong>GP</strong>)</td>
+<td><p>1. PDF generato correttamente <strong>[IF AU_OK][Proprietà GP_OK]</strong></p>
+<p>2. Errore generazione PDF <strong>[ERR]</strong></p></td>
+</tr>
+</tbody>
+</table>
+
 ## 
 
 ## 
@@ -347,6 +425,18 @@ Al termine, il sistema conferma l'avvenuta segnalazione all'utente.
 | **TC02**      | ERR    | VP_OK  | UA_OK  | \-     | \-     | ERR    | **\[ERR\]** Coordinate mancanti                  |
 | **TC03**      | VP_OK  | ERR    | UA_OK  | \-     | \-     | ERR    | **\[ERR\]** Indirizzo mancante o vuoto           |
 | **TC04**      | VP_OK  | VD_OK  | UA_OK  | IM_OK  | EM_OK  | ES_OK  | **\[SUCCESS\]** Segnalazione OK +email inviate   |
+
+**UC 09 Storico e Reportistica**
+
+| **Test Case** | **AU**    | **RU**     | **PR**     | **DB**     | **DM**     | **Esito Atteso**                                                                     |
+|---------------|-----------|------------|------------|------------|------------|--------------------------------------------------------------------------------------|
+| **TC01**      | **ERR**   | **-**      | **-**      | **-**      | **-**      | **\[ERR\]** Utente non loggato                                                       |
+| **TC02**      | **AU_OK** | **RU_BEN** | **PR_0**   | **-**      | **-**      | PDF generato con successo ma vuoto perché non esistono attività associate all’utente |
+| **TC03**      | **AU_OK** | **RU_BEN** | **PR_HAS** | **-**      | **-**      | PDF Generato con successo con i dati presenti nel database                           |
+| **TC04**      | **AU_OK** | **RU_DON** | **-**      | **DB_0**   | **DM_0**   | PDF Generato con successo ma vuoto perché non esistono attività associate all’utente |
+| **TC05**      | **AU_OK** | **RU_DON** | **-**      | **DB_HAS** | **DM_HAS** | PDF Generato con successo con i dati presenti nel database                           |
+| **TC06**      | **AU_OK** | **RU_ENT** | **PR_0**   | **DB_0**   | **DM_0**   | PDF generato con successo ma vuoto perché non esistono attività associate all’utente |
+| **TC07**      | **AU_OK** | **RU_ENT** | **PR_HAS** | **DB_HAS** | **DM_HAS** | PDF Generato con successo con i dati presenti nel database                           |
 
 Per ciascun test case vengono definiti:
 
@@ -641,7 +731,7 @@ Per ciascun test case vengono definiti:
 | latitudine                                                                                                                                                                          | 37.5418                    |
 | indirizzo                                                                                                                                                                           | (vuoto)                    |
 | **OUTPUT**                                                                                                                                                                          |                            |
-| La segnalazione non va a buon fine perché l’indirizzo è mancante e il sistema mostra un messaggio di errore: “Dati mancanti: latitudine, longitudine e indirizzo sono obbligatori". |                            |
+| La segnalazione non va a buon fine perché l’indirizzo è mancante e il sistema mostra un messaggio di errore: “Dati mancanti: latitudine, longitudine e indirizzo sono obbligatori”. |                            |
 
 | **ID TEST FRAME**                                                                                                                                         |                                      |
 |-----------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------|
@@ -653,3 +743,83 @@ Per ciascun test case vengono definiti:
 | indirizzo                                                                                                                                                 | Via Giuseppe Mazzini 62, Battipaglia |
 | **OUTPUT**                                                                                                                                                |                                      |
 | La segnalazione va a buon fine, viene inviata via email a tutti gli enti erogatori e il sistema mostra un pop-up: “Segnalazione completata con successo”. |                                      |
+
+**UC 09 Storico e reportistica**
+
+| **ID TEST FRAME**                                                  |                |
+|--------------------------------------------------------------------|----------------|
+| TC 01                                                              |                |
+| **INPUT**                                                          | **VALORE**     |
+| E-Mail                                                             | N/A            |
+| Password                                                           | N/A            |
+| OTP                                                                | N/A            |
+| Ruolo                                                              | N/A            |
+| Accesso al profilo                                                 | Non effettuato |
+| **Output**                                                         |                |
+| L’accesso all’endpoint viene negato e l’utente viene reindirizzato |                |
+
+| **ID TEST FRAME**                                                                                                          |                        |
+|----------------------------------------------------------------------------------------------------------------------------|------------------------|
+| TC 02                                                                                                                      |                        |
+| **INPUT**                                                                                                                  | **VALORE**             |
+| E-Mail                                                                                                                     | Nico.rossi@example.com |
+| Password                                                                                                                   | password123            |
+| Ruolo                                                                                                                      | Beneficiario           |
+| Prenotazioni                                                                                                               | No                     |
+| **Output**                                                                                                                 |                        |
+| Il PDF viene generato con successo e al suo interno non è presente nessun dato perché l’utente non ha nessuna prenotazione |                        |
+
+| **ID TEST FRAME**                                                                                                                                                                 |                        |
+|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------|
+| TC 03                                                                                                                                                                             |                        |
+| **INPUT**                                                                                                                                                                         | **VALORE**             |
+| E-Mail                                                                                                                                                                            | Nico.rossi@example.com |
+| Password                                                                                                                                                                          | password123            |
+| Ruolo                                                                                                                                                                             | Beneficiario           |
+| Prenotazioni                                                                                                                                                                      | Si                     |
+| **Output**                                                                                                                                                                        |                        |
+| Il PDF viene generato con successo e al suo interno è presente la stampa dei beni prenotati con le loro informazioni, quali: Nome del bene, Punto di Distribuzione, Data e Stato. |                        |
+
+| **ID TEST FRAME**                                                                                                          |                     |
+|----------------------------------------------------------------------------------------------------------------------------|---------------------|
+| TC 04                                                                                                                      |                     |
+| **INPUT**                                                                                                                  | **VALORE**          |
+| E-Mail                                                                                                                     | privato@example.com |
+| Password                                                                                                                   | password123         |
+| Ruolo                                                                                                                      | Donatore            |
+| Donazioni                                                                                                                  | N/A                 |
+| **Output**                                                                                                                 |                     |
+| Il PDF viene generato con successo e al suo interno non è presente nessun dato perché l’utente non ha nessuna prenotazione |                     |
+
+| **ID TEST FRAME**                                                                                                                             |                     |
+|-----------------------------------------------------------------------------------------------------------------------------------------------|---------------------|
+| TC 05                                                                                                                                         |                     |
+| **INPUT**                                                                                                                                     | **VALORE**          |
+| E-Mail                                                                                                                                        | privato@example.com |
+| Password                                                                                                                                      | password123         |
+| Ruolo                                                                                                                                         | Donatore            |
+| Donazioni                                                                                                                                     | SI                  |
+| **Output**                                                                                                                                    |                     |
+| Il PDF viene generato con successo e al suo interno è presente la stampa delle donazioni con le loro informazioni, quali Importo, Ente e Data |                     |
+
+| **ID TEST FRAME**                                                                                                          |                |
+|----------------------------------------------------------------------------------------------------------------------------|----------------|
+| TC 06                                                                                                                      |                |
+| **INPUT**                                                                                                                  | **VALORE**     |
+| E-Mail                                                                                                                     | ente@unisa.it  |
+| Password                                                                                                                   | password123    |
+| Ruolo                                                                                                                      | Ente Erogatore |
+| Prenotazioni e Donazioni                                                                                                   | N/A            |
+| **Output**                                                                                                                 |                |
+| Il PDF viene generato con successo e al suo interno non è presente nessun dato perché l’utente non ha nessuna prenotazione |                |
+
+| **ID TEST FRAME**                                                                                                                                                                                                          |                |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------|
+| TC 07                                                                                                                                                                                                                      |                |
+| **INPUT**                                                                                                                                                                                                                  | **VALORE**     |
+| E-Mail                                                                                                                                                                                                                     | ente@unisa.it  |
+| Password                                                                                                                                                                                                                   | password123    |
+| Ruolo                                                                                                                                                                                                                      | Ente Erogatore |
+| Prenotazioni e Donazioni                                                                                                                                                                                                   | SI             |
+| **Output**                                                                                                                                                                                                                 |                |
+| Il PDF viene generato con successo e al suo interno è presente la stampa delle prenotazioni e delle donazioni con le loro rispettive informazioni, rispettivamente Bene, Donatore e Data insieme a Importo Donatore e Data |                |

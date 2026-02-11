@@ -32,3 +32,10 @@
 | UC06/TC02    | SUPERATO      | 11/02/2026 | Maria Chiara Gregorio | N/A                                                           |
 | UC06/TC03    | SUPERATO      | 11/02/2026 | Maria Chiara Gregorio | N/A                                                           |
 | UC06/TC04    | SUPERATO      | 11/02/2026 | Maria Chiara Gregorio | N/A                                                           |
+| UC09/TC1     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                           |
+| UC09/TC2     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                           |
+| UC09/TC3     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                           |
+| UC09/TC4     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                           |
+| UC09/TC5     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                           |
+| UC09/TC6     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                           |
+| UC09/TC7     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                           |
