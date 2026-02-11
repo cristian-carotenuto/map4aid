@@ -30,12 +30,12 @@ def donazione_monetaria():
         return {"errore": "Importo non valido"},400
 
     ente_erogatore = AccountEnteErogatore.query.filter_by(nome_organizzazione=nome_ente).first()
+    if not ente_erogatore:
+        return {"errore": "Ente erogatore non trovato"},400
+    
     ente_donatore = Account.query.filter_by(email=email_donatore).first()
     email_ente = ente_erogatore.email
     iban_ente = ente_erogatore.iban
-
-    if not ente_erogatore:
-        return {"errore": "Ente erogatore non trovato"},400
 
     # ---- VALIDAZIONE ----
     if not all([email_ente, iban_ente, numero_carta, scadenza, cvv]):
