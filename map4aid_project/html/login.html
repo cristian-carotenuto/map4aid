@@ -144,7 +144,7 @@
         const data = await response.json();
 
         if (response.ok) {
-          saveLoginState(data.email);
+          saveLoginState(data.email, data.ruolo);
           // Chiude modale e reindirizza
           bootstrap.Modal.getInstance(document.getElementById('codiceModal')).hide();
           window.location.href = 'home.html';
