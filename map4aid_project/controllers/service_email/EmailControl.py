@@ -450,7 +450,7 @@ Map4Aid"""
         msg = MIMEMultipart()
         msg["From"] = self.config["email"]
         msg["To"] = email_beneficiario
-        msg["Subject"] = "Email per esito prenotazione"
+        msg["Subject"] = "Email per esito registrazione"
 
         if esito == "True":
             corpo = f"""

@@ -49,11 +49,11 @@ def admin_dashboard():
     return jsonify({"message": "Benvenuto nel pannello admin"}), 200
 
 #funzione per accetare registrazioni
-@auth_bp.route("/admin/conferma_regitrazione", methods=["POST"])
+@auth_bp.route("/admin/conferma_registrazione", methods=["POST"])
 @require_admin
 def admin_confirm():
-    id_beneficiario = session.get("id_beneficiario")
-    esito = session.get("esito")#True se l'account è stato confermato,altrimenti viene cancellato
+    id_beneficiario = request.form.get("id_beneficiario")
+    esito = request.form.get("esito")#True se l'account è stato confermato,altrimenti viene cancellato
     account = AccountBeneficiario.query.filter_by(id=id_beneficiario).first()
 
     if esito == "True":
