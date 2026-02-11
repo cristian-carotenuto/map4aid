@@ -28,6 +28,10 @@ function getUserEmail() {
   return sessionStorage.getItem('userEmail') || '';
 }
 
+function getUserRole() {
+  return sessionStorage.getItem('userRole') || '';
+}
+
 /**
  * Salva lo stato di login in sessionStorage
  * @param {string} email
@@ -35,6 +39,7 @@ function getUserEmail() {
 function saveLoginState(email) {
   sessionStorage.setItem('isLoggedIn', 'true');
   sessionStorage.setItem('userEmail', email);
+  sessionStorage.setItem("userRole", ruolo);
 }
 
 /**
@@ -43,6 +48,7 @@ function saveLoginState(email) {
 function clearLoginState() {
   sessionStorage.removeItem('isLoggedIn');
   sessionStorage.removeItem('userEmail');
+  sessionStorage.removeItem("userRole");
 }
 
 // === GESTIONE ERRORI / SUCCESSI GLOBALI ===
@@ -88,13 +94,20 @@ function updateAuthButtons() {
 
   // Escape sicuro dell'email per prevenire XSS
   const safeEmail = getUserEmail().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  let role = getUserRole();
 
-  if (isLoggedIn()) {
+  if (isLoggedIn() && role == 'donatore') {
     container.innerHTML = `
       <a href="home.html" class="btn btn-light">Home</a>
       <a href="donazione.html" class="btn btn-light">Donazione monetaria</a>
       <a href="donazione-beni.html" class="btn btn-light">Donazione beni</a>
-      <span class="text-white me-2"></span>
+      <a href="profilo.html" class="btn btn-light">Profilo</a>
+      <button class="btn btn-light" onclick="handleLogout()">Logout</button>
+    `;
+  } else if(isLoggedIn()) {
+    container.innerHTML = `
+      <a href="home.html" class="btn btn-light">Home</a>
+      <a href="donazione.html" class="btn btn-light">Donazione monetaria</a>
       <a href="profilo.html" class="btn btn-light">Profilo</a>
       <button class="btn btn-light" onclick="handleLogout()">Logout</button>
     `;
@@ -102,7 +115,6 @@ function updateAuthButtons() {
     container.innerHTML = `
       <a href="home.html" class="btn btn-light">Home</a>
       <a href="donazione.html" class="btn btn-light">Donazione monetaria</a>
-      <a href="donazione-beni.html" class="btn btn-light">Donazione beni</a>
       <a href="login.html" class="btn btn-light">Login</a>
       <a href="register.html" class="btn btn-light">Sign In</a>
     `;

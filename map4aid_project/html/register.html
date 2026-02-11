@@ -15,7 +15,6 @@
     </div>
     <div class="d-flex gap-2" id="auth-buttons"></div>
   </header>
-
   <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-6">
@@ -26,19 +25,13 @@
           <div class="card-body">
             <form id="registerForm">
               <div class="mb-3">
-                <label class="form-label">Ruolo</label>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="ruolo" value="beneficiario" id="ruoloBeneficiario" required>
-                  <label class="form-check-label" for="ruoloBeneficiario">Beneficiario</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="ruolo" value="donatore" id="ruoloDonatore">
-                  <label class="form-check-label" for="ruoloDonatore">Donatore</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="ruolo" value="erogatore" id="ruoloErogatore">
-                  <label class="form-check-label" for="ruoloErogatore">Ente Erogatore</label>
-                </div>
+                <label for="user" class="form-label">Seleziona il tipo di account</label>
+                <select class="form-select" id="user" name="ruolo" required>
+                  <option value="">Seleziona il tipo di account che vuoi creare</option>
+                  <option value="beneficiario">Utente Beneficiario</option>
+                  <option value="donatore">Utente Donatore</option>
+                  <option value="erogatore">Ente Erogatore</option>
+                </select>
               </div>
               <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
@@ -99,8 +92,8 @@
       </div>
     </div>
   </div>
-
-  <!-- Footer -->
+  <script src="../../chatbot/js/loader.js"></script>
+  <!-- Footer ( oviamente ) -->
   <footer class="bg-dark text-white text-center py-3 mt-4">
     <p>&copy; 2026 Map4Aid - Progetto Universitario</p>
   </footer>
@@ -108,8 +101,36 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../js/auth.js"></script>
   <script>
-    document.querySelectorAll('input[name="ruolo"]').forEach(radio => {
-      radio.addEventListener('change', () => {
+    /**
+     * mostra/nascondi i campi specifici in base al ruolo selezionato
+     */
+    selectRole();
+    document.getElementById("user").addEventListener("change", selectRole);
+    function selectRole()
+    {
+      let user = document.getElementById("user").value;
+
+      if (user == 'beneficiario') {
+        document.getElementById('campiBeneficiario').style.display = 'block';
+        document.getElementById('campiDonatore').style.display = 'none';
+        document.getElementById('campiErogatore').style.display = 'none';
+      } else if (user == 'donatore') {
+        document.getElementById('campiBeneficiario').style.display = 'none';
+        document.getElementById('campiDonatore').style.display = 'block';
+        document.getElementById('campiErogatore').style.display = 'none';
+      } else if (user == 'erogatore') {
+        document.getElementById('campiBeneficiario').style.display = 'none';
+        document.getElementById('campiDonatore').style.display = 'none';
+        document.getElementById('campiErogatore').style.display = 'block';
+      } else {
+        document.getElementById('campiBeneficiario').style.display = 'none';
+        document.getElementById('campiDonatore').style.display = 'none';
+        document.getElementById('campiErogatore').style.display = 'none';
+      }
+    }
+
+    /*document.querySelectorAll('input[name="ruolo"]').forEach(option => {
+      option.addEventListener('change', () => {
         document.getElementById('campiBeneficiario').style.display = 'none';
         document.getElementById('campiDonatore').style.display = 'none';
         document.getElementById('campiErogatore').style.display = 'none';
@@ -117,7 +138,7 @@
         else if (radio.value === 'donatore') document.getElementById('campiDonatore').style.display = 'block';
         else if (radio.value === 'erogatore') document.getElementById('campiErogatore').style.display = 'block';
       });
-    });
+    });*/
 
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
       e.preventDefault();

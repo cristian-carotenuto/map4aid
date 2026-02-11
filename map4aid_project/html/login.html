@@ -15,7 +15,6 @@
     </div>
     <div class="d-flex gap-2" id="auth-buttons"></div>
   </header>
-
   <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-6">
@@ -72,8 +71,8 @@
       </div>
     </div>
   </div>
-
-  <!-- Footer -->
+  <script src="../../chatbot/js/loader.js"></script>
+  <!-- Footer ( oviamente ) -->
   <footer class="bg-dark text-white text-center py-3 mt-4">
     <p>&copy; 2026 Map4Aid - Progetto Universitario</p>
   </footer>
@@ -145,7 +144,7 @@
         const data = await response.json();
 
         if (response.ok) {
-          saveLoginState(data.email);
+          saveLoginState(data.email, data.ruolo);
           // Chiude modale e reindirizza
           bootstrap.Modal.getInstance(document.getElementById('codiceModal')).hide();
           window.location.href = 'home.html';
