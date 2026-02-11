@@ -13,6 +13,12 @@ def segnalazione():
     lon = request.form.get("longitudine")
     indirizzo = request.form.get("indirizzo")
 
+    if not lat or not lon or not indirizzo:
+        return {
+            "successo": False,
+            "messaggio": "Dati mancanti: latitudine, longitudine e indirizzo sono obbligatori"
+        }, 400
+
     mail_sender = EmailControlBridge()
     enti_erogatori = AccountEnteErogatore.query.all()
     
@@ -25,7 +31,7 @@ def segnalazione():
             lon=lon
         )
    
-   # Restituisce direttamente il successo
+
     return {
         "successo": True,
         "messaggio": "Segnalazione completata con successo"
