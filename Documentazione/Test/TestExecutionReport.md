@@ -1,6 +1,6 @@
 <img src="media/image1.png" style="width:1.32986in;height:1.32153in" />
 
-*TEST EXECUTION REPORT \#UC02*
+*TEST EXECUTION REPORT*
 
 | **UC/ID TC** | **RISULTATO** | **DATA**   | **TESTER**       | **FAULT IDENTIFICATO**                                        |
 |--------------|---------------|------------|------------------|---------------------------------------------------------------|
