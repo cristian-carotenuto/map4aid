@@ -1,4 +1,4 @@
-<img src="media/image9.png" style="width:1.32986in;height:1.32153in" />
+<img src="media/image11.png" style="width:1.32986in;height:1.32153in" />
 
 *REQUIREMENTS ANALYSIS DOCUMENT*
 
@@ -3034,7 +3034,7 @@ Il form prevede l'inserimento di email e password.</p>
 </tbody>
 </table>
 
-<img src="media/image4.png" style="width:8.12604in;height:9.36458in" />
+<img src="media/image5.png" style="width:8.12604in;height:9.36458in" />
 
 **Entity**
 
@@ -3454,11 +3454,11 @@ Il form prevede l'inserimento di email e password.</p>
 
 **1.Prenotazione di un bene**
 
-<img src="media/image5.png" style="width:7.04063in;height:4.57866in" />
+<img src="media/image24.png" style="width:7.04063in;height:4.57866in" />
 
 **2.Donazione di un bene**
 
-<img src="media/image7.png" style="width:8.20833in;height:5.81527in" />
+<img src="media/image6.png" style="width:8.20833in;height:5.81527in" />
 
 **3.Donazione monetaria**
 
@@ -3470,18 +3470,20 @@ Il form prevede l'inserimento di email e password.</p>
 
 **5.Gestione scorte**
 
-<img src="media/image8.png" style="width:6.89583in;height:6.12711in" />
+<img src="media/image9.png" style="width:6.89583in;height:6.12711in" />
 
 **1.DonazioneMonetariaControl**
 
-<img src="media/image3.png" style="width:5.67708in;height:7.84859in" />
+<img src="media/image4.png" style="width:5.67708in;height:7.84859in" />
 
 **2.LoginControl**
 
-<img src="media/image6.png" style="width:6.34792in;height:7.89583in" />
+<img src="media/image7.png" style="width:6.34792in;height:7.89583in" />
 
 **3.PrenotazioneBene**
 
-<img src="media/image10.png" style="width:5.375in;height:7.76042in" />
+<img src="media/image26.png" style="width:5.375in;height:7.76042in" />
 
-**4.SegnalazioneControl**<img src="media/image11.png" style="width:6.89583in;height:5.86667in" />
+**4.SegnalazioneControl**<img src="media/image3.png" style="width:6.89583in;height:5.86667in" />
+
+<img src="media/image19.png" style="width:6.89133in;height:7.97222in" />
