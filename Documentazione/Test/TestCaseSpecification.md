@@ -12,6 +12,22 @@ Sono riportati tutti i test design relativi alle funzionalità da testare, così
 
 Ogni test case è descritto in modo strutturato, includendo input, condizioni, vincoli e oracoli necessari alla sua esecuzione.
 
+**UC01 Registrazione**
+
+Un utente non registrato crea un nuovo account nel sistema, selezionando il proprio ruolo (beneficiario, donatore o ente erogatore) e compilando i campi richiesti.
+
+L'utente inserisce email, password e i dati specifici in base al ruolo scelto: per il beneficiario sono richiesti nome, cognome, data di nascita, eventuali allergeni e patologie, codice carta d'identità e relativo documento; per il donatore sono richiesti nome, cognome, partita IVA, nome attività, indirizzo sede e categoria; per l'ente erogatore sono richiesti nome organizzazione, indirizzo sede, tipologia ente e IBAN.
+
+Il sistema verifica che i campi obbligatori siano compilati, che l'email non sia già registrata e che il ruolo sia valido.
+
+Se i dati sono validi, il sistema genera un codice OTP a 4 cifre e lo invia all'indirizzo email dell'utente.
+
+L'utente inserisce il codice OTP ricevuto. Il sistema confronta il codice con quello generato e, se valido, completa la registrazione creando l'account.
+
+Per gli utenti di tipo beneficiario, l'account viene creato in stato "non accettato" e richiede la validazione da parte di un amministratore.
+
+Se l'OTP è errato o se l'email non può essere inviata, la registrazione non viene completata.
+
 **UC02 Login**
 
 Un utente registrato accede al sistema inserendo email e password.
@@ -86,7 +102,19 @@ Il sistema genera dinamicamente un file in formato PDF contenente lo storico del
 
 Il PDF viene restituito come file scaricabile con nome storico.pdf
 
-Se lo storico risulta vuoto il sistema genera comunque il PDF e contiene le sezioni previste ma risulta vuoto
+Se lo storico risulta vuoto il sistema genera comunque il PDF e contiene le sezioni previste ma risulta vuoto.
+
+**UC11 Filtraggio della mappa**
+
+Un utente (registrato o non registrato) applica un filtro per categoria ai punti di distribuzione visualizzati sulla mappa, al fine di visualizzare solo gli elementi rilevanti e ridurre il sovraccarico visivo.
+
+L'utente seleziona una categoria dal menu a tendina nella sidebar della home page. Le categorie disponibili sono: Alimentari, Medicinali, Igiene Personale, oppure "Tutte le categorie" per visualizzare tutti i punti.
+
+Il sistema invia una richiesta GET /api/punti-distribuzione con il parametro categoria selezionato. Il backend esegue una query con JOIN sulle tabelle beni, sotto_categorie e macro_categorie per filtrare i punti di distribuzione che contengono beni della categoria richiesta.
+
+Se il filtro è valido, la mappa viene aggiornata mostrando solo i marker corrispondenti. Se non viene selezionato alcun filtro, vengono mostrati tutti i punti di distribuzione.
+
+Se le tabelle delle categorie non esistono nello schema, il filtro viene ignorato e tutti i punti vengono restituiti con una nota informativa.
 
 # 
 
