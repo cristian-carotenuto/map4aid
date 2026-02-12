@@ -2,40 +2,58 @@
 
 *TEST EXECUTION REPORT*
 
-|              |               |            |                       |                                                               |
-|--------------|---------------|------------|-----------------------|---------------------------------------------------------------|
-| **UC/ID TC** | **RISULTATO** | **DATA**   | **TESTER**            | **FAULT IDENTIFICATO**                                        |
-| UC02/TC01    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                           |
-| UC02/TC02    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                           |
-| UC02/TC03    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                           |
-| UC02/TC04    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                           |
-| UC02/TC05    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                           |
-| UC02/TC06    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                           |
-| UC02/TC07    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                           |
-| UC02/TC08    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                           |
-| UC02/TC09    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                           |
-| UC02/TC10    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                           |
-| UC02/TC11    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                           |
-| UC02/TC12    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                           |
-| UC04/TC01    | SUPERATO      | 11/02/2026 | Nicola Luciano        | N/A                                                           |
-| UC04/TC02    | SUPERATO      | 11/02/2026 | Nicola Luciano        | N/A                                                           |
-| UC04/TC03    | FALLITO       | 11/02/2026 | Nicola Luciano        | Errore nel confronto data nel controller                      |
-| UC04/TC03    | SUPERATO      | 11/02/2026 | Nicola Luciano        | N/A                                                           |
-| UC04/TC04    | SUPERATO      | 11/02/2026 | Nicola Luciano        | N/A                                                           |
-| UC04/TC05    | FALLITO       | 11/02/2026 | Nicola Luciano        | Ricerca del tipo di account sbagliato da parte del controller |
-| UC04/TC05    | SUPERATO      | 11/02/2026 | Nicola Luciano        | N/A                                                           |
-| UC04/TC06    | SUPERATO      | 11/02/2026 | Nicola Luciano        | N/A                                                           |
-| UC04/TC07    | SUPERATO      | 11/02/2026 | Nicola Luciano        | N/A                                                           |
-| UC04/TC08    | SUPERATO      | 11/02/2026 | Nicola Luciano        | N/A                                                           |
-| UC04/TC09    | SUPERATO      | 11/02/2026 | Nicola Luciano        | N/A                                                           |
-| UC06/TC01    | SUPERATO      | 11/02/2026 | Maria Chiara Gregorio | N/A                                                           |
-| UC06/TC02    | SUPERATO      | 11/02/2026 | Maria Chiara Gregorio | N/A                                                           |
-| UC06/TC03    | SUPERATO      | 11/02/2026 | Maria Chiara Gregorio | N/A                                                           |
-| UC06/TC04    | SUPERATO      | 11/02/2026 | Maria Chiara Gregorio | N/A                                                           |
-| UC09/TC1     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                           |
-| UC09/TC2     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                           |
-| UC09/TC3     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                           |
-| UC09/TC4     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                           |
-| UC09/TC5     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                           |
-| UC09/TC6     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                           |
-| UC09/TC7     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                           |
+|              |               |            |                       |                                                                                                                                                 |
+|--------------|---------------|------------|-----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| **UC/ID TC** | **RISULTATO** | **DATA**   | **TESTER**            | **FAULT IDENTIFICATO**                                                                                                                          |
+| UC01/TC01    | PASSATO       | 11/02/2026 | Riccardo Di Girolamo  | N/A                                                                                                                                             |
+| UC01/TC02    | PASSATO       | 11/02/2026 | Riccardo Di Girolamo  | N/A                                                                                                                                             |
+| UC01/TC03    | PASSATO       | 11/02/2026 | Riccardo Di Girolamo  | N/A                                                                                                                                             |
+| UC01/TC04    | PASSATO       | 11/02/2026 | Riccardo Di Girolamo  | N/A                                                                                                                                             |
+| UC01/TC05    | NON PASSATO   | 11/02/2026 | Riccardo Di Girolamo  | Il backend non gestisce correttamente il caso di file carta_identita mancante: genera un AttributeError interno invece di restituire errore 400 |
+| UC01/TC05    | PASSATO       | 11/02/2026 | Riccardo Di Girolamo  | N/A                                                                                                                                             |
+| UC01/TC06    | PASSATO       | 11/02/2026 | Riccardo Di Girolamo  | N/A                                                                                                                                             |
+| UC01/TC07    | PASSATO       | 11/02/2026 | Riccardo Di Girolamo  | N/A                                                                                                                                             |
+| UC01/TC08    | PASSATO       | 11/02/2026 | Riccardo Di Girolamo  | N/A                                                                                                                                             |
+| UC01/TC09    | PASSATO       | 11/02/2026 | Riccardo Di Girolamo  | N/A                                                                                                                                             |
+| UC01/TC10    | PASSATO       | 11/02/2026 | Riccardo Di Girolamo  | N/A                                                                                                                                             |
+| UC01/TC11    | PASSATO       | 11/02/2026 | Riccardo Di Girolamo  | N/A                                                                                                                                             |
+| UC02/TC01    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                                                                                                             |
+| UC02/TC02    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                                                                                                             |
+| UC02/TC03    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                                                                                                             |
+| UC02/TC04    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                                                                                                             |
+| UC02/TC05    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                                                                                                             |
+| UC02/TC06    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                                                                                                             |
+| UC02/TC07    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                                                                                                             |
+| UC02/TC08    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                                                                                                             |
+| UC02/TC09    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                                                                                                             |
+| UC02/TC10    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                                                                                                             |
+| UC02/TC11    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                                                                                                             |
+| UC02/TC12    | SUPERATO      | 11/02/2026 | Giovanni De Caro      | N/A                                                                                                                                             |
+| UC04/TC01    | SUPERATO      | 11/02/2026 | Nicola Luciano        | N/A                                                                                                                                             |
+| UC04/TC02    | SUPERATO      | 11/02/2026 | Nicola Luciano        | N/A                                                                                                                                             |
+| UC04/TC03    | FALLITO       | 11/02/2026 | Nicola Luciano        | Errore nel confronto data nel controller                                                                                                        |
+| UC04/TC03    | SUPERATO      | 11/02/2026 | Nicola Luciano        | N/A                                                                                                                                             |
+| UC04/TC04    | SUPERATO      | 11/02/2026 | Nicola Luciano        | N/A                                                                                                                                             |
+| UC04/TC05    | FALLITO       | 11/02/2026 | Nicola Luciano        | Ricerca del tipo di account sbagliato da parte del controller                                                                                   |
+| UC04/TC05    | SUPERATO      | 11/02/2026 | Nicola Luciano        | N/A                                                                                                                                             |
+| UC04/TC06    | SUPERATO      | 11/02/2026 | Nicola Luciano        | N/A                                                                                                                                             |
+| UC04/TC07    | SUPERATO      | 11/02/2026 | Nicola Luciano        | N/A                                                                                                                                             |
+| UC04/TC08    | SUPERATO      | 11/02/2026 | Nicola Luciano        | N/A                                                                                                                                             |
+| UC04/TC09    | SUPERATO      | 11/02/2026 | Nicola Luciano        | N/A                                                                                                                                             |
+| UC06/TC01    | SUPERATO      | 11/02/2026 | Maria Chiara Gregorio | N/A                                                                                                                                             |
+| UC06/TC02    | SUPERATO      | 11/02/2026 | Maria Chiara Gregorio | N/A                                                                                                                                             |
+| UC06/TC03    | SUPERATO      | 11/02/2026 | Maria Chiara Gregorio | N/A                                                                                                                                             |
+| UC06/TC04    | SUPERATO      | 11/02/2026 | Maria Chiara Gregorio | N/A                                                                                                                                             |
+| UC09/TC1     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                                                                                                             |
+| UC09/TC2     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                                                                                                             |
+| UC09/TC3     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                                                                                                             |
+| UC09/TC4     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                                                                                                             |
+| UC09/TC5     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                                                                                                             |
+| UC09/TC6     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                                                                                                             |
+| UC09/TC7     | SUPERATO      | 11/02/2026 | Luciano Corvino       | N/A                                                                                                                                             |
+| UC11/TC01    | PASSATO       | 11/02/2026 | Riccardo Di Girolamo  | N/A                                                                                                                                             |
+| UC11/TC02    | PASSATO       | 11/02/2026 | Riccardo Di Girolamo  | N/A                                                                                                                                             |
+| UC11/TC03    | PASSATO       | 11/02/2026 | Riccardo Di Girolamo  | N/A                                                                                                                                             |
+| UC11/TC04    | PASSATO       | 11/02/2026 | Riccardo Di Girolamo  | N/A                                                                                                                                             |
+| UC11/TC05    | PASSATO       | 11/02/2026 | Riccardo Di Girolamo  | N/A                                                                                                                                             |
+| UC11/TC06    | PASSATO       | 11/02/2026 | Riccardo Di Girolamo  | N/A                                                                                                                                             |
