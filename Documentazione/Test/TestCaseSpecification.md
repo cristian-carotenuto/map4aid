@@ -104,6 +104,42 @@ Il PDF viene restituito come file scaricabile con nome storico.pdf
 
 Se lo storico risulta vuoto il sistema genera comunque il PDF e contiene le sezioni previste ma risulta vuoto.
 
+**UC10 Invio Valutazione e Feedback**
+
+Un utente autenticato con ruolo Beneficiario può inserire una valutazione e un feedback testuale relativo a una prenotazione effettuata.
+
+Il sistema verifica che:
+
+- l’utente sia autenticato
+
+- il beneficiario esista nel database
+
+- l’id_prenotazione sia valido
+
+- la prenotazione esista
+
+- la prenotazione appartenga al beneficiario autenticato
+
+- la prenotazione sia in stato “ritirata”
+
+- non esista già un feedback associato a quella prenotazione
+
+- la valutazione sia compresa tra 1 e 5
+
+Se tutte le condizioni sono rispettate:
+
+- il sistema registra il feedback nel database
+
+- restituisce HTTP 201
+
+Se una delle condizioni non è rispettata:
+
+- viene restituito il codice di errore appropriato (400, 401, 403, 404, 409)
+
+In caso di errore interno del database:
+
+- viene restituito HTTP 500 con messaggio "db_error".
+
 **UC11 Filtraggio della mappa**
 
 Un utente (registrato o non registrato) applica un filtro per categoria ai punti di distribuzione visualizzati sulla mappa, al fine di visualizzare solo gli elementi rilevanti e ridurre il sovraccarico visivo.
@@ -476,9 +512,82 @@ Se le tabelle delle categorie non esistono nello schema, il filtro viene ignorat
 </tbody>
 </table>
 
-##  UC11 Filtraggio della mappa
+## 
 
-##  
+## UC10 Invio Valutazione e Feedback
+
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 22%" />
+<col style="width: 56%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Parametro</strong></th>
+<th><strong>Categoria</strong></th>
+<th><strong>Vincoli e proprietà</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>user_email</td>
+<td>Autenticazione (AU)</td>
+<td><p>1. Utente autenticato → <strong>[AU_OK]</strong></p>
+<p>2. Utente non autenticato → <strong>[ERR]</strong></p></td>
+</tr>
+<tr class="even">
+<td>beneficiario</td>
+<td>Esistenza (BE)</td>
+<td><p>1. Beneficiario esiste → <strong>[BE_OK]</strong></p>
+<p>2. Beneficiario non esiste → <strong>[ERR]</strong></p></td>
+</tr>
+<tr class="odd">
+<td>id_prenotazione</td>
+<td>Validità (ID)</td>
+<td><p>1. ID valido (intero positivo) → <strong>[ID_OK]</strong></p>
+<p>2. ID non valido → <strong>[ERR]</strong></p></td>
+</tr>
+<tr class="even">
+<td>prenotazione</td>
+<td>Esistenza (PR)</td>
+<td><p>1. Prenotazione esiste → <strong>[PR_OK]</strong></p>
+<p>2. Prenotazione non esiste → <strong>[ERR]</strong></p></td>
+</tr>
+<tr class="odd">
+<td>autorizzazione</td>
+<td>Proprietà (OWN)</td>
+<td><p>1. Prenotazione appartiene al beneficiario <strong>→ [OWN_OK]</strong></p>
+<p>2. Prenotazione di altro utente → <strong>[ERR]</strong></p></td>
+</tr>
+<tr class="even">
+<td>stato_prenotazione</td>
+<td>Stato (ST)</td>
+<td><p>1. Stato = “ritirata” → <strong>[ST_OK]</strong></p>
+<p>2. Stato diverso → <strong>[ERR]</strong></p></td>
+</tr>
+<tr class="odd">
+<td>valutazione</td>
+<td>Range (VR)</td>
+<td><p>1. 1 ≤ valutazione ≤ 5 → <strong>[VR_OK]</strong></p>
+<p>2. Valutazione fuori range → <strong>[ERR]</strong></p></td>
+</tr>
+<tr class="even">
+<td>feedback</td>
+<td>Unicità (FB)</td>
+<td><p>1. Feedback non ancora presente → <strong>[FB_OK]</strong></p>
+<p>2. Feedback già presente → <strong>[ERR]</strong></p></td>
+</tr>
+<tr class="odd">
+<td>database</td>
+<td>Integrità (DB)</td>
+<td><p>1. Inserimento corretto → <strong>[DB_OK]</strong></p>
+<p>2. Errore interno DB → [<strong>ERR]</strong></p></td>
+</tr>
+</tbody>
+</table>
+
+##  UC11 Filtraggio della mappa
 
 <table>
 <colgroup>
@@ -603,6 +712,22 @@ Se le tabelle delle categorie non esistono nello schema, il filtro viene ignorat
 | **TC05**      | **AU_OK** | **RU_DON** | **-**      | **DB_HAS** | **DM_HAS** | PDF Generato con successo con i dati presenti nel database                           |
 | **TC06**      | **AU_OK** | **RU_ENT** | **PR_0**   | **DB_0**   | **DM_0**   | PDF generato con successo ma vuoto perché non esistono attività associate all’utente |
 | **TC07**      | **AU_OK** | **RU_ENT** | **PR_HAS** | **DB_HAS** | **DM_HAS** | PDF Generato con successo con i dati presenti nel database                           |
+
+**UC10** **Invio Valutazione e Feedback**
+
+| **Test Case** | **AU**    | **BE**    | **ID**    | **PR**    | **OWN**    | **ST**    | **VR**    | **FB**    | **DB**    | **Esito atteso**                       |
+|---------------|-----------|-----------|-----------|-----------|------------|-----------|-----------|-----------|-----------|----------------------------------------|
+| **TC01**      | **AU_OK** | **BE_OK** | **ID_OK** | **PR_OK** | **OWN_OK** | **ST_OK** | **VR_OK** | **FB_OK** | **DB_OK** | 201 Feedback creato                    |
+| **TC02**      | **ERR**   | **-**     | **-**     | **-**     | **-**      | **-**     | **-**     | **-**     | **-**     | 401 Non autenticato                    |
+| **TC03**      | **AU_OK** | **BE_OK** | **ERR**   | **-**     | **-**      | **-**     | **-**     | **-**     | **-**     | 400 ID non valido                      |
+| **TC04**      | **AU_OK** | **BE_OK** | **ID_OK** | **PR_OK** | **OWN_OK** | **ST_OK** | **ERR**   | **-**     | **-**     | 400 Valutazione non valida             |
+| **TC05**      | **AU_OK** | **ERR**   | **-**     | **-**     | **-**      | **-**     | **-**     | **-**     | **-**     | 404 Beneficiario non trovato           |
+| **TC06**      | **AU_OK** | **BE_OK** | **ID_OK** | **ERR**   | **-**      | **-**     | **-**     | **-**     | **-**     | 404 Prenotazione non trovata           |
+| **TC07**      | **AU_OK** | **BE_OK** | **ID_OK** | **PR_OK** | **ERR**    | **-**     | **-**     | **-**     | **-**     | 403 Non autorizzato                    |
+| **TC08**      | **AU_OK** | **BE_OK** | **ID_OK** | **PR_OK** | **OWN_OK** | **ERR**   | **-**     | **-**     | **-**     | 400 Prenotazione non ritirata          |
+| **TC09**      | **AU_OK** | **BE_OK** | **ID_OK** | **PR_OK** | **OWN_OK** | **ST_OK** | **VR_OK** | **ERR**   | **-**     | 409 Feedback già inviato               |
+| **TC10**      | **AU_OK** | **BE_OK** | **ID_OK** | **PR_OK** | **OWN_OK** | **ST_OK** | **VR_OK** | **FB_OK** | **DB_OK** | 201 Feedback creato (recensione vuota) |
+| **TC11**      | **AU_OK** | **BE_OK** | **ID_OK** | **PR_OK** | **OWN_OK** | **ST_OK** | **VR_OK** | **FB_OK** | **ERR**   | 500 db_error                           |
 
 **UC11 Filtraggio della mappa**
 
@@ -1150,6 +1275,180 @@ Per ciascun test case vengono definiti:
 | Prenotazioni e Donazioni                                                                                                                                                                                                   | SI             |
 | **Output**                                                                                                                                                                                                                 |                |
 | Il PDF viene generato con successo e al suo interno è presente la stampa delle prenotazioni e delle donazioni con le loro rispettive informazioni, rispettivamente Bene, Donatore e Data insieme a Importo Donatore e Data |                |
+
+**UC10 – Invio Valutazione e Feedback**
+
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>ID TEST CASE</strong></th>
+<th><strong>TC01</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>INPUT</strong></td>
+<td><strong>VALORE</strong></td>
+</tr>
+<tr class="even">
+<td>user_email</td>
+<td>mario.rossi@example.com</td>
+</tr>
+<tr class="odd">
+<td>id_prenotazione</td>
+<td>15</td>
+</tr>
+<tr class="even">
+<td>valutazione</td>
+<td>5</td>
+</tr>
+<tr class="odd">
+<td>recensione</td>
+<td>"Servizio eccellente"</td>
+</tr>
+<tr class="even">
+<td colspan="2"><strong>OUTPUT</strong></td>
+</tr>
+<tr class="odd">
+<td colspan="2">Il sistema verifica che la prenotazione esista, appartenga al beneficiario e sia in stato "ritirata".<br />
+Il feedback viene salvato nel database e viene restituito HTTP 201 – "Feedback creato correttamente".</td>
+</tr>
+</tbody>
+</table>
+
+| **ID TEST CASE**                                                                                                    | **TC02**   |
+|---------------------------------------------------------------------------------------------------------------------|------------|
+| **INPUT**                                                                                                           | **VALORE** |
+| user_email                                                                                                          | (assente)  |
+| id_prenotazione                                                                                                     | 15         |
+| valutazione                                                                                                         | 4          |
+| recensione                                                                                                          | "Buono"    |
+| **OUTPUT**                                                                                                          |            |
+| Il sistema blocca la richiesta perché l’utente non è autenticato e restituisce HTTP 401 – "Utente non autenticato". |            |
+
+| **ID TEST CASE**                                                                                                               | **TC03**                                               |
+|--------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------|
+| **INPUT**                                                                                                                      | **VALORE**                                             |
+| user_email                                                                                                                     | mario.rossi@example.com                                |
+| id_prenotazione                                                                                                                | "abc"                                                  |
+| valutazione                                                                                                                    | 4                                                      |
+| recensione                                                                                                                     | "Buono"                                                |
+| **OUTPUT**                                                                                                                     |                                                        |
+| Il sistema rileva che l’id_prenotazione non è valido e restituisce HTTP 400 – "id_prenotazione non valido".                    |                                                        |
+| **ID TEST CASE**                                                                                                               | **TC04**                                               |
+| **INPUT**                                                                                                                      | **VALORE**                                             |
+| user_email                                                                                                                     | [mario.rossi@example.com](mailto:beneficiario@test.it) |
+| id_prenotazione                                                                                                                | 15                                                     |
+| valutazione                                                                                                                    | 8                                                      |
+| recensione                                                                                                                     | "Ottimo servizio"                                      |
+| output                                                                                                                         |                                                        |
+| Il sistema verifica che la valutazione sia fuori dal range consentito (1–5) e restituisce HTTP 400 – "Valutazione non valida". |                                                        |
+
+| **ID TEST CASE**                                                                                       | **TC05**                                                                 |
+|--------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| **INPUT**                                                                                              | **VALORE**                                                               |
+| user_email                                                                                             | [utenteinesistente@example.com](mailto:utenteinesistente@example.com%20) |
+| id_prenotazione                                                                                        | 15                                                                       |
+| Valutazione                                                                                            | 4                                                                        |
+| Recensione                                                                                             | "Buono"                                                                  |
+| output                                                                                                 |                                                                          |
+| Il sistema non trova il beneficiario nel database e restituisce HTTP 404 – "Beneficiario non trovato". |                                                                          |
+
+| **ID TEST CASE**                                                                                       | **TC06**                                               |
+|--------------------------------------------------------------------------------------------------------|--------------------------------------------------------|
+| **INPUT**                                                                                              | **VALORE**                                             |
+| user_email                                                                                             | [mario.rossi@example.com](mailto:beneficiario@test.it) |
+| id_prenotazione                                                                                        | 9999                                                   |
+| Valutazione                                                                                            | 4                                                      |
+| recensione                                                                                             | "Buono"                                                |
+| **OUTPUT**                                                                                             |                                                        |
+| Il sistema non trova la prenotazione nel database e restituisce HTTP 404 – "Prenotazione non trovata". |                                                        |
+
+| **ID TEST CASE**                                                                                                          | **TC07**                                                       |     |
+|---------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|-----|
+| **INPUT**                                                                                                                 | **VALORE**                                                     |     |
+| user_email                                                                                                                | [mario.rossiA@example.com](mailto:mario.rossiA@example.com%20) |     |
+| id_prenotazione                                                                                                           | 20 (appartenente a beneficiarioB)                              |     |
+| Valutazione                                                                                                               | 4                                                              |     |
+| Recensione                                                                                                                | "Buono"                                                        |     |
+| **OUTPUT**                                                                                                                |                                                                |     |
+| Il sistema verifica che la prenotazione non appartiene all’utente autenticato e restituisce HTTP 403 – "Non autorizzato". |                                                                |     |
+
+| **ID TEST CASE**                                                                                                                                 | **TC08**                                               |
+|--------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------|
+| **INPUT**                                                                                                                                        | **VALORE**                                             |
+| user_email                                                                                                                                       | [mario.rossi@example.com](mailto:beneficiario@test.it) |
+| id_prenotazione                                                                                                                                  | 22 (stato = in_attesa)                                 |
+| Valutazione                                                                                                                                      | 4                                                      |
+| Recensione                                                                                                                                       | "Buono"                                                |
+| **OUTPUT**                                                                                                                                       |                                                        |
+| Il sistema verifica che la prenotazione non è in stato "ritirata" e restituisce HTTP 400 – "Feedback consentito solo dopo il ritiro completato". |                                                        |
+
+| **ID TEST CASE**                                                                                                          | **TC09**                                               |
+|---------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------|
+| **INPUT**                                                                                                                 | **VALORE**                                             |
+| user_email                                                                                                                | [mario.rossi@example.com](mailto:beneficiario@test.it) |
+| id_prenotazione                                                                                                           | 15                                                     |
+| Valutazione                                                                                                               | 4                                                      |
+| Recensione                                                                                                                | "Secondo feedback"                                     |
+| **OUTPUT**                                                                                                                |                                                        |
+| Il sistema rileva che esiste già un feedback associato alla prenotazione e restituisce HTTP 409 – "Feedback già inviato". |                                                        |
+
+| **ID TEST CASE**                                                                                                                 | **TC10**                                                      |
+|----------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------|
+| **INPUT**                                                                                                                        | **VALORE**                                                    |
+| user_email                                                                                                                       | [<u>mario.rossi@example.com</u>](mailto:beneficiario@test.it) |
+| id_prenotazione                                                                                                                  | 15                                                            |
+| Valutazione                                                                                                                      | 3                                                             |
+| Recensione                                                                                                                       | (vuota)                                                       |
+| **OUTPUT**                                                                                                                       |                                                               |
+| Il sistema accetta la recensione vuota, salva il feedback nel database e restituisce HTTP 201 – "Feedback creato correttamente". |                                                               |
+
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>ID TEST CASE</strong></th>
+<th><strong>TC11</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>INPUT</strong></td>
+<td><strong>VALORE</strong></td>
+</tr>
+<tr class="even">
+<td>user_email</td>
+<td><a href="mailto:beneficiario@test.it">mario.rossi@example.com</a></td>
+</tr>
+<tr class="odd">
+<td>id_prenotazione</td>
+<td>15</td>
+</tr>
+<tr class="even">
+<td>Valutazione</td>
+<td>5</td>
+</tr>
+<tr class="odd">
+<td>Recensione</td>
+<td>"Test errore DB"</td>
+</tr>
+<tr class="even">
+<td colspan="2"><strong>OUTPUT</strong></td>
+</tr>
+<tr class="odd">
+<td colspan="2"><p>Simulando un errore interno del database durante l’inserimento del feedback, il sistema intercetta l’eccezione e restituisce correttamente:</p>
+<p>HTTP 500 – "db_error".</p></td>
+</tr>
+</tbody>
+</table>
 
 **UC11 Filtraggio della mappa**
 
