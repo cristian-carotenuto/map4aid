@@ -28,6 +28,38 @@ from models.models import (
 prenotazione_lock = threading.Lock()
 annulla_lock = threading.Lock()
 
+#endpoint per caricare i beni
+@auth_bp.route("/punti/<int:id_punto>/beni", methods=["GET"])
+def get_beni_punto(id_punto):
+    punto = PuntoDistribuzione.query.filter_by(id=id_punto).first()
+
+    if not punto:
+        return jsonify({"error": "Punto di distribuzione non trovato"}), 404
+
+    beni = Bene.query.filter_by(punto_distribuzione_id=id_punto).all()
+
+    lista_beni = []
+    for b in beni:
+        lista_beni.append({
+            "id": b.id,
+            "nome": b.nome,
+            "quantita": b.quantita,
+            "tipo": b.tipo,
+            "sottocategoria": b.sottocategoria.nome
+        })
+
+    #pacco
+    if is_craftable(id_punto):
+        lista_beni.append({
+            "id": "pacco_standard",
+            "nome": "Pacco alimentare standard",
+            "quantita": 1,
+            "tipo": "pacco",
+            "sottocategoria": "Pacco"
+        })
+
+    return jsonify(lista_beni), 200
+
 
 @auth_bp.route("/prenotazione", methods=["POST"])
 @require_roles("beneficiario")
@@ -38,10 +70,22 @@ def prenotazione():
         ricetta_path = None
         stato = "in_attesa"
 
-        id_punto_bisogno = request.form.get("id_punto_bisogno")
-        is_pacco = request.form.get("is_pacco")
+        #aggiunto supporto json per compatibilità con front-end
+        if request.is_json:
+            data = request.get_json()
+            id_punto_bisogno = data.get("punto_id")
+            id_bene = data.get("bene_id")
+            is_pacco = "True" if id_bene == "pacco_standard" else "False"
+            is_medicinale = "False"
+        else:
+            id_punto_bisogno = request.form.get("id_punto_bisogno")
+            id_bene = request.form.get("id_bene")
+            is_pacco = request.form.get("is_pacco")
+            is_medicinale = request.form.get("is_medicinale")
+
+
         user_email = session["user_email"]
-        is_medicinale = request.form.get("is_medicinale")
+
 
         punto_distribuzione = PuntoDistribuzione.query.filter_by(id=id_punto_bisogno).first()
         id_ente = punto_distribuzione.ente_erogatore_id
