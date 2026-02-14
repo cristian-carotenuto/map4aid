@@ -3268,7 +3268,7 @@ Il codice risulta non valido o per corrispondenza, o per la terminazione della s
 
 - **Donazione di un Bene**
 
-<img src="media/image5.png" style="width:6.89167in;height:6.01736in" alt="Immagine che contiene testo, diagramma, Disegno tecnico, Piano Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
+<img src="media/image5.png" style="width:6.89167in;height:5.69375in" alt="Immagine che contiene testo, diagramma, Parallelo, Rettangolo" />
 
 - **Prenotazione Ritiro Beni**
 
