@@ -187,14 +187,24 @@ def storico_pdf():
 
     if user.tipo == "beneficiario":
         prenotazioni = Prenotazione.query.filter_by(beneficiario_id=user.id).all()
-        if prenotazioni is None or len(prenotazioni) <= 0:
-            return jsonify({"message": "Prenotazioni non trovate"}), 200
         righe.append("=== PRENOTAZIONI ===")
+        if prenotazioni is None or len(prenotazioni) <= 0:
+            righe.append("Nessuna prenotazione")
         for p in prenotazioni:
             righe.append(
                 f"ID {p.id} | Bene: {p.bene.nome} | Punto: {p.punto.nome} | "
                 f"Data: {p.data_prenotazione.strftime('%d/%m/%Y %H:%M')} | Stato: {p.stato}"
             )
+        righe.append("=== DONAZIONI MONETARIE ===")
+        don_money = DonazioneMonetaria.query.filter_by(donatore_id=user.id).all()
+        if don_money is None or len(don_money) <= 0:
+            righe.append("Nessuna donazione")
+        else:
+            for d in don_money:
+                righe.append(
+                    f"Importo: €{d.importo:.2f} | Ente: {d.ente.nome_organizzazione} | "
+                    f"Data: {d.data.strftime('%d/%m/%Y %H:%M')}"
+                )
 
     elif user.tipo == "donatore":
         righe.append("=== DONAZIONI DI BENI ===")
@@ -242,6 +252,15 @@ def storico_pdf():
             for d in don_money:
                 righe.append(
                     f"Importo: €{d.importo:.2f} | Donatore: {d.donatore.email} | "
+                    f"Data: {d.data.strftime('%d/%m/%Y %H:%M')}"
+                )
+        righe.append("=== DONAZIONI MONETARIE ===")
+        if don_money is None or len(don_money) <= 0:
+            righe.append("Nessuna donazione")
+        else:
+            for d in don_money:
+                righe.append(
+                    f"Importo: €{d.importo:.2f} | Ente: {d.ente.nome_organizzazione} | "
                     f"Data: {d.data.strftime('%d/%m/%Y %H:%M')}"
                 )
 
