@@ -341,14 +341,14 @@ Stavolta vengono caricate 12 tabelle ciascuna per il singolo mese dell’anno co
 <td><strong>Flow Events</strong></td>
 <td><p>Giovanni Esposito accede alla homepage della piattaforma Map4aid. Clicca su “registrazione”, gli viene chiesto di scegliere di indicare il tipo di utente da diventare tra: “utente beneficiario”, “ente donatore” ed “ente erogatore”. Giovanni sceglie “ente donatore”. Viene reindirizzato ad un form inerente al donatore. Giovanni compila il form:</p>
 <ul>
-<li><p>nome:Giovanni</p></li>
-<li><p>cognome:Esposito</p></li>
+<li><p>nome: Giovanni</p></li>
+<li><p>cognome: Esposito</p></li>
 <li><p>email:<a href="mailto:PanificioDivertente@gmail.com"><u>PanificioDivertente@gmail.com</u></a></p></li>
 <li><p>password:PaneCaldo24</p></li>
 <li><p>Telefono:3245642398</p></li>
 <li><p>Partita IVA:74653786543</p></li>
 <li><p>Indirizzo sede: via Roma 23,Napoli, 80040</p></li>
-<li><p>Settore:alimentare</p></li>
+<li><p>Settore: alimentare</p></li>
 </ul>
 <p>Giovanni conferma la registrazione e viene creato l’account, riceve una notifica che avvisa dell’avvenuta creazione dell’account. Per accedere alla piattaforma Giovanni clicca su “login” e inserisce email e password:</p>
 <ul>
@@ -395,7 +395,7 @@ Stavolta vengono caricate 12 tabelle ciascuna per il singolo mese dell’anno co
 <p>Mattia conferma la registrazione e viene creato l’account, riceve una notifica che avvisa dell’avvenuta creazione dell’account. Per accedere alla piattaforma Mattia clicca su “login” e inserisce email e password:</p>
 <ul>
 <li><p>email o username:Crocerossa@gmail.com</p></li>
-<li><p>password:CroceAiutante</p></li>
+<li><p>password: CroceAiutante</p></li>
 </ul>
 <p>Clicca “accedi” e viene reindirizzato alla homepage della piattaforma. Ora che è loggato come ente erogatore ha accesso a tutte le funzionalità da ente erogatore.</p>
 <p>Infine Mattia condivide password ed email con tutte le persone facente parti dell’organizzazione</p></td>
@@ -776,18 +776,17 @@ FIDAS = Ente erogatore</td>
 </tr>
 <tr class="even">
 <td><strong>Flow Events</strong></td>
-<td>Gianni Rossi, registrato come Ente Donatore con la sua attività Farmacia Centrale, decide di effettuare una donazione all’Ente Erogatore “FIDAS” registrato nel sistema.<br />
+<td><p>Gianni Rossi, registrato come Ente Donatore con la sua attività Farmacia Centrale, decide di effettuare una donazione all’Ente Erogatore “FIDAS” registrato nel sistema.<br />
 <br />
-L’utente accede nella sua area riservata, clicca sulla sezione “donazione di beni” e compila il modulo presentato dal sistema inserendo:<br />
-<br />
-- Medicinali come categoria di beni<br />
-- Ibuprofene come titolo del bene specifico<br />
-- 1000 mg (5 tubi) come quantità<br />
-- FIDAS come ente erogatore a cui donare<br />
-- Antinfiammatorio come tipo<br />
-- 04/2026 come scadenza<br />
-<br />
-L’utente clicca su “effettua donazione” e , vista la correttezza dei dati, la richiesta viene inoltrata all’ente erogatore e l’utente visualizza un messaggio “richiesta di donazione inoltrata correttamente all’ente erogatore”.</td>
+L’utente accede nella sua area riservata, clicca sulla sezione “donazione di beni” e compila il modulo presentato dal sistema inserendo:</p>
+<ul>
+<li><p>Ente erogatore: FIDAS</p></li>
+<li><p>Categoria: Medicinale</p></li>
+<li><p>Nome: Confezione Tachipirina 1000 mg</p></li>
+<li><p>Quantità: 10</p></li>
+<li><p>Scadenza:25/12/2026</p></li>
+</ul>
+<p>L’utente clicca su “effettua donazione” e , vista la correttezza dei dati, la richiesta viene inoltrata all’ente erogatore e l’utente visualizza un messaggio “richiesta di donazione inoltrata correttamente all’ente erogatore”.</p></td>
 </tr>
 </tbody>
 </table>
@@ -812,12 +811,12 @@ L’utente clicca su “effettua donazione” e , vista la correttezza dei dati,
 </tr>
 <tr class="even">
 <td><strong>Flow Events</strong></td>
-<td><p>Mario Rossi dopo aver ritirato il bene, vedrà comparire quest’ultimo nello storico di beni ritirati.</p>
+<td><p>Mario Rossi dopo aver ritirato il bene tramite QR-code, vedrà comparire quest’ultimo nello storico di beni ritirati.</p>
 <p>Cliccando sul bene appena ritirato, vedrà comparire a schermo un'interfaccia che conterrà:</p>
 <p>- informazioni sul luogo ed orario di ritiro;<br />
 - modulo per invio di valutazione e feedback.</p>
 <p>Mario Rossi decide di compilare il modulo.</p>
-<p>Inserisce una valutazione numerica del servizio ricevuto, che va da un valore minimo di 1 ad uno massimo di 5.</p>
+<p>Inserisce una valutazione numerica del servizio ricevuto, che va da un valore minimo di 1 ad uno massimo di 5. Decide di inserire 2 stelle.</p>
 <p>Ed inoltre compila il campo Feedback testuale del modulo inserendo commenti e opinioni su qualche aspetto particolare del servizio ricevuto.</p></td>
 </tr>
 </tbody>
@@ -843,7 +842,7 @@ L’utente clicca su “effettua donazione” e , vista la correttezza dei dati,
 </tr>
 <tr class="even">
 <td><strong>Flow Events</strong></td>
-<td><p>Mario Rossi dopo aver ritirato il bene, vedrà comparire quest’ultimo nello storico di beni ritirati.</p>
+<td><p>Mario Rossi dopo aver ritirato il bene tramite QR-code, vedrà comparire quest’ultimo nello storico di beni ritirati.</p>
 <p>Cliccando sul bene appena ritirato, vedrà comparire a schermo un'interfaccia che conterrà:</p>
 <p>- informazioni sul luogo ed orario di ritiro;</p>
 <p>- modulo per invio di valutazione e feedback.</p>
@@ -864,39 +863,28 @@ L’utente clicca su “effettua donazione” e , vista la correttezza dei dati,
 </tr>
 <tr class="even">
 <td><strong>Name</strong></td>
-<td>L’utente visualizza il catalogo (per una categoria) senza prenotare</td>
+<td>Un utente beneficiario prenota un bene medicinale</td>
 </tr>
 <tr class="odd">
 <td><strong>Actors</strong></td>
-<td>Mario Rossi = Utente beneficiario</td>
+<td><p>Luca Bianchi= Utente beneficiario</p>
+<p>Medici senza frontiera = Ente erogatore</p></td>
 </tr>
 <tr class="even">
 <td><strong>Flow Events</strong></td>
-<td><p>Mario Rossi è un utente registrato alla piattaforma MAP4AID e ha effettuato correttamente il login inserendo e-mail e password.</p>
-<p>Una volta sulla sua homepage utente, decide di consultare il catalogo dei beni disponibili senza effettuare alcuna prenotazione.</p>
-<p>Mario clicca sulla voce di menu “Catalogo”.</p>
-<p>Il sistema lo reindirizza su una pagina in cui sono mostrate le categorie principali dei beni messi a disposizione dagli enti erogatori</p>
-<ul>
-<li><p>Alimentari</p></li>
-<li><p>Vestiti</p></li>
-<li><p>Igiene</p></li>
-<li><p>Medicinali</p></li>
-<li><p>Varie</p></li>
-</ul>
-<p>Mario decide di cliccare sulla categoria Alimentari.</p>
-<p>Il sistema aggiorna la schermata mostrando le sottocategorie specifiche (ad esempio: Pane, Pasta, Scatolame, Prodotti senza glutine).</p>
-<p>Mario seleziona la sottocategoria “Pane”.</p>
-<p>Il sistema visualizza l’elenco dei beni disponibili con le seguenti informazioni:</p>
-<ul>
-<li><p>Nome del bene (es. Pane comune, Pane integrale, Pane senza glutine)</p></li>
-<li><p>Descrizione (se presente)</p></li>
-<li><p>Eventuali allergeni</p></li>
-<li><p>Quantità totale disponibile</p></li>
-<li><p>Pulsante “Mostra sulla mappa” per visualizzare dove è reperibile</p></li>
-</ul>
-<p>Mario scorre la lista dei beni disponibili, ma non clicca su “Mostra sulla mappa” e non effettua alcuna prenotazione.</p>
-<p>Dopo aver consultato le informazioni che gli interessavano, decide di tornare alla homepage tramite il menu.</p>
-<p>Il sistema non registra alcuna prenotazione e l’operazione si conclude come semplice visualizzazione del catalogo.</p></td>
+<td><p><mark>Luca Bianchi è un utente registrato alla piattaforma MAP4AID come beneficiario e ha correttamente effettuato il login inserendo e-mail e password.</mark></p>
+<p><mark>Dalla homepage utente, Luca ha bisogno di prenotare un bene in un punto di distribuzione vicino a casa. Decide quindi di cliccare sulla voce di menu “Mappa”.</mark></p>
+<p><mark>Il sistema apre una schermata contenente una mappa interattiva che mostra i punti di distribuzione disponibili. Sul lato della mappa è presente un pannello di filtri che permette di selezionare la categoria di beni desiderata.</mark></p>
+<p><mark>Luca seleziona la categoria “medicinali” che gli interessa e applica i filtri. Il sistema aggiorna i marker sulla mappa mostrando solo i punti che dispongono di beni appartenenti a quella categoria.</mark></p>
+<p><mark>Luca individua il punto di distribuzione più comodo per lui e clicca sul relativo marker.</mark></p>
+<p><mark>Il sistema apre un riquadro informativo con i dettagli del punto di distribuzione (nome, indirizzo, orari di apertura, breve descrizione) e l’elenco dei beni prenotabili in quel punto, con le relative quantità disponibili.</mark></p>
+<p><mark>Dall’elenco dei beni disponibili, Luca seleziona “Confezione di tachipirine 1000mg”, inserisce un file che contiene la ricetta medica e clicca sul pulsante “Prenota”.</mark></p>
+<p><mark>Il sistema mostra una schermata di riepilogo della prenotazione contenente: il punto di ritiro selezionato, i dettagli del bene e l’eventuale fascia oraria di ritiro.</mark></p>
+<p><mark>Luca controlla che i dati siano corretti e conferma la prenotazione cliccando su “Conferma prenotazione”.</mark></p>
+<p><mark>L’ente erogatore che possiede quel punto di ritiro, Medici senza frontiera, valida la prenotazione assicurandosi che la ricetta medica sia valida.</mark></p>
+<p><mark>Il sistema registra la prenotazione, aggiorna le quantità disponibili del bene nel punto di distribuzione scelto e genera un codice QR univoco associato alla prenotazione stessa.</mark></p>
+<p><mark>Il codice QR viene mostrato a schermo e salvato all’interno dell’area personale di Luca, nella sezione “Le mie prenotazioni”. Inoltre, il sistema invia una e-mail di conferma contenente i dettagli della prenotazione e il QR da utilizzare al momento del ritiro.</mark></p>
+<p><mark>Terminata l’operazione, Luca può chiudere la schermata o tornare alla homepage, sapendo di poter mostrare il QR presso il punto di ritiro nel giorno e nell’orario indicati.</mark></p></td>
 </tr>
 </tbody>
 </table>
@@ -980,7 +968,7 @@ Dalla homepage decide di modificare la password del proprio account per motivi d
 <p><mark>Mario ripete la nuova password nel campo “Conferma nuova password” per confermarla.</mark></p>
 <p><mark>Dopo aver compilato tutti i campi, Mario clicca sul pulsante “Salva” (o “Conferma”).</mark></p>
 <p><mark>Il sistema verifica che la password attuale inserita sia corretta, che la nuova password rispetti i requisiti di sicurezza e che la conferma coincida con la nuova password.</mark></p>
-<p><mark>Le verifiche vanno a buon fine: il sistema aggiorna la password di Mario neil database e invalida, se previsto, le eventuali sessioni attive su altri dispositivi.</mark></p></td>
+<p><mark>Le verifiche vanno a buon fine: il sistema aggiorna la password di Mario nel database e invalida, se previsto, le eventuali sessioni attive su altri dispositivi.</mark></p></td>
 </tr>
 </tbody>
 </table>
@@ -1011,20 +999,12 @@ Dalla homepage utente decide di effettuare una donazione della categoria di igie
 <p><mark>Il sistema apre una schermata contenente l’elenco delle categorie di beni donabili.<br />
 Tra queste Donato seleziona la categoria <strong>Igiene personale</strong>.</mark></p>
 <p><mark>Il sistema mostra un modulo di inserimento nel quale Donato deve specificare:<br />
-• Tipo di bene (es. sapone, shampoo, dentifricio, assorbenti, ecc.)<br />
-• Quantità disponibile<br />
-• Una breve descrizione opzionale<br />
-• Eventuale data entro cui la donazione è disponibile al ritiro<br />
-• Comune o zona da cui il bene può essere ritirato</mark></p>
+• Tipo di bene: flacone di Sapone 500ml<br />
+• Quantità disponibile:3<br />
+• Punto di bisogno: Via Napoli 3<br />
+• Nome bene: flacone di Sapone 500ml</mark></p>
 <p><mark>Donato compila tutti i campi richiesti e,</mark></p>
 <p><mark>dopo aver inserito i dati, clicca su <strong>“Continua”</strong>.</mark></p>
-<p><mark>Il sistema apre una schermata che mostra l’elenco degli <strong>enti erogatori registrati</strong> che accettano beni di igiene personale nella zona selezionata.<br />
-Per ciascun ente vengono mostrati:<br />
-• Nome dell’ente<br />
-• Indirizzo<br />
-• Orari di ritiro<br />
-• Categoria dei beni accettati</mark></p>
-<p><mark>Donato individua l’ente a cui desidera destinare la donazione e clicca su <strong>“Dona ora”</strong>.</mark></p>
 <p><mark>Il sistema mostra un riepilogo della donazione con tutte le informazioni inserite da Donato.<br />
 Donato conferma cliccando sul pulsante <strong>“Conferma donazione”</strong>.</mark></p>
 <p><mark>Il sistema registra la donazione, la assegna all’ente selezionato e invia la notifica all’ente erogatore con i dettagli del bene donato.</mark></p>
@@ -1048,7 +1028,7 @@ Donato conferma cliccando sul pulsante <strong>“Conferma donazione”</strong>
 </tr>
 <tr class="even">
 <td><strong>Name</strong></td>
-<td>Un utente beneficiario prenota un bene in un punto di ritiro (con QR)</td>
+<td>Un utente beneficiario prenota un pacco alimentare in un punto di ritiro (con QR)</td>
 </tr>
 <tr class="odd">
 <td><strong>Actors</strong></td>
@@ -1059,11 +1039,11 @@ Donato conferma cliccando sul pulsante <strong>“Conferma donazione”</strong>
 <td><p><mark>Luca Bianchi è un utente registrato alla piattaforma MAP4AID come beneficiario e ha correttamente effettuato il login inserendo e-mail e password.</mark></p>
 <p><mark>Dalla homepage utente, Luca ha bisogno di prenotare un bene in un punto di distribuzione vicino a casa. Decide quindi di cliccare sulla voce di menu “Mappa”.</mark></p>
 <p><mark>Il sistema apre una schermata contenente una mappa interattiva che mostra i punti di distribuzione disponibili. Sul lato della mappa è presente un pannello di filtri che permette di selezionare la categoria di beni desiderata.</mark></p>
-<p><mark>Luca seleziona la categoria di beni che gli interessa (ad esempio “Alimentari”, “Igiene personale” o “Medicinali”) e applica i filtri. Il sistema aggiorna i marker sulla mappa mostrando solo i punti che dispongono di beni appartenenti a quella categoria.</mark></p>
+<p><mark>Luca seleziona la categoria “alimentari” che gli interessa e applica i filtri. Il sistema aggiorna i marker sulla mappa mostrando solo i punti che dispongono di beni appartenenti a quella categoria.</mark></p>
 <p><mark>Luca individua il punto di distribuzione più comodo per lui e clicca sul relativo marker.</mark></p>
 <p><mark>Il sistema apre un riquadro informativo con i dettagli del punto di distribuzione (nome, indirizzo, orari di apertura, breve descrizione) e l’elenco dei beni prenotabili in quel punto, con le relative quantità disponibili.</mark></p>
-<p><mark>Dall’elenco dei beni disponibili, Luca seleziona il bene di suo interesse e clicca sul pulsante “Prenota”.</mark></p>
-<p><mark>Il sistema mostra una schermata di riepilogo della prenotazione contenente: il punto di ritiro selezionato, il bene scelto, la quantità, l’eventuale fascia oraria di ritiro e, se previsto, le condizioni del servizio.</mark></p>
+<p><mark>Dall’elenco dei beni disponibili, Luca seleziona “Prenota pacco alimentare” di suo interesse e clicca sul pulsante “Prenota”.</mark></p>
+<p><mark>Il sistema mostra una schermata di riepilogo della prenotazione contenente: il punto di ritiro selezionato, il contenuto del pacco e l’eventuale fascia oraria di ritiro.</mark></p>
 <p><mark>Luca controlla che i dati siano corretti e conferma la prenotazione cliccando su “Conferma prenotazione”.</mark></p>
 <p><mark>Il sistema registra la prenotazione, aggiorna le quantità disponibili del bene nel punto di distribuzione scelto e genera un codice QR univoco associato alla prenotazione stessa.</mark></p>
 <p><mark>Il codice QR viene mostrato a schermo e salvato all’interno dell’area personale di Luca, nella sezione “Le mie prenotazioni”. Inoltre, il sistema invia una e-mail di conferma contenente i dettagli della prenotazione e il QR da utilizzare al momento del ritiro.</mark></p>
