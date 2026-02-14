@@ -3264,6 +3264,8 @@ Il codice risulta non valido o per corrispondenza, o per la terminazione della s
 
 <img src="media/image8.png" style="width:6.89167in;height:5.87917in" alt="Immagine che contiene diagramma, testo, Piano, linea Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
 
+- **Donazione monetaria**
+
 <img src="media/image9.png" style="width:4.86667in;height:6.9in" alt="Immagine che contiene testo, schermata, diagramma, linea Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
 
 - **Prenotazione Bene**
