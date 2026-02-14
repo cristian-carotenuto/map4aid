@@ -75,7 +75,7 @@ class AuthFacade:
         email = email.lower().strip()
 
         if PendingAccount.query.filter_by(email=email).first():
-            raise ValueError("Email già in fase di registraione")
+            raise ValueError("Email già in fase di registrazione")
 
 
         # -------------------------
@@ -136,7 +136,6 @@ class AuthFacade:
 
         PendingAccount.query.filter_by(email=email).delete(synchronize_session=False)
         db.session.add(pending)
-        db.session.commit()
         db.session.add(pending)
         db.session.commit()
         session["pending_email"] = email

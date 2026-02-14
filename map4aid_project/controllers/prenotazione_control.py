@@ -36,6 +36,7 @@ def prenotazione():
         UPLOAD_FOLDER = "uploads/ricette"
         os.makedirs(UPLOAD_FOLDER, exist_ok=True)
         ricetta_path = None
+        stato = "in_attesa"
 
         id_punto_bisogno = request.form.get("id_punto_bisogno")
         is_pacco = request.form.get("is_pacco")
@@ -63,7 +64,7 @@ def prenotazione():
                 try:
                     checker.check("pacco")
                 except Exception as e:
-                    return jsonify({"error": str(e)}), 200
+                    return jsonify({"error": str(e)}), 400
 
                 sott_pane = SottoCategoria.query.filter_by(nome="Pane").first()
                 sott_pasta = SottoCategoria.query.filter_by(nome="Pasta").first()
@@ -156,6 +157,7 @@ def prenotazione():
             if ricetta.filename == "":
                 return jsonify({"error": "File ricetta non valido"}), 400
 
+            stato = "in_validazione"
             filename = secure_filename(ricetta.filename)
             ricetta_path = os.path.join(UPLOAD_FOLDER, filename)
             ricetta.save(ricetta_path)
@@ -172,7 +174,7 @@ def prenotazione():
             bene_id=bene.id,
             punto_id=punto_distribuzione.id,
             pacco_id=None,
-            stato="in_validazione"
+            stato=stato
         )
 
         bene.quantita -= 1
@@ -221,7 +223,7 @@ def conferma_prenotazione():
         return jsonify({"error": "Non hai i permessi per confermare la prenotazione"}), 401
     
     if prenotazione.stato != "in_attesa": 
-        return jsonify({"error": "La prenotazione non è pronta per il ritiro"}), 400
+        return jsonify({"error": "La prenotazione non è pronta per il ritiro o è già stata  ritirata"}), 400
     
     prenotazione.stato = "ritirata"
     db.session.commit()
@@ -336,7 +338,7 @@ def approva_ricetta():
 
 def cancella_prenotazione(prenotazione):
 
-    if prenotazione.stato == "Completata":
+    if prenotazione.stato == "ritirata":
         return False
 
     if prenotazione.pacco_id is not None:

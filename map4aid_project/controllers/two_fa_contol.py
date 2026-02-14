@@ -64,12 +64,13 @@ def conferma_codice_registrazione():
         )
     if not user:
         return jsonify({"error": "Nessuna registrazionein corso"}), 400
+    tipo = puser.tipo
     db.session.add(user)
     db.session.delete(puser)
     db.session.commit()
     session.pop("pending_email")  # rimuovi email
 
-    if puser.tipo == "beneficiario":
+    if tipo == "beneficiario":
         return jsonify({"message": "Codice valido, registrazione in attessa di validazione dall'admin"}), 200
     return jsonify({"message": "Codice valido, registrazione avvenuta"}), 200
 

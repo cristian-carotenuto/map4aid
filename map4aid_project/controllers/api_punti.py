@@ -204,6 +204,7 @@ def crea_punto():
             sql = f"INSERT INTO punti_distribuzione ({cols_sql}) VALUES ({vals_sql})"
 
             conn.execute(text(sql), params)
+            conn.commit()
             last_id = conn.execute(text("SELECT last_insert_rowid()")).scalar()
 
             resp = {"message": "punto_creato", "id": int(last_id) if last_id is not None else None}

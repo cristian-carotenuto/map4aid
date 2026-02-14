@@ -55,6 +55,10 @@ def admin_confirm():
     id_beneficiario = request.form.get("id_beneficiario")
     esito = request.form.get("esito")#True se l'account è stato confermato,altrimenti viene cancellato
     account = AccountBeneficiario.query.filter_by(id=id_beneficiario).first()
+    email = account.email
+    if account == None:
+        return jsonify({"error": "Account non trovato"}), 400
+
 
     if esito == "True":
         account.accettato = True
@@ -64,7 +68,7 @@ def admin_confirm():
         db.session.commit()
 
     mail_sender = EmailControlBridge()
-    email_ok=mail_sender.send_conferma_registrazione(account.email,esito)
+    email_ok=mail_sender.send_conferma_registrazione(email,esito)
 
 
     if email_ok:

@@ -112,6 +112,8 @@ def get_donazioni():
     
     # Donazioni monetarie
     don_money = DonazioneMonetaria.query.filter_by(donatore_id=user.id).all()
+    don_money.sort(key=lambda d: d.data, reverse=True)
+
     for d in don_money:
         risultato.append({
             "id": f"DM{d.id}",
@@ -185,6 +187,8 @@ def storico_pdf():
 
     if user.tipo == "beneficiario":
         prenotazioni = Prenotazione.query.filter_by(beneficiario_id=user.id).all()
+        if prenotazioni is None or len(prenotazioni) <= 0:
+            return jsonify({"message": "Prenotazioni non trovate"}), 200
         righe.append("=== PRENOTAZIONI ===")
         for p in prenotazioni:
             righe.append(
@@ -195,50 +199,65 @@ def storico_pdf():
     elif user.tipo == "donatore":
         righe.append("=== DONAZIONI DI BENI ===")
         don_beni = DonazioneBene.query.filter_by(donatore_id=user.id).all()
-        for d in don_beni:
-            righe.append(
-                f"Bene: {d.bene.nome} | Quantità: {d.bene.quantita} | "
-                f"Ente: {d.ente_erogatore.nome_organizzazione} | "
-                f"Data: {d.data.strftime('%d/%m/%Y %H:%M')}"
-            )
+        if don_beni is None or len(don_beni) <= 0:
+            righe.append("Nessuna donazione")
+        else:
+            for d in don_beni:
+                righe.append(
+                    f"Bene: {d.bene.nome} | Quantità: {d.bene.quantita} | "
+                    f"Ente: {d.ente_erogatore.nome_organizzazione} | "
+                    f"Data: {d.data.strftime('%d/%m/%Y %H:%M')}"
+                )
 
         righe.append("")
         righe.append("=== DONAZIONI MONETARIE ===")
         don_money = DonazioneMonetaria.query.filter_by(donatore_id=user.id).all()
-        for d in don_money:
-            righe.append(
-                f"Importo: €{d.importo:.2f} | Ente: {d.ente.nome_organizzazione} | "
-                f"Data: {d.data.strftime('%d/%m/%Y %H:%M')}"
-            )
+        if don_money is None or len(don_money) <= 0:
+            righe.append("Nessuna donazione")
+        else:
+            for d in don_money:
+                righe.append(
+                    f"Importo: €{d.importo:.2f} | Ente: {d.ente.nome_organizzazione} | "
+                    f"Data: {d.data.strftime('%d/%m/%Y %H:%M')}"
+                )
 
     elif user.tipo == "ente_erogatore":
         righe.append("=== DONAZIONI DI BENI RICEVUTE ===")
         don_beni = DonazioneBene.query.filter_by(ente_erogatore_id=user.id).all()
-        for d in don_beni:
-            righe.append(
-                f"Bene: {d.bene.nome} | Donatore: {d.donatore.email} | "
-                f"Data: {d.data.strftime('%d/%m/%Y %H:%M')}"
-            )
+        if don_beni is None or len(don_beni) <= 0:
+            righe.append("Nessuna donazione ricevuta")
+        else:
+            for d in don_beni:
+                righe.append(
+                    f"Bene: {d.bene.nome} | Donatore: {d.donatore.email} | "
+                    f"Data: {d.data.strftime('%d/%m/%Y %H:%M')}"
+                )
 
         righe.append("")
         righe.append("=== DONAZIONI MONETARIE RICEVUTE ===")
         don_money = DonazioneMonetaria.query.filter_by(ente_id=user.id).all()
-        for d in don_money:
-            righe.append(
-                f"Importo: €{d.importo:.2f} | Donatore: {d.donatore.email} | "
-                f"Data: {d.data.strftime('%d/%m/%Y %H:%M')}"
-            )
+        if don_money is None or len(don_money) <= 0:
+            righe.append("Nessuna donazione ricevuta")
+        else:
+            for d in don_money:
+                righe.append(
+                    f"Importo: €{d.importo:.2f} | Donatore: {d.donatore.email} | "
+                    f"Data: {d.data.strftime('%d/%m/%Y %H:%M')}"
+                )
 
         righe.append("")
         righe.append("=== PRENOTAZIONI NEI PUNTI DI DISTRIBUZIONE ===")
         punti = PuntoDistribuzione.query.filter_by(ente_erogatore_id=user.id).all()
-        for punto in punti:
-            for p in punto.prenotazioni:
-                righe.append(
-                    f"Punto: {punto.nome} | Bene: {p.bene.nome} | "
-                    f"Beneficiario: {p.beneficiario.email} | "
-                    f"Data: {p.data_prenotazione.strftime('%d/%m/%Y %H:%M')}"
-                )
+        if punti is None or len(punti) <= 0:
+            righe.append("Nessuna prenotazione")
+        else:
+            for punto in punti:
+                for p in punto.prenotazioni:
+                    righe.append(
+                        f"Punto: {punto.nome} | Bene: {p.bene.nome} | "
+                        f"Beneficiario: {p.beneficiario.email} | "
+                        f"Data: {p.data_prenotazione.strftime('%d/%m/%Y %H:%M')}"
+                    )
 
     pdf_buffer = genera_pdf_storico("Storico Utente", righe)
 
