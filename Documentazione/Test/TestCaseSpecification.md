@@ -82,6 +82,51 @@ Il sistema tenta di inviare una e-mail di segnalazione  a ciascun ente con i de
 
 Al termine, il sistema conferma l'avvenuta segnalazione all'utente.
 
+**UC07 Gestione scorte**
+
+Un utente autenticato con ruolo Ente erogatore accede alla sezione di gestione dei beni associati ai propri punti di distribuzione al fine di controllare e aggiornare le scorte disponibili.
+
+L’ente seleziona uno dei propri punti di distribuzione registrati nel sistema.  
+Il sistema verifica che:
+
+- l’utente sia autenticato
+
+- l’utente abbia ruolo *ente erogatore*
+
+- il punto di distribuzione selezionato esista e appartenga all’ente
+
+Se le verifiche hanno esito positivo, il sistema mostra l’elenco dei beni disponibili nel punto selezionato, con categoria, quantità e stato.
+
+L’ente può scegliere una delle seguenti operazioni:
+
+**Aggiunta bene**
+
+- inserisce categoria, tipologia e quantità
+
+- il sistema verifica validità e coerenza con la tassonomia
+
+- il sistema registra il nuovo lotto e aggiorna le scorte
+
+**Rimozione bene**
+
+- seleziona bene e quantità da rimuovere
+
+- il sistema verifica che la quantità richiesta sia disponibile
+
+- il sistema aggiorna la quantità residua o elimina il lotto se esaurito
+
+**Aggiornamento quantità**
+
+- modifica la quantità disponibile (incremento o decremento)
+
+- il sistema valida che la quantità finale non sia negativa
+
+- il sistema aggiorna lo stato delle scorte
+
+Al termine dell’operazione il sistema salva le modifiche nel database e aggiorna la disponibilità dei beni visibile agli utenti.
+
+Se una delle verifiche fallisce (utente non autorizzato, bene inesistente, quantità non valida, errore database), l’operazione non viene completata e viene restituito un messaggio di errore.
+
 **UC 09 Storico attività e reportistica**
 
 Un utente autenticato accede alla sezione dedicata al suo profilo
@@ -452,7 +497,189 @@ Se le tabelle delle categorie non esistono nello schema, il filtro viene ignorat
 
 ## 
 
-## 
+## UC7 GESTIONE BENI
+
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Parametro</strong></th>
+<th><strong>Categoria</strong></th>
+<th><strong>Vincoli e proprietà</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Ente</td>
+<td><p>ente --&gt; Autenticato (<strong>AU</strong>)</p>
+<p>ente --&gt; Esistente (<strong>ES</strong>)</p></td>
+<td><strong>AU</strong>:<br />
+1. L'ente ha effettuato il login (UC_login) ed è autenticato<br />
+2. L'ente non è autenticato<br />
+<br />
+<strong>ES</strong>:<br />
+1. L'ente esiste nel database<br />
+2. L'ente non esiste nel database</td>
+</tr>
+<tr class="even">
+<td>Punto_ritiro</td>
+<td>punto_ritiro --&gt; Esistente (<strong>ES</strong>)<br />
+punto_ritiro --&gt; Appartenente (<strong>AP</strong>)</td>
+<td><strong>ES</strong>:<br />
+1. Il punto di ritiro esiste nel sistema<br />
+2. Il punto di ritiro non esiste<br />
+<br />
+<strong>AP</strong>:<br />
+1. Il punto di ritiro appartiene all'ente loggato<br />
+2. Il punto di ritiro non appartiene all'ente loggato</td>
+</tr>
+<tr class="odd">
+<td>Bene</td>
+<td>bene --&gt; Esistente (<strong>ES</strong>)<br />
+bene --&gt; Nuovo (<strong>NU</strong>)</td>
+<td><strong>ES</strong>:<br />
+1. Il bene esiste già nell'inventario del punto di ritiro<br />
+2. Il bene non esiste nell'inventario<br />
+<br />
+<strong>NU</strong>:<br />
+1. Il bene è nuovo e viene aggiunto per la prima volta<br />
+2. Il bene esiste già (non è nuovo)</td>
+</tr>
+<tr class="even">
+<td>Nome_bene</td>
+<td>nome_bene --&gt; Formato (<strong>FM</strong>)<br />
+nome_bene --&gt; Lunghezza (<strong>LU</strong>)</td>
+<td><strong>FM</strong>:<br />
+1. Il nome bene contiene caratteri alfanumerici validi<br />
+2. Il nome bene contiene caratteri non validi o è vuoto<br />
+<br />
+<strong>LU</strong>:<br />
+1. La lunghezza del nome è tra 1 e 100 caratteri<br />
+2. La lunghezza del nome è 0 o maggiore di 100 caratteri</td>
+</tr>
+<tr class="odd">
+<td>Quantita</td>
+<td>quantita --&gt; Positiva (<strong>PO</strong>)<br />
+quantita --&gt; Formato (<strong>FM</strong>)</td>
+<td><strong>PO</strong>:<br />
+1. La quantità è un numero intero maggiore di 0<br />
+2. La quantità è minore o uguale a 0<br />
+<br />
+<strong>FM</strong>:<br />
+1. La quantità è un numero intero valido<br />
+2. La quantità non è un numero valido (NULL, stringa, decimale)</td>
+</tr>
+<tr class="even">
+<td>Categoria_bene</td>
+<td>categoria_bene --&gt; Valida (<strong>VA</strong>)</td>
+<td><strong>VA</strong>:<br />
+1. La categoria è tra quelle predefinite (Alimentare, Vestiario, Igiene, Casa)<br />
+2. La categoria non è tra quelle predefinite o è NULL</td>
+</tr>
+<tr class="odd">
+<td>Tipo_operazione</td>
+<td>tipo_operazione --&gt; Incremento (<strong>IN</strong>)<br />
+tipo_operazione --&gt; Aggiunta (<strong>AG</strong>)<br />
+tipo_operazione --&gt; Riduzione_Auto (<strong>RA</strong>)<br />
+tipo_operazione --&gt; Riduzione_Manuale (<strong>RM</strong>)</td>
+<td><strong>IN</strong>:<br />
+1. L'operazione è di incremento di un bene esistente<br />
+2. Si tenta incremento ma il bene non esiste<br />
+<br />
+<strong>AG</strong>:<br />
+1. L'operazione è di aggiunta di un nuovo bene<br />
+2. Si tenta aggiunta ma il bene esiste già<br />
+<br />
+<strong>RA</strong>:<br />
+1. L'operazione è automatica da donazione o prenotazione/ritiro<br />
+2. L'operazione automatica fallisce per errori di sistema<br />
+<br />
+<strong>RM</strong>:<br />
+1. Si tenta una riduzione manuale delle scorte<br />
+2. La riduzione manuale viene bloccata dal sistema (vincolo)</td>
+</tr>
+<tr class="even">
+<td>Donazione</td>
+<td>donazione --&gt; Valida (<strong>VA</strong>)</td>
+<td><strong>VA</strong>:<br />
+1. Esiste una donazione registrata (UC#4) che incrementa le scorte<br />
+2. La donazione non esiste o non è valida</td>
+</tr>
+<tr class="odd">
+<td>Prenotazione</td>
+<td>prenotazione --&gt; Valida (<strong>VA</strong>)<br />
+prenotazione --&gt; Ritirata (<strong>RI</strong>)</td>
+<td><strong>VA</strong>:<br />
+1. Esiste una prenotazione registrata (UC#5)<br />
+2. La prenotazione non esiste<br />
+<br />
+<strong>RI</strong>:<br />
+1. La prenotazione è stata confermata come ritirata<br />
+2. La prenotazione non è ancora stata ritirata</td>
+</tr>
+<tr class="even">
+<td>Connessione_db</td>
+<td>connessione_db --&gt; Attiva (<strong>AT</strong>)</td>
+<td><strong>AT</strong>:<br />
+1. La connessione al database è attiva e risponde<br />
+2. La connessione al database è assente o timeout</td>
+</tr>
+<tr class="odd">
+<td>Connesione_rete</td>
+<td>connessione_rete --&gt; Disponibile (<strong>DI</strong>)</td>
+<td><strong>DI</strong>:<br />
+1. La connessione di rete è disponibile<br />
+2. La connessione di rete non è disponibile o timeout</td>
+</tr>
+<tr class="even">
+<td>Esito</td>
+<td>esito --&gt; Successo (<strong>SU</strong>)<br />
+esito --&gt; Fallimento (<strong>FA</strong>)</td>
+<td><strong>U</strong>:<br />
+1. L'operazione è completata con successo e le scorte sono aggiornate<br />
+2. L'operazione fallisce e le scorte rimangono invariate<br />
+<br />
+<strong>FA</strong>:<br />
+1. Viene generato un messaggio di errore descrittivo<br />
+2. Viene eseguito il rollback allo stato precedente</td>
+</tr>
+<tr class="odd">
+<td>Quantita_aggiornata</td>
+<td>quantita_aggiornata --&gt; Coerente (<strong>CO</strong>)<br />
+quantita_aggiornata --&gt; Sincronizzata (<strong>SI</strong>)</td>
+<td><strong>CO</strong>:<br />
+1. La quantità aggiornata = quantità_precedente + quantità_incremento<br />
+2. La quantità aggiornata non corrisponde al calcolo atteso<br />
+<br />
+<strong>SI</strong>:<br />
+1. Database e interfaccia utente mostrano la stessa quantità<br />
+2. Database e interfaccia non sono sincronizzati</td>
+</tr>
+<tr class="even">
+<td>Messaggio_errore</td>
+<td>messaggio_errore --&gt; Presente (<strong>PR</strong>)<br />
+messaggio_errore --&gt; Descrittivo (<strong>DE</strong>)</td>
+<td><strong>PR</strong>:<br />
+1. Il messaggio di errore è presente quando esito = fallimento<br />
+2. Il messaggio è assente anche con fallimento<br />
+<br />
+<strong>DE</strong>:<br />
+1. Il messaggio descrive chiaramente l'errore (es. "Riduzione manuale non consentita")<br />
+2. Il messaggio è generico o non chiaro</td>
+</tr>
+<tr class="odd">
+<td>Interfaccia</td>
+<td>interfaccia --&gt; Aggiornata (<strong>AG</strong>)</td>
+<td><strong>AG</strong>:<br />
+1. L'interfaccia della dashboard mostra i dati aggiornati in tempo reale<br />
+2. L'interfaccia non si aggiorna o mostra dati obsoleti</td>
+</tr>
+</tbody>
+</table>
 
 ## 
 
@@ -700,6 +927,85 @@ Se le tabelle delle categorie non esistono nello schema, il filtro viene ignorat
 | **TC02**      | ERR    | VP_OK  | UA_OK  | \-     | \-     | ERR    | **\[ERR\]** Coordinate mancanti                  |
 | **TC03**      | VP_OK  | ERR    | UA_OK  | \-     | \-     | ERR    | **\[ERR\]** Indirizzo mancante o vuoto           |
 | **TC04**      | VP_OK  | VD_OK  | UA_OK  | IM_OK  | EM_OK  | ES_OK  | **\[SUCCESS\]** Segnalazione OK +email inviate   |
+
+**UC 07 GESTIONE BENI**
+
+<table>
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 8%" />
+<col style="width: 10%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 8%" />
+<col style="width: 9%" />
+<col style="width: 27%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Test Case</strong></th>
+<th><strong>AU</strong></th>
+<th><p><strong>ES</strong></p>
+<p><strong>(ente)</strong></p></th>
+<th><p><strong>ES</strong></p>
+<p><strong>(punto)</strong></p></th>
+<th><strong>AP</strong></th>
+<th><p><strong>ES</strong></p>
+<p><strong>(bene)</strong></p></th>
+<th><strong>NU</strong></th>
+<th><p><strong>FM</strong></p>
+<p><strong>(nome)</strong></p></th>
+<th><strong>ESITO ATTESO</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>TC01</strong></td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+<td></td>
+<td></td>
+<td>Ok ---&gt; scorte incrementate</td>
+</tr>
+<tr class="even">
+<td><strong>TC02</strong></td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+<td>ERR</td>
+<td>OK</td>
+<td>OK</td>
+<td>Ok ---&gt; nuovo bene creato</td>
+</tr>
+<tr class="odd">
+<td><strong>TC03</strong></td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+<td></td>
+<td>ERR</td>
+<td>ERR ---&gt; Operazione bloccata</td>
+</tr>
+<tr class="even">
+<td><strong>TC04</strong></td>
+<td>ERR</td>
+<td>ERR</td>
+<td>ERR</td>
+<td>ERR</td>
+<td></td>
+<td></td>
+<td></td>
+<td>ERR ---&gt; Accesso negato</td>
+</tr>
+</tbody>
+</table>
 
 **UC 09 Storico e Reportistica**
 
@@ -1195,6 +1501,58 @@ Per ciascun test case vengono definiti:
 | indirizzo                                                                                                                                                 | Via Giuseppe Mazzini 62, Battipaglia |
 | **OUTPUT**                                                                                                                                                |                                      |
 | La segnalazione va a buon fine, viene inviata via email a tutti gli enti erogatori e il sistema mostra un pop-up: “Segnalazione completata con successo”. |                                      |
+
+**UC07 GESTIONE BENI**
+
+| **ID TEST FRAME**                                                                                                                                                         |                                     |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------|
+| TC01                                                                                                                                                                      |                                     |
+| **INPUT**                                                                                                                                                                 | **VALORE**                          |
+| ente                                                                                                                                                                      | Associazione “Cuore Uniti”          |
+| punto_ritiro                                                                                                                                                              | Appartenente all’ente “Cuore Uniti” |
+| bene                                                                                                                                                                      | Nome:pasta --- Quantità attuale:100 |
+| quantità                                                                                                                                                                  | 20                                  |
+| categoria_bene                                                                                                                                                            | “Alimentare”                        |
+| tipo_operazione                                                                                                                                                           | INCREMENTO                          |
+| **OUTPUT**                                                                                                                                                                |                                     |
+| Il sistema incrementa la quantità del bene "Pasta" da 100 a 120 unità, aggiorna correttamente il database e sincronizza l'interfaccia utente mostrando la nuova quantità. |                                     |
+
+| **ID TEST FRAME**                                                                                                                                                                                                                                              |                                                |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------|
+| TC02                                                                                                                                                                                                                                                           |                                                |
+| **INPUT**                                                                                                                                                                                                                                                      | **VALORE**                                     |
+| ente                                                                                                                                                                                                                                                           | Associazione “Cuore Uniti”                     |
+| punto_ritiro                                                                                                                                                                                                                                                   | Appartenente all’associazione “Cuore Uniti”    |
+| bene                                                                                                                                                                                                                                                           | Nome: latte UHT --- Quantità:NULL (non esiste) |
+| quantità                                                                                                                                                                                                                                                       | 50                                             |
+| categoria_bene                                                                                                                                                                                                                                                 | “Alimentare”                                   |
+| tipo_operazione                                                                                                                                                                                                                                                | AGGIUNTA_NUOVO                                 |
+| **OUTPUT**                                                                                                                                                                                                                                                     |                                                |
+| Il sistema crea un nuovo bene "Latte UHT" nell'inventario del punto di ritiro con quantità iniziale di 50 unità, genera automaticamente l'ID 51 per il bene, aggiorna il database e mostra il nuovo bene nell'interfaccia della dashboard.                     |                                                |
+| **ID TEST FRAME**                                                                                                                                                                                                                                              |                                                |
+| TC03                                                                                                                                                                                                                                                           |                                                |
+| **INPUT**                                                                                                                                                                                                                                                      | **VALORE**                                     |
+| ente                                                                                                                                                                                                                                                           | Associazione “Cuore Uniti”                     |
+| punto_ritiro                                                                                                                                                                                                                                                   | Appartenente all’associazione “Cuore Uniti”    |
+| bene                                                                                                                                                                                                                                                           | Nome: pasta --- Quantità attuale:100           |
+| quantità                                                                                                                                                                                                                                                       | -10 (negativa)                                 |
+| categoria_bene                                                                                                                                                                                                                                                 | “Alimentare”                                   |
+| tipo_operazione                                                                                                                                                                                                                                                | RIDUZIONE_MANUALE                              |
+| **OUTPUT**                                                                                                                                                                                                                                                     |                                                |
+| Il sistema blocca l'operazione di riduzione manuale, mantiene invariata la quantità a 100 unità e mostra il messaggio di errore "Riduzione manuale non consentita. Le scorte possono essere ridotte solo automaticamente." L'interfaccia non viene aggiornata. |                                                |
+
+| **ID TEST FRAME**                                                                                                                                                                                                                                                |                                                |
+|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------|
+| TC03                                                                                                                                                                                                                                                             |                                                |
+| **INPUT**                                                                                                                                                                                                                                                        | **VALORE**                                     |
+| ente                                                                                                                                                                                                                                                             | Non autenticato                                |
+| punto_ritiro                                                                                                                                                                                                                                                     | Punto di ritido dell’assciazione “Cuore Uniti” |
+| bene                                                                                                                                                                                                                                                             | Nome: pasta --- Quantità attuale:100           |
+| quantità                                                                                                                                                                                                                                                         | 20                                             |
+| categoria_bene                                                                                                                                                                                                                                                   | “Alimentare”                                   |
+| tipo_operazione                                                                                                                                                                                                                                                  | INCREMENTO                                     |
+| **OUTPUT**                                                                                                                                                                                                                                                       |                                                |
+| Il sistema nega l'accesso alla funzionalità di gestione scorte, restituisce codice errore 401 (Unauthorized), mostra il messaggio "Autenticazione richiesta. Effettuare il login per accedere alla gestione scorte" e reindirizza l'utente alla pagina di login. |                                                |
 
 **UC 09 Storico e reportistica**
 
