@@ -32,7 +32,7 @@ Si riferisce a chiunque acceda e utilizzi il sistema.
 
 - **Utente non registrato**
 
-**Ruolo**: Navigazione della mappa geolocalizzata, filtraggiodei beni per tipologia (cibo, farmaci ecc.) e ricezione di informazioni tramite e-mail.
+**Ruolo**: Navigazione della mappa geolocalizzata, filtraggio dei beni per tipologia (cibo, farmaci ecc.) e ricezione di informazioni tramite e-mail.
 
 - **Utente registrato** (Classe Padre per Utente Beneficiario, Donatore, Erogatore e Amministratore)
 
