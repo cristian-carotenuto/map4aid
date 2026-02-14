@@ -62,7 +62,7 @@ class PrenotazioneChecker:
         if not ultima:
             return True
 
-        limite = datetime.now().replace(tzinfo=None) - timedelta(days=giorni_limite)
+        limite = datetime.now() - timedelta(days=giorni_limite)
 
         if ultima.data_prenotazione < limite:
             return True

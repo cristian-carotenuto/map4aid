@@ -75,7 +75,7 @@ def donazione_monetaria():
     if not email_ok:
         return {
             "errore": "Donazione eseguita ma email non inviata"
-        },400
+        },200
 
     return {
         "messaggio": "Donazione monetaria completata con successo"
