@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="55397952-be6e-4a64-8a4f-522745ebe921" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/profilo_control.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/profilo_control.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
