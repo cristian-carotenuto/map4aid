@@ -455,9 +455,9 @@ Stavolta vengono caricate 12 tabelle ciascuna per il singolo mese dell’anno co
 <td><strong>Flow Events</strong></td>
 <td><p>Giulia prova ad accedere alla piattaforma Map4Aid, ma si rende conto di non ricordare la password che aveva creato.</p>
 <p>Dalla pagina di login clicca il link “Password dimenticata?”. Viene reindirizzata ad una pagina che le chiede di inserire l’indirizzo email associato al suo account. Giulia digita: <a href="mailto:giulia.verdi@gmail.com"><u>giulia.verdi@gmail.com</u></a>.</p>
-<p>Premendo “Invia”, se l’email è corretta allora riceverà un link per reimpostare la password, altrimenti un messaggio di errore per riprovare ad inserire l’email corretta.</p>
-<p>Giulia riceve una email per il recupero password, all’interno del quale c’è un link che la reindirizza alla pagina di reimpostazione della password.</p>
-<p>Giulia clicca il link, inserisce una nuova password: Gv1234* e la conferma. Appare il pop-up “la password è stata aggiornata con successo”.</p>
+<p>Premendo “Invia”, se l’email è corretta allora riceverà un codice per verificare l’email.</p>
+<p>Giulia riceve una email per il recupero password, all’interno del quale c’è un codice che una volta inserito sarà reindirizzata alla pagina per cambiare password.</p>
+<p>Giulia inserisce una nuova password: Gv1234* e la conferma. Appare il pop-up “la password è stata aggiornata con successo”.</p>
 <p>Torna quindi alla pagina di login, inserisce l’email e la nuova password e accede.</p></td>
 </tr>
 </tbody>
@@ -475,7 +475,7 @@ Stavolta vengono caricate 12 tabelle ciascuna per il singolo mese dell’anno co
 </tr>
 <tr class="even">
 <td><strong>Name</strong></td>
-<td><mark>L’utente beneficiario decide di effettuare una prenotazione, ma successivamente decide di cancellarla</mark></td>
+<td><mark>L’utente beneficiario decide di effettuare una prenotazione</mark></td>
 </tr>
 <tr class="odd">
 <td><strong>Actors</strong></td>
@@ -491,15 +491,11 @@ Stavolta vengono caricate 12 tabelle ciascuna per il singolo mese dell’anno co
 </ul>
 <p>Clicca su “accedi” e viene reindirizzato alla homepage della piattaforma. Ora che è loggato come utente beneficiario ha accesso a tutte le funzionalità da beneficiario. Mario ha bisogno di prenotare medicinali per la gola. Sulla mappa della homepage filtra i punti di distribuzione che hanno medicinali. Mario clicca sul punto di distribuzione a lui più vicino. Si apre una scheda che mostra tutti i beni prenotabili in quel momento nel punto di distribuzione selezionato. I beni disponibili sono:</p>
 <ul>
-<li><p>Pacco di medicinali(erogato da Medici Senza Frontiere)</p></li>
-<li><p>Pacco di igiene personale(erogato da Medici Senza Frontiere)</p></li>
+<li><p>Confezione di Tachipirine 1000mg (10 supposte) x2 (erogato da Medici Senza Frontiere)</p></li>
+<li><p>Pacco di fazzoletti (erogato da Medici Senza Frontiere)</p></li>
 </ul>
 <p>Mario clicca sul “+” del pacco di medicinali per visualizzarne il contenuto. Il pacco contiene:</p>
-<ul>
-<li><p>Tachipirina 1000mg paracetamolo(10 supposte) x2</p></li>
-<li><p>Tantum verde gola spray x3</p></li>
-</ul>
-<p>Mario decide di prenotare il pacco di medicinali cliccando su “prenota”. La prenotazione viene mandata per email all’ente erogatore Medici Senza Frontiera che in risposta manda un ulteriore email a Mario per confermare la sua prenotazione.</p></td>
+<p>Mario decide di prenotare il pacco di fazzoletti cliccando su “prenota”. La prenotazione viene mandata per email all’ente erogatore Medici Senza Frontiera che in risposta manda un ulteriore email a Mario per confermare la sua prenotazione.</p></td>
 </tr>
 </tbody>
 </table>
@@ -562,7 +558,7 @@ Stavolta vengono caricate 12 tabelle ciascuna per il singolo mese dell’anno co
 </tr>
 <tr class="even">
 <td><strong>Flow Events</strong></td>
-<td><p>Mattia Accardo che è un operatore dell’ente “Croce Rossa”, decide di voler rimuovere un punto di distribuzione, quindi effettua il login alla piattaforma Map4aid tramite l’account dell’ente “Croce Rossa”; dopodichè andrà nella sezione “Gestione dei punti di distribuzione” e clicca su “Rimuovi punto di distribuzione”, poi gli verrà mostrata la mappa con i propri punti di distribuzione e sceglie di rimuovere il punto con indirizzo “Piazza Garibaldi, Napoli 80040”.</p>
+<td><p>Mattia Accardo che è un operatore dell’ente “Croce Rossa”, decide di voler rimuovere un punto di distribuzione, quindi effettua il login alla piattaforma Map4aid tramite l’account dell’ente “Croce Rossa”; dopodiché andrà nella sezione “Gestione dei punti di distribuzione” e clicca su “Rimuovi punto di distribuzione”, poi gli verrà mostrata la mappa con i propri punti di distribuzione e sceglie di rimuovere il punto con indirizzo “Piazza Garibaldi, Napoli 80040”.</p>
 <p>Gli viene mostrato un pop-up “Punto di distribuzione rimosso con successo”. Il punto scompare dalla mappa e non è più visibile dagli utenti.</p></td>
 </tr>
 </tbody>
@@ -580,11 +576,12 @@ Stavolta vengono caricate 12 tabelle ciascuna per il singolo mese dell’anno co
 </tr>
 <tr class="even">
 <td><strong>Name</strong></td>
-<td>Registrazione e login di un utente (login andato a buon fine)</td>
+<td>Registrazione e login di un utente benficiario (login andato a buon fine)</td>
 </tr>
 <tr class="odd">
 <td><strong>Actors</strong></td>
-<td>Mario Rossi = Utente non registrato</td>
+<td><p>Mario Rossi = Utente non registrato</p>
+<p>Giovanni De Caro = Amministratore</p></td>
 </tr>
 <tr class="even">
 <td><strong>Flow Events</strong></td>
@@ -593,19 +590,21 @@ Stavolta vengono caricate 12 tabelle ciascuna per il singolo mese dell’anno co
 <li><p>Nome: Mario</p></li>
 <li><p>Cognome: Rossi</p></li>
 <li><p>Data di nascita: 01/01/2000</p></li>
-<li><p>Luogo di nascita: Salerno</p></li>
-<li><p>Indirizzo di residenza: Via Bianchi, 1, Salerno 84121</p></li>
-<li><p>Codice Fiscale: <mark>RSSMRA00A01H703N</mark></p></li>
 <li><p><mark>e-mail: <a href="mailto:mariorossi@gmail.com"><u>mariorossi@gmail.com</u></a></mark></p></li>
 <li><p><mark>password: Password</mark></p></li>
+<li><p><mark>Codice ID card: CodiceExample</mark></p></li>
+<li><p><mark>File ID card: carta_id_Mario_Rossi.pdf</mark></p></li>
 <li><p><mark>Allergeni/Patologie: N/A</mark></p></li>
 </ul>
-<p><mark>Mario compila il form e lo invia al sistema che, dopo aver validato i dati, invia una mail di conferma. Il sistema attiva l’account di Mario, il quale può andare sulla pagina di login dove compilare il seguente form:</mark></p>
+<p><mark>Mario compila il form e lo invia al sistema che, dopo aver validato i dati, il sistema invia una mail con un codice. Mario deve inserire correttamente il codice nella pagina mostrata.</mark></p>
+<p><mark>A questo punto un amministratore, in questo caso Giovanni De Caro, di sistema dovrà provvedere a validare il suo account controllando che la sua carta d’identità corrisponda ai dati inseriti nel form. Giovanni dopo aver controllato che tutto corrisponda valida l’account.</mark></p>
+<p><mark>Il sistema attiva l’account di Mario, il quale può andare sulla pagina di login dove compilare il seguente form:</mark></p>
 <ul>
 <li><p><mark>e-mail: <a href="mailto:mariorossi@gmail.com"><u>mariorossi@gmail.com</u></a></mark></p></li>
 <li><p><mark>password: Password</mark></p></li>
 </ul>
-<p><mark>Il sistema riconosce e-mail e password come corretti e crea la sessione, loggando Mario e sbloccando le funzionalità destinate agli utenti beneficiari.</mark></p></td>
+<p><mark>Il sistema invia una mail con un codice. . Mario deve inserire correttamente il codice nella pagina mostrata.</mark></p>
+<p><mark>Il sistema riconosce e-mail, password e codice come corretti e crea la sessione, loggando Mario e sbloccando le funzionalità destinate agli utenti beneficiari.</mark></p></td>
 </tr>
 </tbody>
 </table>
@@ -622,7 +621,7 @@ Stavolta vengono caricate 12 tabelle ciascuna per il singolo mese dell’anno co
 </tr>
 <tr class="even">
 <td><strong>Name</strong></td>
-<td>Registrazione e login di un utente (login andato male per via della password)</td>
+<td>Registrazione e login di un utente beneficiario(login andato male per via della password)</td>
 </tr>
 <tr class="odd">
 <td><strong>Actors</strong></td>
@@ -635,19 +634,20 @@ Stavolta vengono caricate 12 tabelle ciascuna per il singolo mese dell’anno co
 <li><p>Nome: Mario</p></li>
 <li><p>Cognome: Rossi</p></li>
 <li><p>Data di nascita: 01/01/2000</p></li>
-<li><p>Luogo di nascita: Salerno</p></li>
-<li><p>Indirizzo di residenza: Via Bianchi, 1, Salerno 84121</p></li>
-<li><p>Codice Fiscale: <mark>RSSMRA00A01H703N</mark></p></li>
 <li><p><mark>e-mail: <a href="mailto:mariorossi@gmail.com"><u>mariorossi@gmail.com</u></a></mark></p></li>
 <li><p><mark>password: Password</mark></p></li>
+<li><p><mark>Codice ID card: CodiceExample</mark></p></li>
+<li><p><mark>File ID card: carta_id_Mario_Rossi.pdf</mark></p></li>
 <li><p><mark>Allergeni/Patologie: N/A</mark></p></li>
 </ul>
-<p><mark>Mario compila il form e lo invia al sistema che, dopo aver validato i dati, invia una mail di conferma. Il sistema attiva l’account di Mario, il quale può andare sulla pagina di login dove compilare il seguente form:</mark></p>
+<p><mark>Mario compila il form e lo invia al sistema che, dopo aver validato i dati, il sistema invia una mail con un codice. Mario deve inserire correttamente il codice nella pagina mostrata.</mark></p>
+<p><mark>A questo punto un amministratore, in questo caso Giovanni De Caro, di sistema dovrà provvedere a validare il suo account controllando che la sua carta d’identità corrisponda ai dati inseriti nel form. Giovanni dopo aver controllato che tutto corrisponda valida l’account.</mark></p>
+<p><mark>Il sistema attiva l’account di Mario, il quale può andare sulla pagina di login dove compilare il seguente form:</mark></p>
 <ul>
 <li><p><mark>e-mail: <a href="mailto:mariorossi@gmail.com"><u>mariorossi@gmail.com</u></a></mark></p></li>
 <li><p><mark>password: abcd</mark></p></li>
 </ul>
-<p><mark>Il sistema riconosce che la password inserita non è inserita correttamente e notifica Mario, sulla stessa pagina di login, con un messaggio di “E-Mail e/o password errate”. Il sistema non crea la sessione e dà la possibilità a Mario di riprovare l’inserimento dei dati di login.</mark></p></td>
+<p><mark>Il sistema riconosce che la password è sbagliata e notifica a Mario che le credenziali inserite sono sbagliate.</mark></p></td>
 </tr>
 </tbody>
 </table>
@@ -674,10 +674,13 @@ Stavolta vengono caricate 12 tabelle ciascuna per il singolo mese dell’anno co
 <tr class="even">
 <td><strong>Flow Events</strong></td>
 <td><p>Mario Nappi che è un Utente beneficiario, decide di voler fare una donazione monetaria.</p>
-<p>Procede al login. Clicca sulla sezione “Donazione Monetaria” compilando il modulo presentato dal sistema, inserendo:<br />
--Croce Rossa come Ente erogatore;<br />
--sceglie l’importo della donazione;<br />
--compila i campi relativi ai dati di pagamento e al metodo.</p>
+<p>Procede al login. Clicca sulla sezione “Donazione Monetaria” compilando il modulo presentato dal sistema, inserendo:</p>
+<ul>
+<li><p>Ente erogatore: Croce Rossa</p></li>
+<li><p>Importo: 5000 €</p></li>
+<li><p>Numero carta: 1234 5678 1234 1344</p></li>
+<li><p>Scadenza:05/7/2027</p></li>
+</ul>
 <p>I dati inseriti corrispondono e sono corretti, la transazione avviene. Mario Nappi riceve tempestivamente una notifica (email) di avvenuto successo.</p></td>
 </tr>
 </tbody>
@@ -704,11 +707,13 @@ Stavolta vengono caricate 12 tabelle ciascuna per il singolo mese dell’anno co
 </tr>
 <tr class="even">
 <td><strong>Flow Events</strong></td>
-<td><p>Mario Nappi che è un Utente beneficiario, decide di voler fare una donazione monetaria.</p>
-<p>Procede al login. Clicca sulla sezione “Donazione Monetaria” compilando il modulo presentato dal sistema, inserendo:<br />
--Croce Rossa come Ente erogatore;<br />
--sceglie l’importo della donazione;<br />
--compila i campi relativi ai dati di pagamento e al metodo.</p>
+<td><p>Mario Nappi che è un Utente beneficiario, decide di voler fare una donazione monetaria. Procede al login. Clicca sulla sezione “Donazione Monetaria” compilando il modulo presentato dal sistema, inserendo:</p>
+<ul>
+<li><p>Importo: 5000 €</p></li>
+<li><p>Ente erogatore: Croce Rossa</p></li>
+<li><p>Numero carta: 1234 5678 1234 1344</p></li>
+<li><p>Scadenza:05/7/2027</p></li>
+</ul>
 <p>I dati inseriti corrispondono e sono corretti, ma quando avviene la transazione Mario Nappi riceve una notifica a schermo “Transazione fallita”.<br />
 Riceve tempestivamente una email dove gli viene comunicato che il credito a disposizione (carte di credito, conto,..) è insufficiente rispetto all’importo da lui scelto, e che la transazione non è andata a buon fine.</p></td>
 </tr>
@@ -731,23 +736,21 @@ Riceve tempestivamente una email dove gli viene comunicato che il credito a disp
 </tr>
 <tr class="odd">
 <td><strong>Actors</strong></td>
-<td>Mario Rossi = Utente Giampiero Neri (Panificio Bakery) = Ente donatore<br />
+<td>Utente Giampiero Neri (Panificio Bakery) = Ente donatore<br />
 Croce Rossa = Ente erogatore</td>
 </tr>
 <tr class="even">
 <td><strong>Flow Events</strong></td>
-<td>Giampiero Neri, registrato come Ente Donatore con la sua attività Panificio Bakery, decide di effettuare una donazione all’Ente Erogatore “Croce Rossa” registrato nel sistema.<br />
+<td><p>Giampiero Neri, registrato come Ente Donatore con la sua attività Panificio Bakery, decide di effettuare una donazione all’Ente Erogatore “Croce Rossa” registrato nel sistema.<br />
 <br />
-L’utente accede nella sua area riservata, clicca sulla sezione “donazione di beni” e compila il modulo presentato dal sistema inserendo:<br />
-<br />
-- Alimentare come categoria di beni<br />
-- Pane come titolo del bene specifico<br />
-- 2kg come quantità<br />
-- Croce rossa come ente erogatore a cui donare<br />
-- Glutine come allergeni<br />
-- 10/12/2025 come scadenza<br />
-<br />
-L’utente clicca su “effettua donazione” e , vista la correttezza dei dati, la richiesta viene inoltrata all’ente erogatore e l’utente visualizza un messaggio “richiesta di donazione inoltrata correttamente all’ente erogatore”.</td>
+L’utente accede nella sua area riservata, clicca sulla sezione “donazione di beni” e compila il modulo presentato dal sistema:</p>
+<ul>
+<li><p>Categoria: alimentare</p></li>
+<li><p>Nome:Pane(2kg)</p></li>
+<li><p>Quantità:20</p></li>
+<li><p>Scdenza:26/04/2026</p></li>
+</ul>
+<p>L’utente clicca su “effettua donazione” e , vista la correttezza dei dati, la richiesta viene inoltrata all’ente erogatore e l’utente visualizza un messaggio “richiesta di donazione inoltrata correttamente all’ente erogatore”.</p></td>
 </tr>
 </tbody>
 </table>

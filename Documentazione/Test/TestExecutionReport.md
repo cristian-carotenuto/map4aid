@@ -72,14 +72,3 @@
 | UC07/TC02    | PASSATO       | 14/02/2026 | Vito Francesco Maistrini | N/A                                                                                                                                             |
 | UC07/TC03    | PASSATO       | 14/02/2026 | Vito Francesco Maistrini | N/A                                                                                                                                             |
 | UC07/TC04    | PASSATO       | 14/02/2026 | Vito Francesco Maistrini | N/A                                                                                                                                             |
-| UC5/TC01    | PASSATO        | 14/02/2026 | Giovanni Esposito         | N/A                                                                                                                                            |
-| UC5/TC02    | PASSATO        | 14/02/2026 | Giovanni Esposito         | N/A                                                                                                                                            |
-| UC5/TC03    | PASSATO        | 14/02/2026 | Giovanni Esposito         | N/A                                                                                                                                            |
-| UC5/TC04    | PASSATO        | 14/02/2026 | Giovanni Esposito         | N/A                                                                                                                                            |
-| UC5/TC05    | PASSATO        | 14/02/2026 | Giovanni Esposito         | N/A                                                                                                                                            |
-| UC5/TC06    | PASSATO        | 14/02/2026 | Giovanni Esposito         | N/A                                                                                                                                            |
-| UC5/TC07    | PASSATO        | 14/02/2026 | Giovanni Esposito         | N/A                                                                                                                                            |
-| UC5/TC08    | PASSATO        | 14/02/2026 | Giovanni Esposito         | N/A                                                                                                                                            |
-| UC5/TC09    | PASSATO        | 14/02/2026 | Giovanni Esposito         | N/A                                                                                                                                            |
-| UC5/TC10    | PASSATO        | 14/02/2026 | Giovanni Esposito         | N/A                                                                                                                                            |
-| UC5/TC10    | PASSATO        | 14/02/2026 | Giovanni Esposito         | N/A                                  
