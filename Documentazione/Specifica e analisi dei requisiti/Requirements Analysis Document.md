@@ -3256,20 +3256,20 @@ Il codice risulta non valido o per corrispondenza, o per la terminazione della s
 
 # STATECHART DIAGRAMS
 
-- **Prenotazione Bene**
+- **PrenotazioneBene**
 
-<img src="media/image7.png" style="width:5.75676in;height:8.35417in" alt="Immagine che contiene diagramma, Disegno tecnico, Piano, schematico Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
+<img src="media/image7.png" style="width:5.75553in;height:7.3681in" alt="Immagine che contiene diagramma, Disegno tecnico, Piano, schematico Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
 
-- **Segnalazione Punto Bisogno**
+- **SegnalazioneControl**
 
 <img src="media/image8.png" style="width:6.89167in;height:5.87917in" alt="Immagine che contiene diagramma, testo, Piano, linea Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
 
-- **Donazione monetaria**
+- **DonazioneMonetariaControl**
 
 <img src="media/image9.png" style="width:4.86667in;height:6.9in" alt="Immagine che contiene testo, schermata, diagramma, linea Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
 
-- **Prenotazione Bene**
+- **AutenticazioneControl**<img src="media/image10.png" style="width:5.62708in;height:7in" />
 
 # ACTIVITY DIAGRAM:PRENOTAZIONE DI UN BENE
 
-<img src="media/image10.PNG" style="width:4.28358in;height:6.66712in" />
+<img src="media/image11.PNG" style="width:5.02239in;height:7.81702in" />
