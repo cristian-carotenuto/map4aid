@@ -20,7 +20,7 @@
 
 [**8. STATECHART DIAGRAMS [66](#statechart-diagrams)**](#statechart-diagrams)
 
-[**9. ACTIVITY DIAGRAM [70](#activity-diagram)**](#activity-diagram)
+[**9. ACTIVITY DIAGRAM [70](#activity-diagramprenotazione-di-un-bene)**](#activity-diagramprenotazione-di-un-bene)
 
 # ATTORI
 
@@ -3270,6 +3270,6 @@ Il codice risulta non valido o per corrispondenza, o per la terminazione della s
 
 - **Prenotazione Bene**
 
-# ACTIVITY DIAGRAM
+# ACTIVITY DIAGRAM:PRENOTAZIONE DI UN BENE
 
-<img src="media/image10.png" style="width:3.84375in;height:8.54585in" alt="Immagine che contiene testo, schermata, design Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
+<img src="media/image10.PNG" style="width:4.28358in;height:6.66712in" />
