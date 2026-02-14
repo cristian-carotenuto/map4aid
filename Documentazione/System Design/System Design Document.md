@@ -2,39 +2,91 @@
 
 *SYSTEM DESIGN DOCUMENT*
 
-**1.Usabilità del sistema**: le interfacce del sistema devono essere chiare e comprensibili
+# Sommario
 
-**2.Sicurezza:** il sistema deve trattare i dati degli utenti in modo sicuro
+[**1. DESIGN GOALS** 3](#section)
 
-**3.Privacy:** il sistema deve garantire la privacy degli utenti chiedendo solo dati essenziali
+[**2. TRADE-OFF** [4](#trade-off)](#trade-off)
 
-**4.Accessibilità:**il sistema deve essere accessibile da diversi dispositivi
+[2.1 Usabilità vs Sicurezza [4](#usabilità-vs-sicurezza)](#usabilità-vs-sicurezza)
 
-**5.Affidabilità:** Il sistema deve garantire la correttezza delle informazioni sui beni disponibili.
+[2.1.2 Scelte di sicurezza implementate [4](#scelte-di-sicurezza-implementate)](#scelte-di-sicurezza-implementate)
 
-**6.Scalabilità:** Il sistema deve poter gestire un gran numero di utenti e beni in modo efficiente
+[2.1.3 Impatto sull’usabilità [4](#impatto-sullusabilità)](#impatto-sullusabilità)
+
+[2.1.4 Motivazione del compromesso [4](#motivazione-del-compromesso)](#motivazione-del-compromesso)
+
+[2.2 Privacy vs Affidabilità [5](#privacy-vs-affidabilità)](#privacy-vs-affidabilità)
+
+[2.2.1 Scelte che privilegiano l’affidabilità [5](#scelte-che-privilegiano-laffidabilità)](#scelte-che-privilegiano-laffidabilità)
+
+[2.2.2 Misure adottate per mitigare l’impatto sulla privacy [5](#misure-adottate-per-mitigare-limpatto-sulla-privacy)](#misure-adottate-per-mitigare-limpatto-sulla-privacy)
+
+[2.2.3 Motivazione del compromesso [5](#motivazione-del-compromesso-1)](#motivazione-del-compromesso-1)
+
+[2.3 Conclusione [6](#conclusione)](#conclusione)
+
+[**3. ARCHITETTURA DEL SISTEMA** [7](#architettura-del-sistema)](#architettura-del-sistema)
+
+[3.1 Introduzione al Sistema [7](#introduzione-al-sistema)](#introduzione-al-sistema)
+
+[3.2 Architettura Three‑Tier [7](#architettura-threetier)](#architettura-threetier)
+
+[3.2.1 Presentation Tier – Frontend Web [7](#presentation-tier-frontend-web)](#presentation-tier-frontend-web)
+
+[3.2.1.1 Responsabilità del frontend [7](#responsabilità-del-frontend)](#responsabilità-del-frontend)
+
+[3.2.2 Application Tier – Backend Flask [8](#application-tier-backend-flask)](#application-tier-backend-flask)
+
+[3.2.2.1 Responsabilità del backend [8](#responsabilità-del-backend)](#responsabilità-del-backend)
+
+[3.2.3 Data Tier – Database SQLite + SQLAlchemy ORM [8](#data-tier-database-sqlite-sqlalchemy-orm)](#data-tier-database-sqlite-sqlalchemy-orm)
+
+[3.2.3.1 Responsabilità del Data Tier [9](#responsabilità-del-data-tier)](#responsabilità-del-data-tier)
+
+[**3.4 Comunicazione tra i Livelli [9](#comunicazione-tra-i-livelli)**](#comunicazione-tra-i-livelli)
+
+[**3.5 Deployment [9](#deployment)**](#deployment)
+
+[**3.6 Conclusione [10](#conclusione-1)**](#conclusione-1)
 
 # 
 
-## 
+# DESIGN GOALS
 
-## 
+Lo sviluppo di **MAP4AID** si basa su una serie di principi cardine, definiti per garantire l'efficacia del sistema e la tutela degli utenti. Di seguito vengono illustrati i sei obiettivi di design che guidano l'intero progetto:
 
-## 
+1.  **Usabilità del sistema**
 
-## 
+- Le interfacce del sistema devono essere chiare e comprensibili
 
-## 
+2.  **Sicurezza**
 
-## 
+- Il sistema deve trattare i dati degli utenti in modo sicuro
 
-## 
+3.  **Privacy**
 
-## 1. Usabilità vs Sicurezza
+- Il sistema deve garantire la privacy degli utenti chiedendo solo dati essenziali
+
+4.  **Accessibilità**
+
+- Il sistema deve essere accessibile da diversi dispositivi
+
+5.  **Affidabilità**
+
+- Il sistema deve garantire la correttezza delle informazioni sui beni disponibili.
+
+6.  **Scalabilità**
+
+- Il sistema deve poter gestire un gran numero di utenti e beni in modo efficiente
+
+# 2. TRADE-OFF
+
+## 2.1 Usabilità vs Sicurezza
 
 Nel progetto Map4Aid questo trade‑off è stato affrontato privilegiando la sicurezza, pur mantenendo un livello di usabilità adeguato al contesto sociale dell’applicazione.
 
-### Scelte di sicurezza implementate
+### 2.1.2 Scelte di sicurezza implementate
 
 **Registrazione con OTP**: ogni nuovo account deve confermare la propria identità tramite codice monouso inviato via email.
 
@@ -52,7 +104,7 @@ Nel progetto Map4Aid questo trade‑off è stato affrontato privilegiando la sic
 
 - scelta più sicura rispetto ai token client‑side, ma meno comoda per l’utente e meno scalabile.
 
-### Impatto sull’usabilità
+### 2.1.3 Impatto sull’usabilità
 
 - La registrazione richiede più passaggi rispetto a un’app tradizionale.
 
@@ -60,7 +112,7 @@ Nel progetto Map4Aid questo trade‑off è stato affrontato privilegiando la sic
 
 - Alcune operazioni (es. prenotazione medicinali) richiedono conferme multiple.
 
-### Motivazione del compromesso
+### 2.1.4 Motivazione del compromesso
 
 Il sistema gestisce:
 
@@ -78,7 +130,7 @@ Il compromesso scelto è quindi:
 
 > **Sicurezza elevata, anche a costo di una minore immediatezza nell’esperienza utente.**
 
-## 2. Privacy vs Affidabilità
+## 2.2 Privacy vs Affidabilità
 
 Trade off più evidente nel progetto, Map4Aid deve garantire che:
 
@@ -92,7 +144,7 @@ Trade off più evidente nel progetto, Map4Aid deve garantire che:
 
 Per farlo, il sistema deve raccogliere dati che normalmente non verrebbero richiesti in un’app generica.
 
-### Scelte che privilegiano l’affidabilità
+### 2.2.1 Scelte che privilegiano l’affidabilità
 
 - **Raccolta di dati sanitari** (allergeni, patologie) per migliorare la qualità del servizio.
 
@@ -106,7 +158,7 @@ Per farlo, il sistema deve raccogliere dati che normalmente non verrebbero richi
 
 Questi elementi aumentano l’affidabilità del sistema, ma riducono la privacy dell’utente.
 
-### Misure adottate per mitigare l’impatto sulla privacy
+### 2.2.2 Misure adottate per mitigare l’impatto sulla privacy
 
 - Raccolta **solo dei dati strettamente necessari** al servizio.
 
@@ -118,7 +170,7 @@ Questi elementi aumentano l’affidabilità del sistema, ma riducono la privacy 
 
 - Nessuna esposizione dei dati sensibili nelle API pubbliche.
 
-### Motivazione del compromesso
+### 2.2.3 Motivazione del compromesso
 
 Il sistema deve garantire che:
 
@@ -132,7 +184,7 @@ Per questo motivo, la privacy non può essere assoluta:
 
 **una parte dei dati sensibili è necessaria per garantire affidabilità e correttezza del servizio.**
 
-# Conclusione
+# 2.3 Conclusione
 
 Nel complesso, Map4Aid adotta scelte progettuali che privilegiano:
 
@@ -152,15 +204,17 @@ Questi compromessi sono coerenti con la natura del sistema, che gestisce:
 
 - prenotazioni critiche
 
-e richiede quindi un livello di controllo superiore rispetto a un’applicazione consumer tradizionale, essendo infatti un servizio prettamente aid.
+richiede quindi un livello di controllo superiore rispetto a un’applicazione consumer tradizionale, essendo infatti un servizio prettamente aid.
 
 Il compromesso scelto è:
 
-**Affidabilità e correttezza dei processi \> Minimizzazione assoluta dei dati**,
+**Affidabilità e correttezza dei processi \> Minimizzazione assoluta dei dati**
 
-> pur mantenendo un livello di privacy adeguato e conforme al principio di necessità.
+pur mantenendo un livello di privacy adeguato e conforme al principio di necessità.
 
-## Introduzione al Sistema
+# 3. ARCHITETTURA DEL SISTEMA 
+
+## 3.1 Introduzione al Sistema
 
 Map4Aid è una piattaforma web progettata per supportare la distribuzione di beni essenziali e medicinali a persone in difficoltà, facilitando la collaborazione tra beneficiari, donatori ed enti erogatori.
 
@@ -186,7 +240,7 @@ Per garantire sicurezza, modularità e manutenibilità, Map4Aid adotta un’arch
 
 In questo modello, **la view non può accedere direttamente al model**, ma deve sempre passare attraverso il controller e il backend Flask.
 
-# Architettura Three‑Tier
+# 3.2 Architettura Three‑Tier
 
 L’architettura del sistema è suddivisa in tre livelli indipendenti:
 
@@ -198,7 +252,7 @@ L’architettura del sistema è suddivisa in tre livelli indipendenti:
 
 Questa separazione garantisce sicurezza, scalabilità e una chiara divisione delle responsabilità.
 
-## 1. Presentation Tier – Frontend Web
+## 3.2.1 Presentation Tier – Frontend Web
 
 Il frontend è sviluppato come applicazione web tradizionale, organizzata nelle cartelle:
 
@@ -210,7 +264,7 @@ Il frontend è sviluppato come applicazione web tradizionale, organizzata nelle 
 
 - **imgs/** – risorse grafiche
 
-### Responsabilità del frontend
+### 3.2.1.1 Responsabilità del frontend
 
 - mostrare le informazioni provenienti dal backend
 
@@ -226,7 +280,7 @@ Il frontend **non accede mai direttamente al database**.
 
 Ogni operazione passa attraverso il backend, garantendo sicurezza e controllo degli accessi.
 
-## 2. Application Tier – Backend Flask
+## 3.2.2 Application Tier – Backend Flask
 
 Il backend è il cuore logico del sistema.
 
@@ -248,7 +302,7 @@ La struttura include:
 
 - **migrations/** – gestione delle migrazioni del database
 
-### Responsabilità del backend
+### 3.2.2.1 Responsabilità del backend
 
 - autenticazione e autorizzazione (OTP, sessioni, ruoli)
 
@@ -272,7 +326,7 @@ La struttura include:
 
 Il backend è l’unico livello autorizzato a interagire con il database.
 
-## 3. Data Tier – Database SQLite + SQLAlchemy ORM
+## 3.2.3 Data Tier – Database SQLite + SQLAlchemy ORM
 
 Il livello dati utilizza:
 
@@ -280,7 +334,7 @@ Il livello dati utilizza:
 
 - **SQLAlchemy** come ORM per mappare le entità Python alle tabelle SQL
 
-### Responsabilità del Data Tier
+### 3.2.3.1 Responsabilità del Data Tier
 
 - memorizzazione persistente dei dati
 
@@ -312,7 +366,7 @@ Il database contiene:
 
 - donazioni monetarie (importo, donatore, ente destinatario, data)
 
-# Comunicazione tra i Livelli
+# 3.4 Comunicazione tra i Livelli
 
 La comunicazione segue rigorosamente il modello three‑tier:
 
@@ -344,7 +398,7 @@ Questo garantisce:
 
 - separazione delle responsabilità
 
-# Deployment
+# 3.5 Deployment
 
 Il sistema è eseguito in ambiente locale tramite:
 
@@ -374,7 +428,7 @@ Questa configurazione è ideale per sviluppo e test, ma l’architettura three�
 
 senza modificare la struttura logica del sistema.
 
-# Conclusione
+# 3.6 Conclusione
 
 L’architettura three‑tier adottata da Map4Aid garantisce:
 
