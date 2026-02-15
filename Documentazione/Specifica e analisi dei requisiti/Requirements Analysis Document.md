@@ -14,13 +14,13 @@
 
 [**5. USE CASE [38](#use-case)**](#use-case)
 
-[**6. OGGETTI ENTITY, BOUNDARY E CONTROL [53](#oggetti-entity-boundary-e-control)**](#oggetti-entity-boundary-e-control)
+[**6. OGGETTI ENTITY, BOUNDARY E CONTROL [54](#oggetti-entity-boundary-e-control)**](#oggetti-entity-boundary-e-control)
 
-[**7. SEQUENCE DIAGRAMS [62](#sequence-diagrams)**](#sequence-diagrams)
+[**7. SEQUENCE DIAGRAMS [63](#sequence-diagrams)**](#sequence-diagrams)
 
-[**8. STATECHART DIAGRAMS [66](#statechart-diagrams)**](#statechart-diagrams)
+[**8. STATECHART DIAGRAMS [67](#statechart-diagrams)**](#statechart-diagrams)
 
-[**9. ACTIVITY DIAGRAM [70](#activity-diagram)**](#activity-diagram)
+[**9. ACTIVITY DIAGRAM [71](#activity-diagram)**](#activity-diagram)
 
 # ATTORI
 
@@ -3258,7 +3258,7 @@ Il codice risulta non valido o per corrispondenza, o per la terminazione della s
 
 - **PrenotazioneBene**
 
-<img src="media/image7.png" style="width:5.75676in;height:8.35417in" alt="Immagine che contiene diagramma, Disegno tecnico, Piano, schematico Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
+<img src="media/image7.png" style="width:5.55952in;height:8.06795in" alt="Immagine che contiene diagramma, Disegno tecnico, Piano, schematico Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
 
 - **SegnalazioneControl**
 
