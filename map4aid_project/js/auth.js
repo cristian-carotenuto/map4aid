@@ -35,11 +35,12 @@ function getUserRole() {
 /**
  * Salva lo stato di login in sessionStorage
  * @param {string} email
+ * @param {string} ruolo
  */
-function saveLoginState(email) {
+function saveLoginState(email, ruolo) {
   sessionStorage.setItem('isLoggedIn', 'true');
   sessionStorage.setItem('userEmail', email);
-  sessionStorage.setItem("userRole", ruolo);
+  sessionStorage.setItem('userRole', ruolo);
 }
 
 /**
@@ -96,7 +97,7 @@ function updateAuthButtons() {
   const safeEmail = getUserEmail().replace(/</g, '&lt;').replace(/>/g, '&gt;');
   let role = getUserRole();
 
-  if (isLoggedIn() && role == 'donatore') {
+  if (isLoggedIn() && role === 'donatore') {
     container.innerHTML = `
       <a href="home.html" class="btn btn-light">Home</a>
       <a href="donazione.html" class="btn btn-light">Donazione monetaria</a>
@@ -104,7 +105,7 @@ function updateAuthButtons() {
       <a href="profilo.html" class="btn btn-light">Profilo</a>
       <button class="btn btn-light" onclick="handleLogout()">Logout</button>
     `;
-  } else if(isLoggedIn()) {
+  } else if (isLoggedIn()) {
     container.innerHTML = `
       <a href="home.html" class="btn btn-light">Home</a>
       <a href="donazione.html" class="btn btn-light">Donazione monetaria</a>

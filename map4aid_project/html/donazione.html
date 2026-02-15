@@ -80,7 +80,6 @@
       </div>
     </div>
   </div>
-  <script src="../../chatbot/js/loader.js"></script>
   <!-- Footer -->
   <footer class="bg-dark text-white text-center py-3 mt-4">
     <p>&copy; 2026 Map4Aid - Progetto Universitario</p>
@@ -89,15 +88,6 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../js/auth.js"></script>
   <script>
-<<<<<<< HEAD
-    /**
-     * Invio del form di donazione
-     * Coerente con DonazioneMonetariaControl.py:
-     * - Metodo: POST
-     * - Dati: form-data
-     * - Campi richiesti: ente, importo, numero_carta, titolare_carta, scadenza_carta, cvv
-     */
-=======
     // Protezione: solo utenti loggati possono donare
     if (!sessionStorage.getItem('isLoggedIn')) {
       showError('errorMessage', 'Devi effettuare il login per donare');
@@ -105,9 +95,6 @@
         window.location.href = 'login.html';
       }, 2000);
     }
-
-    // Invio form
->>>>>>> 74119fae10b68d158f93a6ed977814df03143aa5
     document.getElementById('donazioneForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const formData = new FormData(e.target);
@@ -118,7 +105,7 @@
 
       try {
         // ✅ Endpoint corretto con /auth/
-        const response = await fetch('/donazioneMonetaria', {
+        const response = await fetch('/auth/donazioneMonetaria', {
           method: 'POST',
           body: formData
         });

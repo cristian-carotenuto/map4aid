@@ -76,7 +76,6 @@
       </div>
     </div>
   </div>
-  <script src="../../chatbot/js/loader.js"></script>
   <!-- Footer -->
   <footer class="bg-dark text-white text-center py-3 mt-4">
     <p>&copy; 2026 Map4Aid - Progetto Universitario</p>
@@ -113,7 +112,7 @@
 
       try {
         // ✅ Endpoint corretto con /auth/
-        const response = await fetch(`/punti/${puntoId}/beni`);
+        const response = await fetch(`/auth/punti/${puntoId}/beni`);
         if (!response.ok) throw new Error('Errore nel caricamento dei beni');
         
         const beni = await response.json();
@@ -149,7 +148,7 @@
 
       try {
         // ✅ Endpoint corretto 
-        const response = await fetch(`/punti/${puntoId}/beni/${beneId}/slot`);
+        const response = await fetch(`/auth/punti/${puntoId}/beni/${beneId}/slot`);
         if (!response.ok) throw new Error('Errore nel caricamento degli slot');
         
         const slot = await response.json();
@@ -160,7 +159,7 @@
 
         container.innerHTML = slot.map(s => `
           <div class="col-md-4">
-            <div class="card slot-card" onclick="selezionaSlot('${s.orario_inizio}', '${s.orario_fine}')">
+            <div class="card slot-card" onclick="selezionaSlot('${s.orario_inizio}', '${s.orario_fine}', this)">
               <div class="card-body text-center">
                 <h6 class="card-title">${s.orario_inizio} - ${s.orario_fine}</h6>
                 <span class="slot-badge bg-success">Disponibile</span>
@@ -187,10 +186,10 @@
     /**
      * Seleziona uno slot
      */
-    function selezionaSlot(inizio, fine) {
+    function selezionaSlot(inizio, fine, element) {
       slotSelezionato = { inizio, fine };
       document.querySelectorAll('.slot-card').forEach(card => card.classList.remove('border', 'border-primary'));
-      event.currentTarget.classList.add('border', 'border-primary');
+      element.classList.add('border', 'border-primary');
     }
 
     /**
@@ -216,23 +215,24 @@
 
       try {
         // ✅ Endpoint corretto con /auth/
-        const response = await fetch('/prenotazione', {
+        // Il backend legge request.form, quindi usiamo FormData
+        const formData = new FormData();
+        formData.append('id_punto_bisogno', puntoId);
+        formData.append('id_bene', beneSelezionato.id);
+        formData.append('is_pacco', 'False');
+        formData.append('is_medicinale', beneSelezionato.categoria === 'Medicinali' ? 'True' : 'False');
+
+        const response = await fetch('/auth/prenotazione', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            punto_id: puntoId,
-            bene_id: beneSelezionato.id,
-            slot_orario: `${slotSelezionato.inizio}-${slotSelezionato.fine}`
-          })
+          body: formData
         });
 
         const data = await response.json();
-        if (response.ok && data.codice_prenotazione) {
-          // Mostra QR code
+        if (response.ok && data.message) {
           document.getElementById('qrCodePlaceholder').innerHTML = `
-            <div class="mb-2">Codice prenotazione:</div>
-            <div class="fw-bold">${data.codice_prenotazione}</div>
-            <div class="mt-2 small text-muted">Presenta questo codice al punto di distribuzione</div>
+            <div class="mb-2">Prenotazione confermata!</div>
+            <div class="fw-bold">${data.message}</div>
+            <div class="mt-2 small text-muted">Controlla la tua email per i dettagli</div>
           `;
           goToStep(3);
         } else {

@@ -33,13 +33,9 @@
               <!-- Selezione punto di distribuzione -->
               <div class="mb-3">
                 <label for="punto_distribuzione" class="form-label">Punto di distribuzione</label>
-                <select class="form-select" id="punto_distribuzione" name="punto_distribuzione" required>
+                <select class="form-select" id="punto_distribuzione" name="punto_distribuzione_nome" required>
                   <option value="">Seleziona un punto</option>
-                  <!-- TODO: popolare dinamicamente dal backend -->
-                  <option value="1">Centro Colosseo - Via del Colosseo, 1, Roma</option>
-                  <option value="2">Centro Termini - Piazza dei Cinquecento, Roma</option>
-                  <option value="3">Centro San Giovanni - Via Appia Nuova, Roma</option>
-                  <option value="4">Centro EUR - Viale Europa, Roma</option>
+                  <!-- Popolato dinamicamente dal backend, fallback statico -->
                 </select>
               </div>
 
@@ -51,118 +47,105 @@
                   <option value="alimentare">Alimentari</option>
                   <option value="medicinale">Medicinali</option>
                   <option value="igiene">Igiene Personale</option>
-                  <option value="abbigliamento">Abbigliamento</option>
+                  <option value="vestiario">Abbigliamento</option>
                   <option value="mobilità">Mobilità</option>
                 </select>
               </div>
 
-              <div id = "campiAlimentare" style = "display: none;">
-                <!-- Nome del bene -->
+              <!-- Sottocategoria del bene -->
+              <div class="mb-3">
+                <label for="sottocategoria" class="form-label">Sottocategoria</label>
+                <input type="text" class="form-control" id="sottocategoria" name="sottocategoria" placeholder="Es. Pasta, Tachipirina, Sapone..." required>
+              </div>
+
+              <div id="campiAlimentare" style="display: none;">
                 <div class="mb-3">
-                  <label for="nome_bene" class="form-label">Nome del bene</label>
-                  <input type="text" class="form-control" id="nome_bene" name="nome_bene" placeholder="Es. Pasta, Pane, Caffè..." required>
+                  <label for="nome_alimentare" class="form-label">Nome del bene</label>
+                  <input type="text" class="form-control" id="nome_alimentare" name="nome" placeholder="Es. Pasta, Pane, Caffè...">
                 </div>
-                <!-- Quantità -->
                 <div class="mb-3">
-                  <label for="quantita" class="form-label">Quantità</label>
-                  <input type="number" class="form-control" id="quantita" name="quantita" min="1" value="1" required>
+                  <label for="quantita_alimentare" class="form-label">Quantità</label>
+                  <input type="number" class="form-control" id="quantita_alimentare" name="quantita" min="1" value="1">
                 </div>
-                <!-- Allergeni -->
                 <div class="mb-3">
-                  <label for="nome_bene" class="form-label">Allergeni</label>
-                  <input type="text" class="form-control" id="allergeni" name="allergeni" placeholder="Es. Glutine, Arachidi..." required>
+                  <label for="allergeni_alimentare" class="form-label">Allergeni</label>
+                  <input type="text" class="form-control" id="allergeni_alimentare" name="allergeni" placeholder="Es. Glutine, Arachidi...">
                 </div>
-                <!-- Scadenza -->
                 <div class="mb-3">
-                  <label for="nome_bene" class="form-label">Data di scadenza</label>
-                  <input type="Date" class="form-control" id="scadenza" name="scadenza" required>
+                  <label for="scadenza_alimentare" class="form-label">Data di scadenza</label>
+                  <input type="date" class="form-control" id="scadenza_alimentare" name="scadenza">
                 </div>
               </div>
 
-              <div id = "campiMedicinale" style = "display: none;">
-                <!-- Nome del bene -->
+              <div id="campiMedicinale" style="display: none;">
                 <div class="mb-3">
-                  <label for="nome_bene" class="form-label">Nome del bene</label>
-                  <input type="text" class="form-control" id="nome_bene" name="nome_bene" placeholder="Es. Oki, Tachipirina, Tachiflu..." required>
+                  <label for="nome_medicinale" class="form-label">Nome del bene</label>
+                  <input type="text" class="form-control" id="nome_medicinale" name="nome" placeholder="Es. Oki, Tachipirina, Tachiflu...">
                 </div>
-                <!-- Quantità -->
                 <div class="mb-3">
-                  <label for="quantita" class="form-label">Quantità</label>
-                  <input type="number" class="form-control" id="quantita" name="quantita" min="1" value="1" required>
+                  <label for="quantita_medicinale" class="form-label">Quantità</label>
+                  <input type="number" class="form-control" id="quantita_medicinale" name="quantita" min="1" value="1">
                 </div>
-                <!-- Allergeni -->
                 <div class="mb-3">
-                  <label for="nome_bene" class="form-label">Tipo di medicinale</label>
-                  <input type="text" class="form-control" id="tipo_medicinale" name="tipo_medicinale" placeholder="Es. Antinfiammatorio, Antidolorifico, Antibiotico..." required>
+                  <label for="tipo_medicinale" class="form-label">Tipo di medicinale</label>
+                  <input type="text" class="form-control" id="tipo_medicinale" name="tipo_medicinale" placeholder="Es. Antinfiammatorio, Antidolorifico, Antibiotico...">
                 </div>
-                <!-- Scadenza -->
                 <div class="mb-3">
-                  <label for="nome_bene" class="form-label">Data di scadenza</label>
-                  <input type="Date" class="form-control" id="scadenza" name="scadenza" required>
+                  <label for="scadenza_medicinale" class="form-label">Data di scadenza</label>
+                  <input type="date" class="form-control" id="scadenza_medicinale" name="scadenza">
                 </div>
               </div>
 
-              <div id = "campiIgiene" style = "display: none;">
-                <!-- Nome del bene -->
+              <div id="campiIgiene" style="display: none;">
                 <div class="mb-3">
-                  <label for="nome_bene" class="form-label">Nome del bene</label>
-                  <input type="text" class="form-control" id="nome_bene" name="nome_bene" placeholder="Es. Shampoo, Dentfricio, Assorbenti..." required>
+                  <label for="nome_igiene" class="form-label">Nome del bene</label>
+                  <input type="text" class="form-control" id="nome_igiene" name="nome" placeholder="Es. Shampoo, Dentifricio, Assorbenti...">
                 </div>
-                <!-- Quantità -->
                 <div class="mb-3">
-                  <label for="quantita" class="form-label">Quantità</label>
-                  <input type="number" class="form-control" id="quantita" name="quantita" min="1" value="1" required>
+                  <label for="quantita_igiene" class="form-label">Quantità</label>
+                  <input type="number" class="form-control" id="quantita_igiene" name="quantita" min="1" value="1">
                 </div>
-                <!-- Destinatari -->
                 <div class="mb-3">
-                  <label for="nome_bene" class="form-label">Destinatari</label>
-                  <input type="text" class="form-control" id="destinatari" name="destinatari" placeholder="Es. Donne, Neonati, Soggetti con esigenze specifiche..." required>
+                  <label for="destinatari_igiene" class="form-label">Destinatari</label>
+                  <input type="text" class="form-control" id="destinatari_igiene" name="destinatari" placeholder="Es. Donne, Neonati, Soggetti con esigenze specifiche...">
                 </div>
               </div>
 
-              <div id = "campiAbbigliamento" style = "display: none;">
-                <!-- Nome del bene -->
+              <div id="campiAbbigliamento" style="display: none;">
                 <div class="mb-3">
-                  <label for="nome_bene" class="form-label">Nome del bene</label>
-                  <input type="text" class="form-control" id="nome_bene" name="nome_bene" placeholder="Es. T-shirt, Pantaloni, Guanti..." required>
+                  <label for="nome_abbigliamento" class="form-label">Nome del bene</label>
+                  <input type="text" class="form-control" id="nome_abbigliamento" name="nome" placeholder="Es. T-shirt, Pantaloni, Guanti...">
                 </div>
-                <!-- Quantità -->
                 <div class="mb-3">
-                  <label for="quantita" class="form-label">Quantità</label>
-                  <input type="number" class="form-control" id="quantita" name="quantita" min="1" value="1" required>
+                  <label for="quantita_abbigliamento" class="form-label">Quantità</label>
+                  <input type="number" class="form-control" id="quantita_abbigliamento" name="quantita" min="1" value="1">
                 </div>
-                <!-- Taglia -->
                 <div class="mb-3">
-                  <label for="nome_bene" class="form-label">Taglia</label>
-                  <input type="text" class="form-control" id="taglia" name="taglia" placeholder="Es. S, M, L..." required>
+                  <label for="taglia_abbigliamento" class="form-label">Taglia</label>
+                  <input type="text" class="form-control" id="taglia_abbigliamento" name="taglia" placeholder="Es. S, M, L...">
                 </div>
-                <!-- Condizioni -->
                 <div class="mb-3">
-                  <label for="nome_bene" class="form-label">Condizioni</label>
-                  <input type="text" class="form-control" id="condizioni" name="condizioni" placeholder="Es. Come nuovo, Buone, Usurato..." required>
+                  <label for="condizioni_abbigliamento" class="form-label">Condizioni</label>
+                  <input type="text" class="form-control" id="condizioni_abbigliamento" name="condizioni" placeholder="Es. Come nuovo, Buone, Usurato...">
                 </div>
               </div>
 
-              <div id = "campiMobilità" style = "display: none;">
-                <!-- Nome del bene -->
+              <div id="campiMobilità" style="display: none;">
                 <div class="mb-3">
-                  <label for="nome_bene" class="form-label">Nome del bene</label>
-                  <input type="text" class="form-control" id="nome_bene" name="nome_bene" placeholder="Es. Stampelle, Sedia a rotelle, Bastone..." required>
+                  <label for="nome_mobilita" class="form-label">Nome del bene</label>
+                  <input type="text" class="form-control" id="nome_mobilita" name="nome" placeholder="Es. Stampelle, Sedia a rotelle, Bastone...">
                 </div>
-                <!-- Quantità -->
                 <div class="mb-3">
-                  <label for="quantita" class="form-label">Quantità</label>
-                  <input type="number" class="form-control" id="quantita" name="quantita" min="1" value="1" required>
+                  <label for="quantita_mobilita" class="form-label">Quantità</label>
+                  <input type="number" class="form-control" id="quantita_mobilita" name="quantita" min="1" value="1">
                 </div>
-                <!-- Tipo mobilità -->
                 <div class="mb-3">
-                  <label for="nome_bene" class="form-label">Tipo di Mobilità</label>
-                  <input type="text" class="form-control" id="tipo_mobilita" name="tipo_mobilita" placeholder="Es. Deambulazione, Trasferimento..." required>
+                  <label for="tipo_mobilita" class="form-label">Tipo di Mobilità</label>
+                  <input type="text" class="form-control" id="tipo_mobilita" name="tipo_mobilita" placeholder="Es. Deambulazione, Trasferimento...">
                 </div>
-                <!-- Condizioni -->
                 <div class="mb-3">
-                  <label for="nome_bene" class="form-label">Stato</label>
-                  <input type="text" class="form-control" id="stato" name="stato" placeholder="Es. Come nuovo, Buone, Usurato..." required>
+                  <label for="stato_mobilita" class="form-label">Stato</label>
+                  <input type="text" class="form-control" id="stato_mobilita" name="stato" placeholder="Es. Come nuovo, Buone, Usurato...">
                 </div>
               </div>
 
@@ -176,7 +159,6 @@
       </div>
     </div>
   </div>
-  <script src="../chatbot/js/loader.js"></script>
   <!-- Footer -->
   <footer class="bg-dark text-white text-center py-3 mt-4">
     <p>&copy; 2026 Map4Aid - Progetto Universitario</p>
@@ -196,64 +178,45 @@
     function selectGood()
     {
       let goods = document.getElementById("tipo").value;
+      const sezioni = {
+        'alimentare': 'campiAlimentare',
+        'medicinale': 'campiMedicinale',
+        'igiene': 'campiIgiene',
+        'vestiario': 'campiAbbigliamento',
+        'mobilità': 'campiMobilità'
+      };
 
-      if (goods == 'alimentare') {
-        document.getElementById('campiAlimentare').style.display = 'block';
-        document.getElementById('campiMedicinale').style.display = 'none';
-        document.getElementById('campiIgiene').style.display = 'none';
-        document.getElementById('campiAbbigliamento').style.display = 'none';
-        document.getElementById('campiMobilità').style.display = 'none';
-      } else if (goods == 'medicinale') {
-        document.getElementById('campiAlimentare').style.display = 'none';
-        document.getElementById('campiMedicinale').style.display = 'block';
-        document.getElementById('campiIgiene').style.display = 'none';
-        document.getElementById('campiAbbigliamento').style.display = 'none';
-        document.getElementById('campiMobilità').style.display = 'none';
-      } else if (goods == 'igiene') {
-        document.getElementById('campiAlimentare').style.display = 'none';
-        document.getElementById('campiMedicinale').style.display = 'none';
-        document.getElementById('campiIgiene').style.display = 'block';
-        document.getElementById('campiAbbigliamento').style.display = 'none';
-        document.getElementById('campiMobilità').style.display = 'none';
-      } else if (goods == 'abbigliamento') {
-        document.getElementById('campiAlimentare').style.display = 'none';
-        document.getElementById('campiMedicinale').style.display = 'none';
-        document.getElementById('campiIgiene').style.display = 'none';
-        document.getElementById('campiAbbigliamento').style.display = 'block';
-        document.getElementById('campiMobilità').style.display = 'none';
-      } else if (goods == 'mobilità') {
-        document.getElementById('campiAlimentare').style.display = 'none';
-        document.getElementById('campiMedicinale').style.display = 'none';
-        document.getElementById('campiIgiene').style.display = 'none';
-        document.getElementById('campiAbbigliamento').style.display = 'none';
-        document.getElementById('campiMobilità').style.display = 'block';
-      } else {
-        document.getElementById('campiAlimentare').style.display = 'none';
-        document.getElementById('campiMedicinale').style.display = 'none';
-        document.getElementById('campiIgiene').style.display = 'none';
-        document.getElementById('campiAbbigliamento').style.display = 'none';
-        document.getElementById('campiMobilità').style.display = 'none';
+      // Nascondi e disabilita tutte le sezioni
+      Object.values(sezioni).forEach(id => {
+        const div = document.getElementById(id);
+        div.style.display = 'none';
+        div.querySelectorAll('input').forEach(inp => { inp.disabled = true; });
+      });
+
+      // Mostra e abilita solo la sezione selezionata
+      if (sezioni[goods]) {
+        const div = document.getElementById(sezioni[goods]);
+        div.style.display = 'block';
+        div.querySelectorAll('input').forEach(inp => { inp.disabled = false; });
       }
     }
 
-    // Carica punti di distribuzione dal backend (con fallback ai dati statici)
+    // Carica punti di distribuzione dal backend
     async function caricaPuntiSelect() {
       try {
         const response = await fetch('/api/punti-distribuzione');
         if (!response.ok) throw new Error('API non disponibile');
         const data = await response.json();
         const select = document.getElementById('punto_distribuzione');
-        // Rimuovi le opzioni statiche (tranne la prima)
         while (select.options.length > 1) select.remove(1);
         data.data.forEach(p => {
           const opt = document.createElement('option');
-          opt.value = p.id;
+          opt.value = p.nome;
           opt.textContent = `${p.nome || 'Punto'} - ${p.citta || ''}, ${p.regione || ''}`;
           select.appendChild(opt);
         });
       } catch (error) {
-        console.warn('Fallback a punti statici:', error);
-        // I punti statici sono già nel select HTML
+        console.warn('Errore caricamento punti:', error);
       }
     }
     caricaPuntiSelect();
@@ -271,14 +234,14 @@
 
       try {
         // ✅ Endpoint per donazione beni (TODO: da collegare al backend reale)
-        const response = await fetch('/donazioneBene', {
+        const response = await fetch('/auth/donazioneBene', {
           method: 'POST',
           body: formData
         });
 
         const data = await response.json();
 
-        if (response.ok && (data.messaggio || data.successo)) {
+        if (response.ok && data.message) {
           showSuccess('successMessage', 'Donazione bene registrata con successo! Grazie per il tuo contributo.');
           document.getElementById('donazioneBeniForm').reset();
           setTimeout(() => window.location.href = 'home.html', 2500);
@@ -286,16 +249,14 @@
           showError('errorMessage', data.errore || data.error || 'Errore durante l\'invio della donazione');
         }
       } catch (error) {
-        // ✅ Fallback mock: simuliamo il successo per la view
-        console.warn('Backend non disponibile, simulazione successo:', error);
-        showSuccess('successMessage', 'Donazione bene registrata con successo! Grazie per il tuo contributo.');
-        document.getElementById('donazioneBeniForm').reset();
-        setTimeout(() => window.location.href = 'home.html', 2500);
+        showError('errorMessage', 'Errore di connessione al server');
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
       }
     });
   </script>
+  <!-- Chatbot integrato -->
+  <script src="../chatbot/js/loader.js"></script>
 </body>
 </html>

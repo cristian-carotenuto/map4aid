@@ -71,8 +71,7 @@
       </div>
     </div>
   </div>
-  <script src="../../chatbot/js/loader.js"></script>
-  <!-- Footer ( oviamente ) -->
+  <!-- Footer -->
   <footer class="bg-dark text-white text-center py-3 mt-4">
     <p>&copy; 2026 Map4Aid - Progetto Universitario</p>
   </footer>
@@ -94,7 +93,7 @@
       try {
         const formData = new FormData(e.target);
         // ✅ CORRETTO: usa /login
-        const response = await fetch('/login', {
+        const response = await fetch('/auth/login', {
           method: 'POST',
           body: formData
         });
@@ -136,7 +135,7 @@
         formData.append('codice', codice);
 
         // ✅ CORRETTO: usa /auth/2FALogin
-        const response = await fetch('/2FALogin', {
+        const response = await fetch('/auth/2FALogin', {
           method: 'POST',
           body: formData
         });
