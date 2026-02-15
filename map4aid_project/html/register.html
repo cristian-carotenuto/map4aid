@@ -30,7 +30,7 @@
                   <option value="">Seleziona il tipo di account che vuoi creare</option>
                   <option value="beneficiario">Utente Beneficiario</option>
                   <option value="donatore">Utente Donatore</option>
-                  <option value="ente_erogatore">Ente Erogatore</option>
+                  <option value="erogatore">Ente Erogatore</option>
                 </select>
               </div>
               <div class="mb-3">
@@ -122,7 +122,7 @@
         document.getElementById('campiBeneficiario').style.display = 'none';
         document.getElementById('campiDonatore').style.display = 'block';
         document.getElementById('campiErogatore').style.display = 'none';
-      } else if (user === 'ente_erogatore') {
+      } else if (user === 'erogatore') {
         document.getElementById('campiBeneficiario').style.display = 'none';
         document.getElementById('campiDonatore').style.display = 'none';
         document.getElementById('campiErogatore').style.display = 'block';
@@ -164,7 +164,7 @@
         formData.append('categoria', document.getElementById('categoria').value);
         formData.append('nome_attivita', document.getElementById('nome_attivita').value);
         formData.append('indirizzo_sede', document.getElementById('indirizzo_sede').value);
-      } else if (ruolo === 'ente_erogatore') {
+      } else if (ruolo === 'erogatore') {
         formData.append('nome_organizzazione', document.getElementById('nome_organizzazione').value);
         formData.append('indirizzo_sede', document.getElementById('indirizzo_sede_erog').value);
         formData.append('tipologia_ente', document.getElementById('tipologia_ente').value);
