@@ -1,5 +1,7 @@
 from flask import request, jsonify, send_file
 from flask_login import login_required, current_user
+from geopy import Nominatim
+
 from controllers.routes import auth_bp
 from controllers.pdf_service import genera_pdf_storico
 from controllers.auth_facade import AuthFacade
@@ -15,6 +17,7 @@ def get_profilo():
     Restituisce i dati del profilo dell'utente autenticato
     """
     user = current_user
+
     
     # Dati base comuni a tutti
     profilo = {
@@ -71,12 +74,15 @@ def get_prenotazioni():
     
     risultato = []
     for p in prenotazioni:
+        geolocator = Nominatim(user_agent="map4aid_project")
+        location = geolocator.reverse((p.punto.latitudine, p.punto.longitudine))
+        indirizzo = location.address if location else "Indirizzo non disponibile"
         risultato.append({
             "id": p.id,
             "data": p.data_prenotazione.strftime('%d/%m/%Y'),
             "ora": p.data_prenotazione.strftime('%H:%M'),
             "punto": p.punto.nome if p.punto else "",
-            "indirizzo": p.punto.latitudine if p.punto else "",  # placeholder, potresti aggiungere un campo indirizzo
+            "indirizzo": indirizzo if p.punto else "",  # placeholder, potresti aggiungere un campo indirizzo
             "bene": p.bene.nome if p.bene else (p.pacco.nome if p.pacco else "N/A"),
             "quantita": 1,  # puoi aggiungere un campo quantità al model se necessario
             "stato": p.stato
@@ -254,16 +260,6 @@ def storico_pdf():
                     f"Importo: €{d.importo:.2f} | Donatore: {d.donatore.email} | "
                     f"Data: {d.data.strftime('%d/%m/%Y %H:%M')}"
                 )
-        righe.append("=== DONAZIONI MONETARIE ===")
-        if don_money is None or len(don_money) <= 0:
-            righe.append("Nessuna donazione")
-        else:
-            for d in don_money:
-                righe.append(
-                    f"Importo: €{d.importo:.2f} | Ente: {d.ente.nome_organizzazione} | "
-                    f"Data: {d.data.strftime('%d/%m/%Y %H:%M')}"
-                )
-
         righe.append("")
         righe.append("=== PRENOTAZIONI NEI PUNTI DI DISTRIBUZIONE ===")
         punti = PuntoDistribuzione.query.filter_by(ente_erogatore_id=user.id).all()

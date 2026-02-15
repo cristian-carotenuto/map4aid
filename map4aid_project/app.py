@@ -40,7 +40,7 @@ def create_app():
 
     from controllers.routes import auth_bp
     from controllers import admin_control
-    from controllers import two_fa_contol
+    from controllers import two_fa_control
     from controllers import autenticazione_control
     from controllers import login_control
     from controllers import segnalazione_control

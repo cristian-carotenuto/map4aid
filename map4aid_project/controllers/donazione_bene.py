@@ -109,7 +109,7 @@ def donazioneBene():
     email_ok2 = mail_sender.send_donazione_bene_donatore(donatore.email,erogatore.email,bene)
 
     if email_ok1 and email_ok2:
-        return {"message":"Donazione di bene effetuata"},200
+        return {"message":"Donazione di bene effettuata"},200
     else:
         return {"errore":"Donazione effetuata ma email non inviate"},500
 

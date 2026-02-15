@@ -34,7 +34,7 @@ def job(app):
                 punto = PuntoDistribuzione.query.filter_by(id=prenotazione.punto_id).first()
                 ente = Account.query.filter_by(id=punto.ente_erogatore_id).first()
                 geolocator = Nominatim(user_agent="my_app")
-                indirizzo = geolocator.reverse((punto.latitudine, punto.longitude), language="it")
+                indirizzo = geolocator.reverse((punto.latitudine, punto.longitudine), language="it")
                 mail_sender.send_cancellazione_prenotazione_beneficiario(ente.email, beneficiario.email,
                                                                          prenotazione.data_prenotazione,
                                                                          indirizzo)

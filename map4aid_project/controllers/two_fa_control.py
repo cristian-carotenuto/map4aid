@@ -16,7 +16,7 @@ def conferma_codice_registrazione():
     puser = PendingAccount.query.filter_by(email=email).first()
 
     if not puser:
-        return jsonify({"error": "Nessuna registrazionein corso"}), 400
+        return jsonify({"error": "Nessuna registrazione in corso"}), 400
 
     codice_inserito = request.form.get("codice")
     if not check_password_hash(puser.token,codice_inserito):
@@ -40,7 +40,7 @@ def conferma_codice_registrazione():
         )
 
     # ----DONATORE-----
-    if puser.tipo == "donatore":
+    elif puser.tipo == "donatore":
         user = AccountDonatore(
             email=email,
             password_hash = puser.password_hash,
@@ -53,7 +53,7 @@ def conferma_codice_registrazione():
         )
 
     #--------ENTE EROGATORE--------
-    if puser.tipo == "erogatore":
+    elif puser.tipo == "erogatore":
         user = AccountEnteErogatore(
             email=email,
             password_hash = puser.password_hash,
@@ -63,7 +63,7 @@ def conferma_codice_registrazione():
             tipologia_ente = puser.extra_data["tipologia_ente"]
         )
     if not user:
-        return jsonify({"error": "Nessuna registrazionein corso"}), 400
+        return jsonify({"error": "Nessuna registrazione in corso"}), 400
     tipo = puser.tipo
     db.session.add(user)
     db.session.delete(puser)

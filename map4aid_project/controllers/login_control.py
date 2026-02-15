@@ -81,7 +81,7 @@ def conferma_recupero():
 
     # Codice corretto → consenti cambio password
     session["reset_verified"] = email  # salva email verificata
-    session.pop("pending_email")  # rimuovi codice
+    session.pop("pending_email",None)  # rimuovi codice
 
     return jsonify({"message": "Codice valido, puoi cambiare la password"}), 200
 
@@ -103,5 +103,5 @@ def cambia_password():
     user.set_password(nuova_password)
     db.session.commit()
 
-    session.pop("reset_verified")  # pulizia sessione
+    session.pop("reset_verified",None)  # pulizia sessione
     return jsonify({"message": "Password cambiata con successo"}), 200

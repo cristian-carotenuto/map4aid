@@ -7,7 +7,6 @@ from controllers.service_email.email_control_bridge import EmailControlBridge
 from models.models import AccountEnteErogatore
 
 @auth_bp.route("/segnalazione", methods=["POST"])
-@require_roles("donatore","beneficiario","ente_erogatore")
 def segnalazione():
     lat = request.form.get("latitudine")
     lon = request.form.get("longitudine")
