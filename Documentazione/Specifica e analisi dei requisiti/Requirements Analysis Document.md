@@ -3250,9 +3250,9 @@ Il codice risulta non valido o per corrispondenza, o per la terminazione della s
 
 <img src="media/image5.png" style="width:6.89167in;height:5.69375in" alt="Immagine che contiene testo, diagramma, Parallelo, Rettangolo" />
 
-- **Prenotazione e Ritiro Beni**
+- **Prenotazione di un bene**
 
-<img src="media/image6.jpeg" style="width:6.88542in;height:7.61458in" />
+<img src="media/image6.PNG" style="width:6.96824in;height:6.95118in" />
 
 # STATECHART DIAGRAMS
 
