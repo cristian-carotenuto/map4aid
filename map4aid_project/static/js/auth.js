@@ -99,25 +99,25 @@ function updateAuthButtons() {
 
   if (isLoggedIn() && role === 'donatore') {
     container.innerHTML = `
-      <a href="home.html" class="btn btn-light">Home</a>
-      <a href="donazione.html" class="btn btn-light">Donazione monetaria</a>
-      <a href="donazione-beni.html" class="btn btn-light">Donazione beni</a>
-      <a href="profilo.html" class="btn btn-light">Profilo</a>
+      <a href="/" class="btn btn-light">Home</a>
+      <a href="/donazione" class="btn btn-light">Donazione monetaria</a>
+      <a href="/donazione-beni" class="btn btn-light">Donazione beni</a>
+      <a href="/profilo" class="btn btn-light">Profilo</a>
       <button class="btn btn-light" onclick="handleLogout()">Logout</button>
     `;
   } else if (isLoggedIn()) {
     container.innerHTML = `
-      <a href="home.html" class="btn btn-light">Home</a>
-      <a href="donazione.html" class="btn btn-light">Donazione monetaria</a>
-      <a href="profilo.html" class="btn btn-light">Profilo</a>
+      <a href="/" class="btn btn-light">Home</a>
+      <a href="/donazione" class="btn btn-light">Donazione monetaria</a>
+      <a href="/profilo" class="btn btn-light">Profilo</a>
       <button class="btn btn-light" onclick="handleLogout()">Logout</button>
     `;
   } else {
     container.innerHTML = `
-      <a href="home.html" class="btn btn-light">Home</a>
-      <a href="donazione.html" class="btn btn-light">Donazione monetaria</a>
-      <a href="login.html" class="btn btn-light">Login</a>
-      <a href="register.html" class="btn btn-light">Sign In</a>
+      <a href="/" class="btn btn-light">Home</a>
+      <a href="/donazione" class="btn btn-light">Donazione monetaria</a>
+      <a href="/login" class="btn btn-light">Login</a>
+      <a href="/register" class="btn btn-light">Sign In</a>
     `;
   }
 }
@@ -139,7 +139,7 @@ async function handleLogout() {
   } finally {
     clearLoginState();
     if (typeof updateAuthButtons === 'function') updateAuthButtons();
-    window.location.href = 'home.html';
+    window.location.href = '/';
   }
 }
 
