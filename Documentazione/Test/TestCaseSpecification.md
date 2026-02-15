@@ -2,6 +2,18 @@
 
 *TEST CASE SPECIFICATION*
 
+# 
+
+# Sommario
+
+[**1. SPECIFICA [4](#specifica)**](#specifica)
+
+[**2. TEST DESIGN [1](#_Toc222091008)**](#_Toc222091008)
+
+[**3. TEST FRAME [12](#test-frame)**](#test-frame)
+
+[**4. SPECIFICHE DEI TEST CASE [20](#specifiche-dei-test-case)**](#specifiche-dei-test-case)
+
 All’interno di questo documento viene riportata l’applicazione della metodologia di individuazione dei casi di test definita nel Test Plan (TP).
 
 Il documento raccoglie i test frame generati attraverso la tecnica di progettazione indicata nel TP e le specifiche dettagliate dei casi di test associati alle funzionalità da verificare.
@@ -11,6 +23,8 @@ L’obiettivo è garantire una copertura sistematica e completa dei requisiti, a
 Sono riportati tutti i test design relativi alle funzionalità da testare, così come identificate nel TP. Per ciascuna funzionalità vengono presentati i test frame derivati dall’applicazione della tecnica di progettazione scelta e, successivamente, le specifiche dei casi di test che ne discendono.
 
 Ogni test case è descritto in modo strutturato, includendo input, condizioni, vincoli e oracoli necessari alla sua esecuzione.
+
+# SPECIFICA
 
 **UC01 Registrazione**
 
@@ -32,9 +46,7 @@ Se l'OTP è errato o se l'email non può essere inviata, la registrazione non vi
 
 Un utente registrato accede al sistema inserendo email e password.
 
-Il sistema verifica che le credenziali siano corrette e che l’utente non sia già autenticato.
-
-Se la verifica ha esito positivo, il sistema genera un codice OTP e lo invia all’indirizzo email dell’utente.
+Il sistema verifica che le credenziali siano corrette e che l’utente non sia già autenticato. Se la verifica ha esito positivo, il sistema genera un codice OTP e lo invia all’indirizzo email dell’utente.
 
 L’utente inserisce il codice OTP ricevuto.
 
@@ -197,11 +209,9 @@ Se il filtro è valido, la mappa viene aggiornata mostrando solo i marker corris
 
 Se le tabelle delle categorie non esistono nello schema, il filtro viene ignorato e tutti i punti vengono restituiti con una nota informativa.
 
-# 
+# TEST DESIGN
 
 **UC01 Registrazione**
-
-## 
 
 <table>
 <colgroup>
@@ -271,8 +281,6 @@ Se le tabelle delle categorie non esistono nello schema, il filtro viene ignorat
 
 **UC02 Login**
 
-## 
-
 <table>
 <colgroup>
 <col style="width: 21%" />
@@ -331,11 +339,7 @@ Se le tabelle delle categorie non esistono nello schema, il filtro viene ignorat
 </tbody>
 </table>
 
-## 
-
 **UC04 Donazione Monetaria**
-
-## 
 
 <table>
 <colgroup>
@@ -436,68 +440,66 @@ Se le tabelle delle categorie non esistono nello schema, il filtro viene ignorat
 
 ## UC6 Segnalazione di un punto di bisogno
 
-##         
-
 <table>
 <colgroup>
-<col style="width: 17%" />
-<col style="width: 25%" />
-<col style="width: 56%" />
+<col style="width: 18%" />
+<col style="width: 26%" />
+<col style="width: 55%" />
 </colgroup>
 <thead>
 <tr class="header">
-<th><h2 id="parametro">Parametro</h2></th>
-<th><h2 id="categoria">Categoria</h2></th>
-<th><h2 id="vincoli-e-proprietà">Vincoli e proprietà</h2></th>
+<th><h2 id="parametro" class="unnumbered">Parametro</h2></th>
+<th><h2 id="categoria" class="unnumbered">Categoria</h2></th>
+<th><h2 id="vincoli-e-proprietà" class="unnumbered">Vincoli e proprietà</h2></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><h2 id="latitudine">Latitudine</h2></td>
-<td><h2 id="validità-posizione-vp">Validità Posizione (VP)</h2></td>
-<td><h2 id="presente-e-non-vuota-vp_ok">1. Presente e non vuota → [VP_OK]</h2>
-<h2 id="mancante-err">2. Mancante → [ERR]</h2></td>
+<td><h2 id="latitudine" class="unnumbered">Latitudine</h2></td>
+<td><h2 id="validità-posizione-vp" class="unnumbered">Validità Posizione (VP)</h2></td>
+<td><h2 id="presente-e-non-vuota-vp_ok" class="unnumbered">1. Presente e non vuota → [VP_OK]</h2>
+<h2 id="mancante-err" class="unnumbered">2. Mancante → [ERR]</h2></td>
 </tr>
 <tr class="even">
-<td><h2 id="longitudine">Longitudine</h2></td>
-<td><h2 id="validità-posizione-vp-1">Validità Posizione (VP)</h2></td>
-<td><h2 id="presente-e-non-vuota-vp_ok-1">1. Presente e non vuota → [VP_OK]</h2>
-<h2 id="mancante-o-stringa-vuota-err">2. Mancante o stringa vuota → [ERR]</h2></td>
+<td><h2 id="longitudine" class="unnumbered">Longitudine</h2></td>
+<td><h2 id="validità-posizione-vp-1" class="unnumbered">Validità Posizione (VP)</h2></td>
+<td><h2 id="presente-e-non-vuota-vp_ok-1" class="unnumbered">1. Presente e non vuota → [VP_OK]</h2>
+<h2 id="mancante-o-stringa-vuota-err" class="unnumbered">2. Mancante o stringa vuota → [ERR]</h2></td>
 </tr>
 <tr class="odd">
-<td><h2 id="indirizzo">Indirizzo</h2></td>
-<td><h2 id="validità-dati-vd">Validità Dati (VD)</h2></td>
-<td><h2 id="testo-presente-vd_ok">1. Testo presente → [VD_OK]</h2>
-<h2 id="campo-vuoto-err">2. Campo vuoto → [ERR]</h2>
-<h2 id="section-7"></h2></td>
+<td><h2 id="indirizzo" class="unnumbered">Indirizzo</h2></td>
+<td><h2 id="validità-dati-vd" class="unnumbered">Validità Dati (VD)</h2></td>
+<td><h2 id="testo-presente-vd_ok" class="unnumbered">1. Testo presente → [VD_OK]</h2>
+<h2 id="campo-vuoto-err" class="unnumbered">2. Campo vuoto → [ERR]</h2>
+<h2 id="section-2" class="unnumbered"></h2></td>
 </tr>
 <tr class="even">
-<td><h2 id="utente">Utente</h2></td>
-<td><h2 id="utente-autenticato-ua">Utente Autenticato (UA)</h2></td>
-<td><h2 id="ruolo-autorizzato-ua_ok">1. Ruolo autorizzato → [UA_OK]</h2>
-<h2 id="utente-non-loggatonon-autorizzato-err">2. Utente non loggato/non autorizzato → [ERR]</h2></td>
+<td><h2 id="utente" class="unnumbered">Utente</h2></td>
+<td><h2 id="utente-autenticato-ua" class="unnumbered">Utente Autenticato (UA)</h2></td>
+<td><h2 id="ruolo-autorizzato-ua_ok" class="unnumbered">1. Ruolo autorizzato → [UA_OK]</h2>
+<h2 id="utente-non-loggatonon-autorizzato-err" class="unnumbered">2. Utente non loggato/non autorizzato → [ERR]</h2></td>
 </tr>
 <tr class="odd">
-<td><h2 id="enti-destinatari">Enti Destinatari</h2></td>
-<td><h2 id="invio-multiplo-im">Invio Multiplo (IM)</h2></td>
-<td><h2 id="lista-enti-erogatori-caricata-correttamente-im_ok">1. Lista enti erogatori caricata correttamente → [IM_OK]</h2></td>
+<td><h2 id="enti-destinatari" class="unnumbered">Enti Destinatari</h2></td>
+<td><h2 id="invio-multiplo-im" class="unnumbered">Invio Multiplo (IM)</h2></td>
+<td><h2 id="lista-enti-erogatori-caricata-correttamente-im_ok" class="unnumbered">1. Lista enti erogatori caricata correttamente → [IM_OK]</h2></td>
 </tr>
 <tr class="even">
-<td><h2 id="email">Email</h2></td>
-<td><h2 id="invio-email-em">Invio Email (EM)</h2></td>
-<td><h2 id="inviata-correttamente-a-tutti-em_ok">1. Inviata correttamente a tutti → [EM_OK]</h2></td>
+<td><h2 id="email" class="unnumbered">Email</h2></td>
+<td><h2 id="invio-email-em" class="unnumbered">Invio Email (EM)</h2></td>
+<td><h2 id="inviata-correttamente-a-tutti-em_ok" class="unnumbered">1. Inviata correttamente a tutti → [EM_OK]</h2></td>
 </tr>
 <tr class="odd">
-<td><h2 id="esito">Esito</h2></td>
-<td><h2 id="esito-segnalazione-es">Esito Segnalazione (ES)</h2></td>
-<td><h2 id="pop-up-di-successo-mostrato-allutente-es_ok">1. Pop-up di successo mostrato all’utente → [ES_OK]</h2></td>
+<td><h2 id="esito" class="unnumbered">Esito</h2></td>
+<td><h2 id="esito-segnalazione-es" class="unnumbered">Esito Segnalazione (ES)</h2></td>
+<td><h2 id="pop-up-di-successo-mostrato-allutente-es_ok" class="unnumbered">1. Pop-up di successo mostrato all’utente → [ES_OK]</h2></td>
 </tr>
 </tbody>
 </table>
 
 ## 
 
-## UC7 GESTIONE BENI
+## UC7 Gestione dei beni
 
 <table>
 <colgroup>
@@ -681,8 +683,6 @@ messaggio_errore --&gt; Descrittivo (<strong>DE</strong>)</td>
 </tbody>
 </table>
 
-## 
-
 **UC 09 Storico attività e reportistica**
 
 <table>
@@ -745,9 +745,9 @@ messaggio_errore --&gt; Descrittivo (<strong>DE</strong>)</td>
 
 <table>
 <colgroup>
-<col style="width: 20%" />
 <col style="width: 22%" />
-<col style="width: 56%" />
+<col style="width: 22%" />
+<col style="width: 55%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -814,7 +814,7 @@ messaggio_errore --&gt; Descrittivo (<strong>DE</strong>)</td>
 </tbody>
 </table>
 
-##  UC11 Filtraggio della mappa
+## UC11 Filtraggio della mappa
 
 <table>
 <colgroup>
@@ -867,6 +867,8 @@ messaggio_errore --&gt; Descrittivo (<strong>DE</strong>)</td>
 ## 
 
 ## 
+
+# TEST FRAME
 
 **UC01 Registrazione**
 
@@ -935,11 +937,11 @@ messaggio_errore --&gt; Descrittivo (<strong>DE</strong>)</td>
 <col style="width: 7%" />
 <col style="width: 8%" />
 <col style="width: 10%" />
+<col style="width: 10%" />
 <col style="width: 9%" />
 <col style="width: 9%" />
-<col style="width: 9%" />
-<col style="width: 8%" />
-<col style="width: 9%" />
+<col style="width: 7%" />
+<col style="width: 10%" />
 <col style="width: 27%" />
 </colgroup>
 <thead>
@@ -1046,6 +1048,8 @@ messaggio_errore --&gt; Descrittivo (<strong>DE</strong>)</td>
 | TC04          | SL_OK  | ES_OK  | DP_NO  | TB_OK  | RS_EMPTY | **\[SUCCESS\]** Lista vuota (nessun punto con beni)       |
 | TC05          | SL_OK  | \-     | \-     | TB_NO  | RS_OK    | **\[SUCCESS\]** Filtro ignorato, tutti i punti restituiti |
 | TC06          | \-     | \-     | \-     | \-     | ERR      | **\[ERR\]** Errore database                               |
+
+# SPECIFICHE DEI TEST CASE
 
 Per ciascun test case vengono definiti:
 
@@ -1502,7 +1506,7 @@ Per ciascun test case vengono definiti:
 | **OUTPUT**                                                                                                                                                |                                      |
 | La segnalazione va a buon fine, viene inviata via email a tutti gli enti erogatori e il sistema mostra un pop-up: “Segnalazione completata con successo”. |                                      |
 
-**UC07 GESTIONE BENI**
+**UC07 Gestione dei beni**
 
 | **ID TEST FRAME**                                                                                                                                                         |                                     |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------|
