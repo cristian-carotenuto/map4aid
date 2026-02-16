@@ -15,7 +15,6 @@
     </div>
     <div class="d-flex gap-2" id="auth-buttons"></div>
   </header>
-
   <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-6">
@@ -24,21 +23,15 @@
             <h3 class="text-center">Crea il tuo account</h3>
           </div>
           <div class="card-body">
-            <form id="registerForm">
+            <form id="registerForm" enctype="multipart/form-data">
               <div class="mb-3">
-                <label class="form-label">Ruolo</label>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="ruolo" value="beneficiario" id="ruoloBeneficiario" required>
-                  <label class="form-check-label" for="ruoloBeneficiario">Beneficiario</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="ruolo" value="donatore" id="ruoloDonatore">
-                  <label class="form-check-label" for="ruoloDonatore">Donatore</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="ruolo" value="erogatore" id="ruoloErogatore">
-                  <label class="form-check-label" for="ruoloErogatore">Ente Erogatore</label>
-                </div>
+                <label for="user" class="form-label">Seleziona il tipo di account</label>
+                <select class="form-select" id="user" name="ruolo" required>
+                  <option value="">Seleziona il tipo di account che vuoi creare</option>
+                  <option value="beneficiario">Utente Beneficiario</option>
+                  <option value="donatore">Utente Donatore</option>
+                  <option value="erogatore">Ente Erogatore</option>
+                </select>
               </div>
               <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
@@ -51,6 +44,11 @@
               <div id="campiBeneficiario" style="display:none;">
                 <div class="mb-3"><label for="nome" class="form-label">Nome</label><input type="text" class="form-control" id="nome" name="nome"></div>
                 <div class="mb-3"><label for="cognome" class="form-label">Cognome</label><input type="text" class="form-control" id="cognome" name="cognome"></div>
+                <div class="mb-3"><label for="data_nascita" class="form-label">Data di nascita</label><input type="date" class="form-control" id="data_nascita" name="data_nascita"></div>
+                <div class="mb-3"><label for="codice_carta_identita" class="form-label">Codice Carta d'Identità</label><input type="text" class="form-control" id="codice_carta_identita" name="codice_carta_identita" placeholder="Es. CA00000AA"></div>
+                <div class="mb-3"><label for="carta_identita" class="form-label">Immagine Carta d'Identità</label><input type="file" class="form-control" id="carta_identita" name="carta_identita" accept="image/*,.pdf"></div>
+                <div class="mb-3"><label for="allergeni" class="form-label">Allergeni</label><input type="text" class="form-control" id="allergeni" name="allergeni" placeholder="Es. Glutine, Lattosio..."></div>
+                <div class="mb-3"><label for="patologie" class="form-label">Patologie</label><input type="text" class="form-control" id="patologie" name="patologie" placeholder="Es. Diabete, Celiachia..."></div>
               </div>
               <div id="campiDonatore" style="display:none;">
                 <div class="mb-3"><label for="nome_don" class="form-label">Nome</label><input type="text" class="form-control" id="nome_don" name="nome"></div>
@@ -99,7 +97,6 @@
       </div>
     </div>
   </div>
-
   <!-- Footer -->
   <footer class="bg-dark text-white text-center py-3 mt-4">
     <p>&copy; 2026 Map4Aid - Progetto Universitario</p>
@@ -108,30 +105,77 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../js/auth.js"></script>
   <script>
-    document.querySelectorAll('input[name="ruolo"]').forEach(radio => {
-      radio.addEventListener('change', () => {
+    /**
+     * mostra/nascondi i campi specifici in base al ruolo selezionato
+     */
+    selectRole();
+    document.getElementById("user").addEventListener("change", selectRole);
+    function selectRole()
+    {
+      let user = document.getElementById("user").value;
+
+      if (user === 'beneficiario') {
+        document.getElementById('campiBeneficiario').style.display = 'block';
+        document.getElementById('campiDonatore').style.display = 'none';
+        document.getElementById('campiErogatore').style.display = 'none';
+      } else if (user === 'donatore') {
+        document.getElementById('campiBeneficiario').style.display = 'none';
+        document.getElementById('campiDonatore').style.display = 'block';
+        document.getElementById('campiErogatore').style.display = 'none';
+      } else if (user === 'erogatore') {
+        document.getElementById('campiBeneficiario').style.display = 'none';
+        document.getElementById('campiDonatore').style.display = 'none';
+        document.getElementById('campiErogatore').style.display = 'block';
+      } else {
         document.getElementById('campiBeneficiario').style.display = 'none';
         document.getElementById('campiDonatore').style.display = 'none';
         document.getElementById('campiErogatore').style.display = 'none';
-        if (radio.value === 'beneficiario') document.getElementById('campiBeneficiario').style.display = 'block';
-        else if (radio.value === 'donatore') document.getElementById('campiDonatore').style.display = 'block';
-        else if (radio.value === 'erogatore') document.getElementById('campiErogatore').style.display = 'block';
-      });
-    });
+      }
+    }
 
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-      const ruolo = document.querySelector('input[name="ruolo"]:checked')?.value;
+      const ruolo = document.getElementById('user').value;
       if (!email || !password || !ruolo) { showError('errorMessage', 'Compila tutti i campi obbligatori'); return; }
+
       const formData = new FormData();
-      formData.append('email', email); formData.append('password', password); formData.append('ruolo', ruolo);
+      formData.append('email', email);
+      formData.append('password', password);
+      formData.append('ruolo', ruolo);
+
+      // Aggiungi i campi specifici per ruolo
+      if (ruolo === 'beneficiario') {
+        formData.append('nome', document.getElementById('nome').value);
+        formData.append('cognome', document.getElementById('cognome').value);
+        formData.append('data_nascita', document.getElementById('data_nascita').value);
+        formData.append('codice_carta_identita', document.getElementById('codice_carta_identita').value);
+        formData.append('allergeni', document.getElementById('allergeni').value);
+        formData.append('patologie', document.getElementById('patologie').value);
+        const fileCi = document.getElementById('carta_identita').files[0];
+        if (fileCi) {
+          formData.append('carta_identita', fileCi);
+        }
+      } else if (ruolo === 'donatore') {
+        formData.append('nome', document.getElementById('nome_don').value);
+        formData.append('cognome', document.getElementById('cognome_don').value);
+        formData.append('partita_iva', document.getElementById('partita_iva').value);
+        formData.append('categoria', document.getElementById('categoria').value);
+        formData.append('nome_attivita', document.getElementById('nome_attivita').value);
+        formData.append('indirizzo_sede', document.getElementById('indirizzo_sede').value);
+      } else if (ruolo === 'erogatore') {
+        formData.append('nome_organizzazione', document.getElementById('nome_organizzazione').value);
+        formData.append('indirizzo_sede', document.getElementById('indirizzo_sede_erog').value);
+        formData.append('tipologia_ente', document.getElementById('tipologia_ente').value);
+        formData.append('iban', document.getElementById('iban').value);
+      }
+
       const submitBtn = e.target.querySelector('button[type="submit"]');
       const originalText = submitBtn.textContent;
       submitBtn.disabled = true; submitBtn.textContent = 'Invio in corso...';
       try {
-        const response = await fetch('/register', { method: 'POST', body: formData });
+        const response = await fetch('/auth/register', { method: 'POST', body: formData });
         const data = await response.json();
         if (response.ok) {
           localStorage.setItem('ruoloRegistrazione', ruolo);
@@ -149,7 +193,7 @@
       submitBtn.disabled = true; submitBtn.textContent = 'Verifica in corso...';
       try {
         const formData = new FormData(); formData.append('codice', codice);
-        const response = await fetch('/2FARegister', { method: 'POST', body: formData });
+        const response = await fetch('/auth/2FARegister', { method: 'POST', body: formData });
         const data = await response.json();
         if (response.ok) {
           bootstrap.Modal.getInstance(document.getElementById('codiceModal')).hide();

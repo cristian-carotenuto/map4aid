@@ -170,7 +170,18 @@ def crea_punto():
     if not payload:
         return jsonify({"error": "invalid_request", "message": "JSON body richiesto"}), 400
 
-    candidate_cols = ["nome", "regione", "citta", "latitudine", "longitudine", "ente_erogatore_id", "accettato"]
+    candidate_cols = [
+        "nome",
+        "regione",
+        "citta",
+        "giorni_apertura",
+        "orario_apertura",
+        "orario_chiusura",
+        "latitudine",
+        "longitudine",
+        "ente_erogatore_id",
+        "accettato"
+    ]
     try:
         with db.engine.connect() as conn:
             pragma = pragma_table_info(conn, "punti_distribuzione")
@@ -193,6 +204,7 @@ def crea_punto():
             sql = f"INSERT INTO punti_distribuzione ({cols_sql}) VALUES ({vals_sql})"
 
             conn.execute(text(sql), params)
+            conn.commit()
             last_id = conn.execute(text("SELECT last_insert_rowid()")).scalar()
 
             resp = {"message": "punto_creato", "id": int(last_id) if last_id is not None else None}
@@ -207,3 +219,19 @@ def crea_punto():
     except Exception as e:
         current_app.logger.error("DB error on creating punto", exc_info=e)
         return jsonify({"error": "db_error", "message": str(e)}), 500
+
+
+@api.route("/categorie", methods=["GET"])
+def get_categorie():
+    """Lista di tutte le sottocategorie raggruppate per macrocategoria"""
+    from models.models import MacroCategoria
+    macro_list = MacroCategoria.query.all()
+    result = []
+    for m in macro_list:
+        for s in m.sotto_categorie:
+            result.append({
+                "id": s.id,
+                "nome": s.nome,
+                "macro": m.nome
+            })
+    return jsonify(result), 200

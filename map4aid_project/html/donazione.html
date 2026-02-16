@@ -80,7 +80,6 @@
       </div>
     </div>
   </div>
-
   <!-- Footer -->
   <footer class="bg-dark text-white text-center py-3 mt-4">
     <p>&copy; 2026 Map4Aid - Progetto Universitario</p>
@@ -96,8 +95,6 @@
         window.location.href = 'login.html';
       }, 2000);
     }
-
-    // Invio form
     document.getElementById('donazioneForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const formData = new FormData(e.target);
@@ -108,7 +105,7 @@
 
       try {
         // ✅ Endpoint corretto con /auth/
-        const response = await fetch('/donazioneMonetaria', {
+        const response = await fetch('/auth/donazioneMonetaria', {
           method: 'POST',
           body: formData
         });

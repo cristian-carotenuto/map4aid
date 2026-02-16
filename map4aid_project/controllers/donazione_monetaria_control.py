@@ -6,14 +6,14 @@ from controllers.service_email.email_control_bridge import EmailControlBridge
 from models import AccountEnteErogatore
 from controllers.permessi import require_roles
 from config import db
-from models.models import AccountDonatore, DonazioneMonetaria
+from models.models import AccountDonatore, DonazioneMonetaria, Account
 
 
 @auth_bp.route("/donazioneMonetaria", methods=["POST"])
 @require_roles("donatore","beneficiario","ente_erogatore")
 def donazione_monetaria():
         # ---- DATI DA SESSIONE ----
-    email_donatore = session.get("user_email")
+    email_donatore = session["user_email"]
 
     # ---- DATI DA FORM ----
     nome_ente = request.form.get("nome_ente_erogatore")
@@ -30,7 +30,10 @@ def donazione_monetaria():
         return {"errore": "Importo non valido"},400
 
     ente_erogatore = AccountEnteErogatore.query.filter_by(nome_organizzazione=nome_ente).first()
-    ente_donatore = AccountDonatore.query.filter_by(email=email_donatore).first()
+    if not ente_erogatore:
+        return {"errore": "Ente erogatore non trovato"},400
+    
+    ente_donatore = Account.query.filter_by(email=email_donatore).first()
     email_ente = ente_erogatore.email
     iban_ente = ente_erogatore.iban
 
@@ -72,7 +75,7 @@ def donazione_monetaria():
     if not email_ok:
         return {
             "errore": "Donazione eseguita ma email non inviata"
-        },400
+        },200
 
     return {
         "messaggio": "Donazione monetaria completata con successo"
@@ -88,7 +91,7 @@ def esegui_transazione(numero_carta, scadenza, cvv,
         return False
     if not iban_destinatario.startswith("IT"):
         return False
-    if scadenza < datetime.now(timezone.utc):
+    if scadenza < datetime.now(timezone.utc).date():
         return False
     return True
 

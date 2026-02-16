@@ -28,13 +28,19 @@ function getUserEmail() {
   return sessionStorage.getItem('userEmail') || '';
 }
 
+function getUserRole() {
+  return sessionStorage.getItem('userRole') || '';
+}
+
 /**
  * Salva lo stato di login in sessionStorage
  * @param {string} email
+ * @param {string} ruolo
  */
-function saveLoginState(email) {
+function saveLoginState(email, ruolo) {
   sessionStorage.setItem('isLoggedIn', 'true');
   sessionStorage.setItem('userEmail', email);
+  sessionStorage.setItem('userRole', ruolo);
 }
 
 /**
@@ -43,6 +49,7 @@ function saveLoginState(email) {
 function clearLoginState() {
   sessionStorage.removeItem('isLoggedIn');
   sessionStorage.removeItem('userEmail');
+  sessionStorage.removeItem("userRole");
 }
 
 // === GESTIONE ERRORI / SUCCESSI GLOBALI ===
@@ -88,13 +95,34 @@ function updateAuthButtons() {
 
   // Escape sicuro dell'email per prevenire XSS
   const safeEmail = getUserEmail().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  let role = getUserRole();
 
-  if (isLoggedIn()) {
+  if (isLoggedIn() && role === 'admin') {
+    container.innerHTML = `
+      <a href="home.html" class="btn btn-light">Home</a>
+      <a href="admin-dashboard.html" class="btn btn-light">Pannello Admin</a>
+      <button class="btn btn-light" onclick="handleLogout()">Logout</button>
+    `;
+  } else if (isLoggedIn() && role === 'ente_erogatore') {
+    container.innerHTML = `
+      <a href="home.html" class="btn btn-light">Home</a>
+      <a href="ente-punti.html" class="btn btn-light">I miei punti</a>
+      <a href="ente-prenotazioni.html" class="btn btn-light">Prenotazioni</a>
+      <a href="profilo.html" class="btn btn-light">Profilo</a>
+      <button class="btn btn-light" onclick="handleLogout()">Logout</button>
+    `;
+  } else if (isLoggedIn() && role === 'donatore') {
     container.innerHTML = `
       <a href="home.html" class="btn btn-light">Home</a>
       <a href="donazione.html" class="btn btn-light">Donazione monetaria</a>
       <a href="donazione-beni.html" class="btn btn-light">Donazione beni</a>
-      <span class="text-white me-2"></span>
+      <a href="profilo.html" class="btn btn-light">Profilo</a>
+      <button class="btn btn-light" onclick="handleLogout()">Logout</button>
+    `;
+  } else if (isLoggedIn()) {
+    container.innerHTML = `
+      <a href="home.html" class="btn btn-light">Home</a>
+      <a href="donazione.html" class="btn btn-light">Donazione monetaria</a>
       <a href="profilo.html" class="btn btn-light">Profilo</a>
       <button class="btn btn-light" onclick="handleLogout()">Logout</button>
     `;
@@ -102,7 +130,6 @@ function updateAuthButtons() {
     container.innerHTML = `
       <a href="home.html" class="btn btn-light">Home</a>
       <a href="donazione.html" class="btn btn-light">Donazione monetaria</a>
-      <a href="donazione-beni.html" class="btn btn-light">Donazione beni</a>
       <a href="login.html" class="btn btn-light">Login</a>
       <a href="register.html" class="btn btn-light">Sign In</a>
     `;
@@ -115,9 +142,10 @@ function updateAuthButtons() {
  * Esegue il logout chiamando il backend e pulendo lo stato locale
  */
 async function handleLogout() {
+  const isAdmin = getUserRole() === 'admin';
+  const endpoint = isAdmin ? '/auth/adminLogout' : '/auth/logout';
   try {
-    // Usa credentials: 'same-origin' per inviare i cookie di sessione
-    await fetch('/auth/logout', {
+    await fetch(endpoint, {
       method: 'POST',
       credentials: 'same-origin'
     });
@@ -125,6 +153,7 @@ async function handleLogout() {
     console.warn('Errore durante il logout:', error);
   } finally {
     clearLoginState();
+    if (isAdmin) sessionStorage.removeItem('is_admin');
     if (typeof updateAuthButtons === 'function') updateAuthButtons();
     window.location.href = 'home.html';
   }

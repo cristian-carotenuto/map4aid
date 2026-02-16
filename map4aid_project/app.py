@@ -5,11 +5,18 @@ from flask_login import LoginManager
 from config import db, migrate
 from models import Account
 from tasks import start_scheduler
+from flask import render_template
 
 
 def create_app():
     # Attiva la gestione della cartella instance/
-    app = Flask(__name__, instance_relative_config=True)
+    app = Flask(
+        __name__,
+        instance_relative_config=True,
+        template_folder="html",
+        static_folder=".",
+        static_url_path=""
+    )
 
     #mi assicuro che esista la cartella instance
     os.makedirs(app.instance_path, exist_ok=True)
@@ -35,7 +42,7 @@ def create_app():
 
     from controllers.routes import auth_bp
     from controllers import admin_control
-    from controllers import two_fa_contol
+    from controllers import two_fa_control
     from controllers import autenticazione_control
     from controllers import login_control
     from controllers import segnalazione_control
@@ -47,15 +54,21 @@ def create_app():
     from controllers import prenotazione_control
     from controllers import profilo_control
     from controllers import feedback_control
+    from controllers import gestione_scorte_control
     from controllers.feedback_control import feedback_bp
     app.register_blueprint(feedback_bp)
     app.register_blueprint(api_punti.api, url_prefix="/api")
     app.register_blueprint(auth_bp, url_prefix="/auth")
 
     print(">>>>>Flask root:", os.getcwd())
+
     @app.route("/")
     def home():
-        return "sono on"
+        return render_template("home.html")
+
+    @app.route("/<path:page>.html")
+    def serve_page(page):
+        return render_template(f"{page}.html")
 
     if os.environ.get('WERKZEUG_RUN_MAIN') == 'true' or not app.debug:
         start_scheduler(app)

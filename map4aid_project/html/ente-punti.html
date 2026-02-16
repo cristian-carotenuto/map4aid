@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>I miei punti - Map4Aid</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .punto-card { border-left: 4px solid #28a745; transition: transform 0.2s; }
+    .punto-card:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    .punto-card.pending { border-left-color: #ffc107; }
+  </style>
+</head>
+<body class="bg-light">
+  <!-- Header dinamico -->
+  <header class="header-bg text-white p-3 d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+      <img src="../imgs/logo.png" alt="Logo Map4Aid" width="60" height="60" class="me-3 rounded-circle">
+      <h1 class="h4 mb-0 ms-3">MAP4AID</h1>
+    </div>
+    <div class="d-flex gap-2" id="auth-buttons"></div>
+  </header>
+
+  <div class="container mt-5">
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-md-3">
+        <div class="list-group">
+          <a href="profilo.html" class="list-group-item list-group-item-action">Profilo</a>
+          <a href="ente-punti.html" class="list-group-item list-group-item-action active">I miei punti</a>
+          <a href="ente-prenotazioni.html" class="list-group-item list-group-item-action">Prenotazioni</a>
+        </div>
+      </div>
+
+      <!-- Contenuto principale -->
+      <div class="col-md-9">
+        <div id="alertArea" class="mb-3"></div>
+
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">I miei punti di distribuzione</h3>
+            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalNuovoPunto">
+              + Nuovo punto
+            </button>
+          </div>
+          <div class="card-body">
+            <div id="loading" class="text-center py-3">
+              <div class="spinner-border text-secondary" role="status"></div>
+              <p class="mt-2 text-muted small">Caricamento...</p>
+            </div>
+            <div id="emptyState" class="alert alert-info" style="display:none;">
+              Non hai ancora creato nessun punto di distribuzione.
+              <a href="#" data-bs-toggle="modal" data-bs-target="#modalNuovoPunto">Creane uno ora.</a>
+            </div>
+            <div id="listaPunti"></div>
+            <div id="errorMessage" class="mt-3 text-danger" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal nuovo punto -->
+  <div class="modal fade" id="modalNuovoPunto" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Richiedi nuovo punto di distribuzione</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted small">La richiesta sarà inviata all'amministratore per approvazione.</p>
+          <form id="formNuovoPunto">
+            <div class="mb-3">
+              <label class="form-label">Nome del punto <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="np_nome" required placeholder="Es. Punto distribuzione Nord">
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Orario apertura <span class="text-danger">*</span></label>
+                <input type="time" class="form-control" id="np_orario_apertura" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Orario chiusura <span class="text-danger">*</span></label>
+                <input type="time" class="form-control" id="np_orario_chiusura" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Giorni di apertura <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="np_giorni" required placeholder="Es. Lunedì-Venerdì oppure Lun,Mer,Ven">
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Latitudine <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="np_lat" step="any" required placeholder="Es. 40.8518">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Longitudine <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="np_lng" step="any" required placeholder="Es. 14.2681">
+              </div>
+            </div>
+            <div id="modalError" class="text-danger" style="display:none;"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+          <button type="button" class="btn btn-success" id="btnInviaPunto">Invia richiesta</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white text-center py-3 mt-4">
+    <p>&copy; 2026 Map4Aid - Progetto Universitario</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    // Protezione accesso
+    if (!isLoggedIn() || getUserRole() !== 'ente_erogatore') {
+      window.location.href = 'login.html';
+    }
+
+    let enteId = null;
+
+    function showAlert(msg, type) {
+      const area = document.getElementById('alertArea');
+      const div = document.createElement('div');
+      div.className = `alert alert-${type} alert-dismissible fade show`;
+      div.innerHTML = `${msg}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+      area.prepend(div);
+      setTimeout(() => div.remove(), 5000);
+    }
+
+    // Carica l'ID dell'ente dal profilo
+    async function caricaProfilo() {
+      try {
+        const res = await fetch('/auth/profilo');
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        enteId = data.id;
+      } catch (e) {
+        showError('errorMessage', 'Errore nel caricamento del profilo');
+      }
+    }
+
+    // Carica lista punti
+    async function caricaPunti() {
+      const loading = document.getElementById('loading');
+      const empty = document.getElementById('emptyState');
+      const lista = document.getElementById('listaPunti');
+
+      loading.style.display = '';
+      empty.style.display = 'none';
+      lista.innerHTML = '';
+
+      try {
+        const res = await fetch('/auth/miei_punti');
+        if (res.status === 401 || res.status === 403) {
+          window.location.href = 'login.html'; return;
+        }
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+
+        loading.style.display = 'none';
+
+        if (data.length === 0) { empty.style.display = ''; return; }
+
+        lista.innerHTML = data.map(p => {
+          const isPending = !p.accettato;
+          const badge = isPending
+            ? '<span class="badge bg-warning text-dark ms-2">In attesa</span>'
+            : '<span class="badge bg-success ms-2">Approvato</span>';
+          const btnScorte = isPending
+            ? '<button class="btn btn-sm btn-secondary" disabled title="In attesa di approvazione">Gestisci scorte</button>'
+            : `<a href="ente-scorte.html?punto_id=${p.id}" class="btn btn-sm btn-primary">Gestisci scorte</a>`;
+          return `
+            <div class="card mb-3 punto-card ${isPending ? 'pending' : ''}">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="card-title mb-1">${p.nome}${badge}</h6>
+                    <p class="card-text small mb-1">Giorni: ${p.giorni_apertura} &bull; ${p.orario_apertura} - ${p.orario_chiusura}</p>
+                    <p class="card-text small mb-0 text-muted">Coordinate: ${p.latitudine}, ${p.longitudine}</p>
+                  </div>
+                  <div>${btnScorte}</div>
+                </div>
+              </div>
+            </div>`;
+        }).join('');
+      } catch (err) {
+        loading.style.display = 'none';
+        showError('errorMessage', 'Impossibile caricare i punti. Riprova più tardi.');
+      }
+    }
+
+    // Invia richiesta nuovo punto
+    document.getElementById('btnInviaPunto').addEventListener('click', async () => {
+      const nome = document.getElementById('np_nome').value.trim();
+      const orario_apertura = document.getElementById('np_orario_apertura').value;
+      const orario_chiusura = document.getElementById('np_orario_chiusura').value;
+      const giorni = document.getElementById('np_giorni').value.trim();
+      const lat = parseFloat(document.getElementById('np_lat').value);
+      const lng = parseFloat(document.getElementById('np_lng').value);
+      const errDiv = document.getElementById('modalError');
+
+      if (!nome || !orario_apertura || !orario_chiusura || !giorni || isNaN(lat) || isNaN(lng)) {
+        errDiv.textContent = 'Compila tutti i campi obbligatori';
+        errDiv.style.display = 'block';
+        return;
+      }
+      errDiv.style.display = 'none';
+
+      if (!enteId) {
+        errDiv.textContent = 'Errore: impossibile identificare l\'ente. Ricarica la pagina.';
+        errDiv.style.display = 'block';
+        return;
+      }
+
+      const btn = document.getElementById('btnInviaPunto');
+      btn.disabled = true;
+      btn.textContent = 'Invio in corso...';
+
+      try {
+        const res = await fetch('/api/gestione-punto', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nome,
+            giorni_apertura: giorni,
+            orario_apertura: orario_apertura + ':00',
+            orario_chiusura: orario_chiusura + ':00',
+            latitudine: lat,
+            longitudine: lng,
+            ente_erogatore_id: enteId
+          })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          bootstrap.Modal.getInstance(document.getElementById('modalNuovoPunto')).hide();
+          document.getElementById('formNuovoPunto').reset();
+          showAlert('Richiesta inviata con successo. In attesa di approvazione dall\'amministratore.', 'success');
+          caricaPunti();
+        } else {
+          errDiv.textContent = data.message || data.error || 'Errore durante la creazione';
+          errDiv.style.display = 'block';
+        }
+      } catch (err) {
+        errDiv.textContent = 'Errore di connessione al server';
+        errDiv.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Invia richiesta';
+      }
+    });
+
+    // Reset errori modal alla chiusura
+    document.getElementById('modalNuovoPunto').addEventListener('hidden.bs.modal', () => {
+      document.getElementById('modalError').style.display = 'none';
+    });
+
+    // Init
+    document.addEventListener('DOMContentLoaded', async () => {
+      await caricaProfilo();
+      caricaPunti();
+    });
+  </script>
+  <script src="../js/chatbot/js/loader.js"></script>
+</body>
+</html>

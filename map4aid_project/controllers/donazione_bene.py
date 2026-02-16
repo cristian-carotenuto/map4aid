@@ -9,7 +9,7 @@ from controllers.service_email.EmailControl import EmailControl
 from controllers.permessi import require_roles
 from config import db
 from models.models import AccountDonatore, PuntoDistribuzione, BeneAlimentare, SottoCategoria, \
-    BeneIgiene, BeneMobilita, DonazioneBene
+    BeneIgiene, BeneMobilita, DonazioneBene, BeneVestiario, BeneMedicinale
 
 
 @auth_bp.route("/donazioneBene", methods=["POST"])
@@ -25,9 +25,12 @@ def donazioneBene():
     sottocategoria_nome = request.form.get("sottocategoria")
 
     if not all([nome,quantita,tipo,punto_nome]):
-        return {"Errore","Campi obbligatori mancanti"},400
+        return {"Errore":"Campi obbligatori mancanti"},400
 
     punto_distribuzione = PuntoDistribuzione.query.filter_by(nome=punto_nome).first()
+    if punto_distribuzione == None:
+        return {"Errore":"Punto di bisogno non trovato"},400
+
     location = geolocator.reverse((punto_distribuzione.latitudine,punto_distribuzione.longitudine))
     sottocategoria = SottoCategoria.query.filter_by(nome=sottocategoria_nome).first()
     donatore = AccountDonatore.query.filter_by(email=email_donatore).first()
@@ -57,7 +60,7 @@ def donazioneBene():
 
     #Medicinale
     elif tipo == "medicinale":
-        bene = BeneIgiene(
+        bene = BeneMedicinale(
             nome=nome,
             quantita=quantita,
             punto_distribuzione_id=punto_distribuzione.id,
@@ -80,7 +83,7 @@ def donazioneBene():
 
     #Vestiti
     elif tipo == "vestiario":
-        bene = BeneMobilita(
+        bene = BeneVestiario(
             nome=nome,
             quantita=quantita,
             punto_distribuzione_id=punto_distribuzione.id,
@@ -106,7 +109,7 @@ def donazioneBene():
     email_ok2 = mail_sender.send_donazione_bene_donatore(donatore.email,erogatore.email,bene)
 
     if email_ok1 and email_ok2:
-        return {"message":"Donazione di bene effetuata"},200
+        return {"message":"Donazione di bene effettuata"},200
     else:
         return {"errore":"Donazione effetuata ma email non inviate"},500
 

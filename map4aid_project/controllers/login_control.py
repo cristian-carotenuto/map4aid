@@ -1,6 +1,7 @@
 import secrets
 
 from flask_login import logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from config import db
 from flask import request, session, jsonify
@@ -15,7 +16,8 @@ from controllers.auth_facade import AuthFacade
 def login():
 
     if current_user.is_authenticated:
-        return jsonify({"error": "Già loggato"}), 400
+        logout_user()
+        session.clear()
 
     facade = AuthFacade(EmailControlBridge())
 
@@ -52,7 +54,7 @@ def recupero_password():
     session["pending_email"] = email
     puser = PendingAccount(
         email = email,
-        token = codice
+        token = generate_password_hash(str(codice))
     )
     db.session.add(puser)
     db.session.commit()
@@ -62,9 +64,9 @@ def recupero_password():
     email_ok = email_control.invia_email_codice(email, codice)
 
     if not email_ok:
-        return jsonify({"message": "Email di recupero inviata"}), 200
+        return jsonify({"errore": "Email di recupero non inviata"}), 400
 
-    return jsonify({"errore": "Email di recupero non inviata"}), 200
+    return jsonify({"message": "Email di recupero inviata"}), 200
 
 
 @auth_bp.route("/confermaRecupero", methods=["POST"])
@@ -75,12 +77,12 @@ def conferma_recupero():
         return jsonify({"error": "Nessuna richiesta in corso"}), 400
 
     codice_inserito = request.form.get("codice")
-    if codice_inserito != puser.token:
+    if not check_password_hash(puser.token,codice_inserito):
         return jsonify({"error": "Codice non valido"}), 401
 
     # Codice corretto → consenti cambio password
     session["reset_verified"] = email  # salva email verificata
-    session.pop("pending_email")  # rimuovi codice
+    session.pop("pending_email",None)  # rimuovi codice
 
     return jsonify({"message": "Codice valido, puoi cambiare la password"}), 200
 
@@ -102,5 +104,5 @@ def cambia_password():
     user.set_password(nuova_password)
     db.session.commit()
 
-    session.pop("reset_verified")  # pulizia sessione
+    session.pop("reset_verified",None)  # pulizia sessione
     return jsonify({"message": "Password cambiata con successo"}), 200

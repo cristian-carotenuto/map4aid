@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Prenota Bene - Map4Aid</title>
+  <title>Prenota Pacco - Map4Aid</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
   <style>
@@ -10,8 +10,10 @@
     .step.active { display: block; }
     .bene-card { cursor: pointer; transition: all 0.2s; }
     .bene-card:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-    .slot-badge { font-size: 0.9em; padding: 0.4em 0.6em; }
+    .bene-card.selected { border: 2px solid #28a745; }
     .qr-placeholder { background-color: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 8px; padding: 2rem; text-align: center; }
+    .pacco-contenuto { font-size: 0.9em; }
+    .pacco-contenuto li { padding: 0.15rem 0; }
   </style>
 </head>
 <body class="bg-light">
@@ -29,28 +31,32 @@
       <div class="col-md-12">
         <div class="card">
           <div class="card-header">
-            <h4 class="mb-0">Prenotazione bene</h4>
+            <h4 class="mb-0">Prenotazione pacco</h4>
           </div>
           <div class="card-body">
-            <!-- Step 1: Selezione bene -->
+            <!-- Step 1: Selezione pacco -->
             <div id="step1" class="step active">
-              <h5 class="mb-3">Seleziona il bene da prenotare</h5>
-              <div id="beniContainer" class="row g-3">
-                <!-- I beni verranno caricati qui -->
+              <h5 class="mb-3">Pacchi disponibili per la prenotazione</h5>
+              <div id="pacchiContainer" class="row g-3">
+                <!-- I pacchi verranno caricati qui -->
               </div>
               <div id="errorMessage" class="mt-3 text-danger" style="display:none;"></div>
             </div>
 
-            <!-- Step 2: Selezione slot -->
+            <!-- Step 2: Conferma prenotazione -->
             <div id="step2" class="step">
-              <h5 class="mb-3">Seleziona lo slot orario</h5>
-              <div id="slotContainer" class="row g-3">
-                <!-- Gli slot verranno caricati qui -->
+              <h5 class="mb-3">Conferma la tua prenotazione</h5>
+              <div class="card mb-3">
+                <div class="card-body">
+                  <h6 class="card-title" id="riepilogoPaccoNome"></h6>
+                  <p class="card-text text-muted" id="riepilogoPaccoDescrizione"></p>
+                </div>
               </div>
               <div class="mt-3">
                 <button type="button" class="btn btn-secondary" onclick="goToStep(1)">Indietro</button>
-                <button type="button" class="btn btn-primary" id="confermaPrenotazioneBtn">Conferma Prenotazione</button>
+                <button type="button" class="btn btn-success" id="confermaPrenotazioneBtn">Conferma Prenotazione</button>
               </div>
+              <div id="errorMessageStep2" class="mt-3 text-danger" style="display:none;"></div>
             </div>
 
             <!-- Step 3: QR Code -->
@@ -76,7 +82,6 @@
       </div>
     </div>
   </div>
-
   <!-- Footer -->
   <footer class="bg-dark text-white text-center py-3 mt-4">
     <p>&copy; 2026 Map4Aid - Progetto Universitario</p>
@@ -87,12 +92,11 @@
   <script>
     // Dati globali
     let puntoId = null;
-    let beneSelezionato = null;
-    let slotSelezionato = null;
+    let paccoSelezionato = null;
 
     // Protezione: solo utenti loggati
     if (!sessionStorage.getItem('isLoggedIn')) {
-      showError('errorMessage', 'Devi effettuare il login per prenotare un bene');
+      showError('errorMessage', 'Devi effettuare il login per prenotare un pacco');
       setTimeout(() => window.location.href = 'login.html', 2000);
     }
 
@@ -105,92 +109,60 @@
     }
 
     /**
-     * Carica i beni disponibili per il punto
+     * Carica i pacchi disponibili per il punto.
+     * L'endpoint restituisce tutti i beni + il pacco (tipo "pacco") se è assemblabile.
+     * Filtriamo lato client per mostrare solo i pacchi.
      */
-    async function caricaBeni(puntoId) {
-      const container = document.getElementById('beniContainer');
+    async function caricaPacchi(puntoId) {
+      const container = document.getElementById('pacchiContainer');
       container.innerHTML = '<div class="col-12 text-center"><div class="spinner-border" role="status"></div></div>';
 
       try {
-        // ✅ Endpoint corretto con /auth/
-        const response = await fetch(`/punti/${puntoId}/beni`);
-        if (!response.ok) throw new Error('Errore nel caricamento dei beni');
-        
+        const response = await fetch(`/auth/punti/${puntoId}/beni`);
+        if (!response.ok) throw new Error('Errore nel caricamento');
+
         const beni = await response.json();
-        if (beni.length === 0) {
-          container.innerHTML = '<div class="col-12 alert alert-info">Nessun bene disponibile in questo punto.</div>';
+        const pacchi = beni.filter(b => b.tipo === 'pacco');
+
+        if (pacchi.length === 0) {
+          container.innerHTML = '<div class="col-12 alert alert-info">Nessun pacco disponibile in questo punto al momento. I pacchi vengono resi disponibili quando tutte le categorie alimentari (Pasta, Pane, Acqua, Carne, Pesce, Verdura) sono presenti.</div>';
           return;
         }
 
-        container.innerHTML = beni.map(bene => `
-          <div class="col-md-4">
-            <div class="card bene-card" onclick="selezionaBene(${JSON.stringify(bene).replace(/"/g, '&quot;')})">
+        container.innerHTML = pacchi.map(pacco => `
+          <div class="col-md-6">
+            <div class="card bene-card" onclick="selezionaPacco(${JSON.stringify(pacco).replace(/"/g, '&quot;')})">
               <div class="card-body">
-                <h6 class="card-title">${bene.nome}</h6>
-                <p class="card-text text-muted small">Quantità: ${bene.quantita_disponibile || 'Non specificata'}</p>
-                <p class="card-text"><small class="text-muted">${bene.categoria}</small></p>
+                <h6 class="card-title">${pacco.nome}</h6>
+                <p class="card-text text-muted small mb-2">Contiene:</p>
+                <ul class="pacco-contenuto list-unstyled mb-0">
+                  <li>&#8226; Pasta</li>
+                  <li>&#8226; Pane</li>
+                  <li>&#8226; Acqua</li>
+                  <li>&#8226; Carne</li>
+                  <li>&#8226; Pesce</li>
+                  <li>&#8226; Verdura</li>
+                </ul>
               </div>
             </div>
           </div>
         `).join('');
       } catch (error) {
-        console.error('Errore caricamento beni:', error);
-        container.innerHTML = '<div class="col-12 alert alert-danger">Errore nel caricamento dei beni. Riprova più tardi.</div>';
-        showError('errorMessage', 'Impossibile caricare i beni. Riprova più tardi.');
+        console.error('Errore caricamento pacchi:', error);
+        container.innerHTML = '<div class="col-12 alert alert-danger">Errore nel caricamento dei pacchi. Riprova più tardi.</div>';
+        showError('errorMessage', 'Impossibile caricare i pacchi. Riprova più tardi.');
       }
     }
 
     /**
-     * Carica gli slot orari per il bene selezionato
+     * Seleziona un pacco e mostra il riepilogo
      */
-    async function caricaSlot(puntoId, beneId) {
-      const container = document.getElementById('slotContainer');
-      container.innerHTML = '<div class="col-12 text-center"><div class="spinner-border" role="status"></div></div>';
-
-      try {
-        // ✅ Endpoint corretto 
-        const response = await fetch(`/punti/${puntoId}/beni/${beneId}/slot`);
-        if (!response.ok) throw new Error('Errore nel caricamento degli slot');
-        
-        const slot = await response.json();
-        if (slot.length === 0) {
-          container.innerHTML = '<div class="col-12 alert alert-info">Nessuno slot disponibile per questo bene.</div>';
-          return;
-        }
-
-        container.innerHTML = slot.map(s => `
-          <div class="col-md-4">
-            <div class="card slot-card" onclick="selezionaSlot('${s.orario_inizio}', '${s.orario_fine}')">
-              <div class="card-body text-center">
-                <h6 class="card-title">${s.orario_inizio} - ${s.orario_fine}</h6>
-                <span class="slot-badge bg-success">Disponibile</span>
-              </div>
-            </div>
-          </div>
-        `).join('');
-      } catch (error) {
-        console.error('Errore caricamento slot:', error);
-        container.innerHTML = '<div class="col-12 alert alert-danger">Errore nel caricamento degli slot. Riprova più tardi.</div>';
-        showError('errorMessage', 'Impossibile caricare gli slot. Riprova più tardi.');
-      }
-    }
-
-    /**
-     * Seleziona un bene
-     */
-    function selezionaBene(bene) {
-      beneSelezionato = bene;
+    function selezionaPacco(pacco) {
+      paccoSelezionato = pacco;
+      document.getElementById('riepilogoPaccoNome').textContent = pacco.nome;
+      document.getElementById('riepilogoPaccoDescrizione').textContent =
+        'Il pacco contiene: Pasta, Pane, Acqua, Carne, Pesce, Verdura. Conferma per completare la prenotazione.';
       goToStep(2);
-      caricaSlot(puntoId, bene.id);
-    }
-
-    /**
-     * Seleziona uno slot
-     */
-    function selezionaSlot(inizio, fine) {
-      slotSelezionato = { inizio, fine };
-      document.querySelectorAll('.slot-card').forEach(card => card.classList.remove('border', 'border-primary'));
-      event.currentTarget.classList.add('border', 'border-primary');
     }
 
     /**
@@ -202,11 +174,11 @@
     }
 
     /**
-     * Conferma la prenotazione
+     * Conferma la prenotazione del pacco
      */
     async function confermaPrenotazione() {
-      if (!beneSelezionato || !slotSelezionato) {
-        showError('errorMessage', 'Seleziona prima un bene e uno slot orario');
+      if (!paccoSelezionato) {
+        showError('errorMessageStep2', 'Seleziona prima un pacco');
         return;
       }
 
@@ -215,32 +187,31 @@
       confermaBtn.textContent = 'Conferma in corso...';
 
       try {
-        // ✅ Endpoint corretto con /auth/
-        const response = await fetch('/prenotazione', {
+        const formData = new FormData();
+        formData.append('id_punto_bisogno', puntoId);
+        formData.append('id_bene', paccoSelezionato.id);
+        formData.append('is_pacco', 'True');
+        formData.append('is_medicinale', 'False');
+
+        const response = await fetch('/auth/prenotazione', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            punto_id: puntoId,
-            bene_id: beneSelezionato.id,
-            slot_orario: `${slotSelezionato.inizio}-${slotSelezionato.fine}`
-          })
+          body: formData
         });
 
         const data = await response.json();
-        if (response.ok && data.codice_prenotazione) {
-          // Mostra QR code
+        if (response.ok && data.message) {
           document.getElementById('qrCodePlaceholder').innerHTML = `
-            <div class="mb-2">Codice prenotazione:</div>
-            <div class="fw-bold">${data.codice_prenotazione}</div>
-            <div class="mt-2 small text-muted">Presenta questo codice al punto di distribuzione</div>
+            <div class="mb-2">Prenotazione confermata!</div>
+            <div class="fw-bold">${data.message}</div>
+            <div class="mt-2 small text-muted">Controlla la tua email per i dettagli</div>
           `;
           goToStep(3);
         } else {
-          showError('errorMessage', data.error || 'Errore durante la prenotazione');
+          showError('errorMessageStep2', data.error || 'Errore durante la prenotazione');
         }
       } catch (error) {
         console.error('Errore prenotazione:', error);
-        showError('errorMessage', 'Errore di connessione al server. Riprova più tardi.');
+        showError('errorMessageStep2', 'Errore di connessione al server. Riprova più tardi.');
       } finally {
         confermaBtn.disabled = false;
         confermaBtn.textContent = 'Conferma Prenotazione';
@@ -250,21 +221,21 @@
     // Inizializza la pagina
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof updateAuthButtons === 'function') updateAuthButtons();
-      
+
       puntoId = getPointIdFromUrl();
       if (!puntoId) {
         showError('errorMessage', 'ID punto non valido');
         setTimeout(() => window.location.href = 'home.html', 2000);
         return;
       }
-      
-      caricaBeni(puntoId);
-      
+
+      caricaPacchi(puntoId);
+
       // Gestione pulsante conferma
       document.getElementById('confermaPrenotazioneBtn').addEventListener('click', confermaPrenotazione);
     });
   </script>
-  <!-- ✅ Chatbot integrato -->
+  <!-- Chatbot integrato -->
   <script src="../chatbot/js/loader.js"></script>
 </body>
 </html>

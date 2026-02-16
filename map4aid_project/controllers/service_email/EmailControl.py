@@ -67,11 +67,11 @@ Map4Aid
         msg["Subject"] = "Email per conferma codice"
 
         corpo = f"""
-Per favore inserire il seguente codice per confermare l'emaill:
+Per favore inserire il seguente codice per confermare l'email:
 {codice}
 Il codice scadrà dopo 10 minuti
 
-Se hai ricevuto questa email senza aver provato a registrarti probabilmente un utente ha inseirito la tua mail per sbaglio
+Se hai ricevuto questa email senza aver provato a registrarti probabilmente un utente ha inserito la tua mail per sbaglio
         
 Cordiali saluti,
 Map4Aid"""
@@ -205,7 +205,7 @@ Map4Aid"""
 
         corpo = f"""
 La donazione di {bene.nome} è andata a buon fine.
-Si aspetti un'email o contatti direttamente {email_donatore}.
+Si aspetti un'email o contatti direttamente {email_ente}.
 Cordiali saluti,
 Map4Aid
 """
@@ -450,7 +450,7 @@ Map4Aid"""
         msg = MIMEMultipart()
         msg["From"] = self.config["email"]
         msg["To"] = email_beneficiario
-        msg["Subject"] = "Email per esito prenotazione"
+        msg["Subject"] = "Email per esito registrazione"
 
         if esito == "True":
             corpo = f"""

@@ -28,6 +28,38 @@ from models.models import (
 prenotazione_lock = threading.Lock()
 annulla_lock = threading.Lock()
 
+#endpoint per caricare i beni
+@auth_bp.route("/punti/<int:id_punto>/beni", methods=["GET"])
+def get_beni_punto(id_punto):
+    punto = PuntoDistribuzione.query.filter_by(id=id_punto).first()
+
+    if not punto:
+        return jsonify({"error": "Punto di distribuzione non trovato"}), 404
+
+    beni = Bene.query.filter_by(punto_distribuzione_id=id_punto).all()
+
+    lista_beni = []
+    for b in beni:
+        lista_beni.append({
+            "id": b.id,
+            "nome": b.nome,
+            "quantita": b.quantita,
+            "tipo": b.tipo,
+            "sottocategoria": b.sottocategoria.nome
+        })
+
+    #pacco
+    if is_craftable(id_punto):
+        lista_beni.append({
+            "id": "pacco_standard",
+            "nome": "Pacco alimentare standard",
+            "quantita": 1,
+            "tipo": "pacco",
+            "sottocategoria": "Pacco"
+        })
+
+    return jsonify(lista_beni), 200
+
 
 @auth_bp.route("/prenotazione", methods=["POST"])
 @require_roles("beneficiario")
@@ -36,11 +68,24 @@ def prenotazione():
         UPLOAD_FOLDER = "uploads/ricette"
         os.makedirs(UPLOAD_FOLDER, exist_ok=True)
         ricetta_path = None
+        stato = "in_attesa"
 
-        id_punto_bisogno = request.form.get("id_punto_bisogno")
-        is_pacco = request.form.get("is_pacco")
+        #aggiunto supporto json per compatibilità con front-end
+        if request.is_json:
+            data = request.get_json()
+            id_punto_bisogno = data.get("punto_id")
+            id_bene = data.get("bene_id")
+            is_pacco = "True" if id_bene == "pacco_standard" else "False"
+            is_medicinale = "False"
+        else:
+            id_punto_bisogno = request.form.get("id_punto_bisogno")
+            id_bene = request.form.get("id_bene")
+            is_pacco = request.form.get("is_pacco")
+            is_medicinale = request.form.get("is_medicinale")
+
+
         user_email = session["user_email"]
-        is_medicinale = request.form.get("is_medicinale")
+
 
         punto_distribuzione = PuntoDistribuzione.query.filter_by(id=id_punto_bisogno).first()
         id_ente = punto_distribuzione.ente_erogatore_id
@@ -63,7 +108,7 @@ def prenotazione():
                 try:
                     checker.check("pacco")
                 except Exception as e:
-                    return jsonify({"error": str(e)}), 200
+                    return jsonify({"error": str(e)}), 400
 
                 sott_pane = SottoCategoria.query.filter_by(nome="Pane").first()
                 sott_pasta = SottoCategoria.query.filter_by(nome="Pasta").first()
@@ -156,6 +201,7 @@ def prenotazione():
             if ricetta.filename == "":
                 return jsonify({"error": "File ricetta non valido"}), 400
 
+            stato = "in_validazione"
             filename = secure_filename(ricetta.filename)
             ricetta_path = os.path.join(UPLOAD_FOLDER, filename)
             ricetta.save(ricetta_path)
@@ -172,7 +218,7 @@ def prenotazione():
             bene_id=bene.id,
             punto_id=punto_distribuzione.id,
             pacco_id=None,
-            stato="in_validazione"
+            stato=stato
         )
 
         bene.quantita -= 1
@@ -221,7 +267,7 @@ def conferma_prenotazione():
         return jsonify({"error": "Non hai i permessi per confermare la prenotazione"}), 401
     
     if prenotazione.stato != "in_attesa": 
-        return jsonify({"error": "La prenotazione non è pronta per il ritiro"}), 400
+        return jsonify({"error": "La prenotazione non è pronta per il ritiro o è già stata  ritirata"}), 400
     
     prenotazione.stato = "ritirata"
     db.session.commit()
@@ -336,7 +382,7 @@ def approva_ricetta():
 
 def cancella_prenotazione(prenotazione):
 
-    if prenotazione.stato == "Completata":
+    if prenotazione.stato == "ritirata":
         return False
 
     if prenotazione.pacco_id is not None:
@@ -387,3 +433,45 @@ def is_craftable(id_punto_bisogno):
             return False
 
     return True
+
+
+# Lista prenotazioni in attesa per i punti dell'ente loggato
+@auth_bp.route("/prenotazioni_ente", methods=["GET"])
+@require_roles("ente_erogatore")
+def prenotazioni_ente():
+    user_email = session.get("user_email")
+    ente = AccountEnteErogatore.query.filter_by(email=user_email).first()
+    if not ente:
+        return jsonify({"error": "Ente non trovato"}), 404
+
+    punti = PuntoDistribuzione.query.filter_by(ente_erogatore_id=ente.id, accettato=True).all()
+    punto_ids = [p.id for p in punti]
+
+    if not punto_ids:
+        return jsonify([]), 200
+
+    prenotazioni = Prenotazione.query.filter(
+        Prenotazione.punto_id.in_(punto_ids),
+        Prenotazione.stato.in_(["in_attesa", "in_validazione"])
+    ).order_by(Prenotazione.data_prenotazione.desc()).all()
+
+    result = []
+    for pr in prenotazioni:
+        if pr.bene_id:
+            bene_nome = pr.bene.nome if pr.bene else "N/A"
+        else:
+            bene_nome = "Pacco alimentare standard"
+
+        beneficiario = AccountBeneficiario.query.filter_by(id=pr.beneficiario_id).first()
+        beneficiario_nome = f"{beneficiario.nome} {beneficiario.cognome}" if beneficiario else "N/A"
+
+        result.append({
+            "id": pr.id,
+            "data_prenotazione": pr.data_prenotazione.strftime("%d/%m/%Y %H:%M") if pr.data_prenotazione else "N/A",
+            "stato": pr.stato,
+            "bene": bene_nome,
+            "punto": pr.punto.nome if pr.punto else "N/A",
+            "beneficiario": beneficiario_nome
+        })
+
+    return jsonify(result), 200
