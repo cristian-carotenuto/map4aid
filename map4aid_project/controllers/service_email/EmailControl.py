@@ -61,6 +61,12 @@ Map4Aid
             return False
 
     def invia_email_codice(self, email_utente, codice):
+        
+        print("\n===== OTP DEBUG =====")
+        print(f"Destinatario: {email_utente}")
+        print(f"Codice OTP: {codice}")
+        print("=====================\n")
+        
         msg = MIMEMultipart()
         msg["From"] = self.config["email"]
         msg["To"] = email_utente
