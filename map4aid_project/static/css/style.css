@@ -1,0 +1,31 @@
+body {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.sidebar {
+  background-color: #f0f0f0;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+#map {
+  height: 600px;
+  width: 100%;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.header-bg {
+  background-color: #28a745;
+}
+
+footer {
+  background-color: #343a40;
+}

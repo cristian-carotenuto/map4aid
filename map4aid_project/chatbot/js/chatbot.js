@@ -74,7 +74,9 @@
 
   // --- Quick replies ---
   const quickReplies = [
-    { key: "what", label: "Cos’è Aidano?", reply: "Aidano è l’assistente della piattaforma: ti aiuta a trovare info e guidarti nelle funzioni principali. Con Aidano, puoi navigare tra le sezioni della piattaforma in maniera più accessibile. Il chatbot sarà sempre disponibile in basso a destra per supporto rapido. Per ulteriore supporto puoi consultare la sezione FAQ o contattare l’assistenza (quando sarà attiva!)." },
+    { key: "what", label: "Cos’è Aidano?", reply: "Aidano è l’assistente della piattaforma: ti aiuta a trovare info e guidarti nelle funzioni principali." },
+    { key: "how", label: "Come funziona la piattaforma?", reply: "Puoi navigare tra le sezioni dal menu. Il chatbot sarà sempre disponibile in basso a destra per supporto rapido." },
+    { key: "faq", label: "FAQ / Contatti", reply: "Info statiche: per supporto puoi consultare la sezione FAQ o contattare l’assistenza (quando sarà attiva)." },
     { key: "free", label: "Ho un’altra domanda", reply: null }
   ];
 
@@ -141,70 +143,18 @@
   window.addEventListener("keydown", (e) => {
     if (!overlay.hidden && e.key === "Escape") close();
   });
-	// prova backend 1 
-	const API_URL = "/api/chat";
-
-const getHistoryForBackend = () => {
-  const raw = sessionStorage.getItem(STORAGE_KEY);
-  if (!raw) return [];
-  try {
-    const data = JSON.parse(raw);
-    // converte {who,text} -> {role,content}
-    return data.map(m => ({
-      role: m.who === "user" ? "user" : "assistant",
-      content: m.text
-    }));
-  } catch {
-    return [];
-  }
-};
-
-const askBackend = async (text) => {
-  const history = getHistoryForBackend();
-
-  const r = await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: text, history })
-  });
-
-  const data = await r.json().catch(() => ({}));
-
-  if (!r.ok) {
-    throw new Error(data.reply || ("HTTP " + r.status));
-  }
-  return data.reply || "";
-};
-
 
   // mock chat senza backend
- form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const text = input.value.trim();
-  if (!text) return;
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const text = input.value.trim();
+    if (!text) return;
 
-  addMsg(text, "user");
-  input.value = "";
+    addMsg(text, "user");
+    input.value = "";
 
-  setInputEnabled(false);
-  const typing = document.createElement("div");
-  typing.className = "cb__msg cb__msg--bot";
-  typing.textContent = "…";
-  messages.appendChild(typing);
-  messages.scrollTop = messages.scrollHeight;
-
-  try {
-    const reply = await askBackend(text);
-    typing.remove();
-    addMsg(reply || "Nessuna risposta dal server.", "bot");
-  } catch (err) {
-    typing.remove();
-    addMsg("Errore di connessione al server.", "bot");
-    console.error(err);
-  } finally {
-    setInputEnabled(true);
-    input.focus();
-  }
-});
-
+    setTimeout(() => {
+      addMsg("Backend non collegato: questa è una risposta demo.", "bot");
+    }, 400);
+  });
 })();

@@ -433,3 +433,45 @@ def is_craftable(id_punto_bisogno):
             return False
 
     return True
+
+
+# Lista prenotazioni in attesa per i punti dell'ente loggato
+@auth_bp.route("/prenotazioni_ente", methods=["GET"])
+@require_roles("ente_erogatore")
+def prenotazioni_ente():
+    user_email = session.get("user_email")
+    ente = AccountEnteErogatore.query.filter_by(email=user_email).first()
+    if not ente:
+        return jsonify({"error": "Ente non trovato"}), 404
+
+    punti = PuntoDistribuzione.query.filter_by(ente_erogatore_id=ente.id, accettato=True).all()
+    punto_ids = [p.id for p in punti]
+
+    if not punto_ids:
+        return jsonify([]), 200
+
+    prenotazioni = Prenotazione.query.filter(
+        Prenotazione.punto_id.in_(punto_ids),
+        Prenotazione.stato.in_(["in_attesa", "in_validazione"])
+    ).order_by(Prenotazione.data_prenotazione.desc()).all()
+
+    result = []
+    for pr in prenotazioni:
+        if pr.bene_id:
+            bene_nome = pr.bene.nome if pr.bene else "N/A"
+        else:
+            bene_nome = "Pacco alimentare standard"
+
+        beneficiario = AccountBeneficiario.query.filter_by(id=pr.beneficiario_id).first()
+        beneficiario_nome = f"{beneficiario.nome} {beneficiario.cognome}" if beneficiario else "N/A"
+
+        result.append({
+            "id": pr.id,
+            "data_prenotazione": pr.data_prenotazione.strftime("%d/%m/%Y %H:%M") if pr.data_prenotazione else "N/A",
+            "stato": pr.stato,
+            "bene": bene_nome,
+            "punto": pr.punto.nome if pr.punto else "N/A",
+            "beneficiario": beneficiario_nome
+        })
+
+    return jsonify(result), 200

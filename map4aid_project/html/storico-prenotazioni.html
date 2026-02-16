@@ -4,10 +4,7 @@
   <meta charset="UTF-8">
   <title>Storico Prenotazioni - Map4Aid</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../css/style.css">
-
-  <link rel="stylesheet" href="../chatbot/css/chatbot.css">
-
+  <link rel="stylesheet" href="{{ url_for('static', filename='static/css/style.css') }}">
   <style>
     .status-badge { font-size: 0.85em; padding: 0.4em 0.6em; }
     .prenotazione-card { border-left: 4px solid #28a745; transition: transform 0.2s; }
@@ -18,7 +15,7 @@
   <!-- Header dinamico -->
   <header class="header-bg text-white p-3 d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center">
-      <img src="../imgs/logo.png" alt="Logo Map4Aid" width="60" height="60" class="me-3 rounded-circle">
+      <img src="{{ url_for('static', filename='static/imgs/logo.png') }}" alt="Logo Map4Aid" width="60" height="60" class="me-3 rounded-circle">
       <h1 class="h4 mb-0 ms-3">MAP4AID</h1>
     </div>
     <div class="d-flex gap-2" id="auth-buttons"></div>
@@ -29,9 +26,9 @@
       <!-- Sidebar coerente con profilo.html e storico-donazioni.html -->
       <div class="col-md-3">
         <div class="list-group">
-          <a href="profilo.html" class="list-group-item list-group-item-action">Profilo</a>
-          <a href="storico-prenotazioni.html" class="list-group-item list-group-item-action active">Storico Prenotazioni</a>
-          <a href="storico-donazioni.html" class="list-group-item list-group-item-action">Storico Donazioni</a>
+          <a href="/profilo" class="list-group-item list-group-item-action">Profilo</a>
+          <a href="/storico-prenotazioni" class="list-group-item list-group-item-action active">Storico Prenotazioni</a>
+          <a href="/storico-donazioni" class="list-group-item list-group-item-action">Storico Donazioni</a>
         </div>
       </div>
 
@@ -39,7 +36,10 @@
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
             <h3 class="mb-0 text-center flex-grow-1">Le mie prenotazioni</h3>
-            <span class="badge bg-primary" id="conteggioPrenotazioni">Caricamento...</span>
+            <div class="d-flex gap-2 align-items-center">
+              <span class="badge bg-primary" id="conteggioPrenotazioni">Caricamento...</span>
+              <a href="/auth/storico_pdf" class="btn btn-outline-primary btn-sm" target="_blank">Scarica PDF</a>
+            </div>
           </div>
           <div class="card-body">
             <div class="mb-3">
@@ -59,18 +59,17 @@
       </div>
     </div>
   </div>
-  <script src="../../chatbot/js/loader.js"></script>
   <!-- Footer -->
   <footer class="bg-dark text-white text-center py-3 mt-4">
     <p>&copy; 2026 Map4Aid - Progetto Universitario</p>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../js/auth.js"></script>
+  <script src="{{ url_for('static', filename='static/js/auth.js') }}"></script>
   <script>
     if (!sessionStorage.getItem('isLoggedIn')) {
       showError('errorMessage', 'Accesso riservato agli utenti registrati');
-      setTimeout(() => window.location.href = 'login.html', 2000);
+      setTimeout(() => window.location.href = '/login', 2000);
     }
 
     function getBadgeClass(stato) {
@@ -107,7 +106,7 @@
       const conteggio = document.getElementById('conteggioPrenotazioni');
       container.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div></div>';
       try {
-        const response = await fetch('/prenotazioni');
+        const response = await fetch('/auth/prenotazioni');
         if (!response.ok) throw new Error('Errore');
         const prenotazioni = await response.json();
         conteggio.textContent = `${prenotazioni.length} prenotazioni`;

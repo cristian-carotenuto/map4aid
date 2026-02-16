@@ -41,25 +41,6 @@
     document.body.appendChild(wrapper.firstElementChild);
   }
 
-  // === BUBBLE INTRO (fuori dall'if) ===
-  if (
-    document.getElementById("chatbot-widget") &&
-    !sessionStorage.getItem("cbIntroShown") &&
-    !document.getElementById("cb-intro-bubble")
-  ) {
-    sessionStorage.setItem("cbIntroShown", "true");
-
-    const bubble = document.createElement("div");
-    bubble.id = "cb-intro-bubble";
-    bubble.innerText = "Ciao, sono Aidano 👋";
-    document.body.appendChild(bubble);
-
-    setTimeout(() => {
-      bubble.classList.add("cb-hide");
-      setTimeout(() => bubble.remove(), 2200);
-    }, 4500);
-  }
-
   // 3) JS logica chatbot
   const jsSrc = "../chatbot/js/chatbot.js";
   if (!document.querySelector(`script[src="${jsSrc}"]`)) {

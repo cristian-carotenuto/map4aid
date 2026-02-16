@@ -219,3 +219,19 @@ def crea_punto():
     except Exception as e:
         current_app.logger.error("DB error on creating punto", exc_info=e)
         return jsonify({"error": "db_error", "message": str(e)}), 500
+
+
+@api.route("/categorie", methods=["GET"])
+def get_categorie():
+    """Lista di tutte le sottocategorie raggruppate per macrocategoria"""
+    from models.models import MacroCategoria
+    macro_list = MacroCategoria.query.all()
+    result = []
+    for m in macro_list:
+        for s in m.sotto_categorie:
+            result.append({
+                "id": s.id,
+                "nome": s.nome,
+                "macro": m.nome
+            })
+    return jsonify(result), 200

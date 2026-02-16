@@ -1,7 +1,6 @@
 import os
 import secrets
 from datetime import datetime
-from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 from flask import session
 from werkzeug.security import generate_password_hash
@@ -17,6 +16,7 @@ def _build_extra_data(ruolo, data, files):
     # Gestione upload documento
     # -------------------------
     file_ci = files.get("carta_identita")
+    file_path = None
 
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -26,7 +26,7 @@ def _build_extra_data(ruolo, data, files):
         file_path = os.path.join(UPLOAD_FOLDER, unique_name)
         file_ci.save(file_path)
 
-    if ruolo == "beneficiario":
+    if ruolo == "beneficiario" and file_ci:
         return {
             "nome": data.get("nome"),
             "cognome": data.get("cognome"),
@@ -135,7 +135,6 @@ class AuthFacade:
         )
 
         PendingAccount.query.filter_by(email=email).delete(synchronize_session=False)
-        db.session.add(pending)
         db.session.add(pending)
         db.session.commit()
         session["pending_email"] = email

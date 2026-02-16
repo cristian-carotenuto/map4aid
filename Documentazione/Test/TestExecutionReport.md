@@ -1,4 +1,4 @@
-<img src="media/image1.png" style="width:1.32986in;height:1.32153in" />
+<img src="media/image1.png" style="width:1.64097in;height:1.63056in" />
 
 *TEST EXECUTION REPORT*
 

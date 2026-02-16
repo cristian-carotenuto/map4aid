@@ -9,6 +9,27 @@ import threading
 scorte_lock = threading.Lock()
 
 
+#lista punti dell'ente loggato (inclusi quelli in attesa di approvazione)
+@auth_bp.route("/miei_punti", methods=["GET"])
+@require_roles("ente_erogatore")
+def miei_punti():
+    user_email = session.get("user_email")
+    ente = AccountEnteErogatore.query.filter_by(email=user_email).first()
+    if not ente:
+        return jsonify({"error": "Ente non trovato"}), 404
+    punti = PuntoDistribuzione.query.filter_by(ente_erogatore_id=ente.id).all()
+    return jsonify([{
+        "id": p.id,
+        "nome": p.nome,
+        "giorni_apertura": p.giorni_apertura,
+        "orario_apertura": str(p.orario_apertura),
+        "orario_chiusura": str(p.orario_chiusura),
+        "latitudine": p.latitudine,
+        "longitudine": p.longitudine,
+        "accettato": p.accettato
+    } for p in punti]), 200
+
+
 #visualizza scorte
 
 @auth_bp.route("/scorte_punto", methods=["GET"])

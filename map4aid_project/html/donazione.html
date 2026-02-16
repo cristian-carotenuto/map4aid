@@ -4,16 +4,13 @@
   <meta charset="UTF-8">
   <title>Donazione - Map4Aid</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../css/style.css">
-
-  <link rel="stylesheet" href="../chatbot/css/chatbot.css">
-
+  <link rel="stylesheet" href="{{ url_for('static', filename='static/css/style.css') }}">
 </head>
 <body class="bg-light">
   <!-- Header dinamico -->
   <header class="header-bg text-white p-3 d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center">
-      <img src="../imgs/logo.png" alt="Logo Map4Aid" width="60" height="60" class="me-3 rounded-circle">
+      <img src="{{ url_for('static', filename='static/imgs/logo.png') }}" alt="Logo Map4Aid" width="60" height="60" class="me-3 rounded-circle">
       <h1 class="h4 mb-0 ms-3">MAP4AID</h1>
     </div>
     <div class="d-flex gap-2" id="auth-buttons"></div>
@@ -83,34 +80,21 @@
       </div>
     </div>
   </div>
-  <script src="../../chatbot/js/loader.js"></script>
   <!-- Footer -->
   <footer class="bg-dark text-white text-center py-3 mt-4">
     <p>&copy; 2026 Map4Aid - Progetto Universitario</p>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../js/auth.js"></script>
+  <script src="{{ url_for('static', filename='static/js/auth.js') }}"></script>
   <script>
-<<<<<<< HEAD
-    /**
-     * Invio del form di donazione
-     * Coerente con DonazioneMonetariaControl.py:
-     * - Metodo: POST
-     * - Dati: form-data
-     * - Campi richiesti: ente, importo, numero_carta, titolare_carta, scadenza_carta, cvv
-     */
-=======
     // Protezione: solo utenti loggati possono donare
     if (!sessionStorage.getItem('isLoggedIn')) {
       showError('errorMessage', 'Devi effettuare il login per donare');
       setTimeout(() => {
-        window.location.href = 'login.html';
+        window.location.href = '/login';
       }, 2000);
     }
-
-    // Invio form
->>>>>>> 74119fae10b68d158f93a6ed977814df03143aa5
     document.getElementById('donazioneForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const formData = new FormData(e.target);
@@ -121,7 +105,7 @@
 
       try {
         // ✅ Endpoint corretto con /auth/
-        const response = await fetch('/donazioneMonetaria', {
+        const response = await fetch('/auth/donazioneMonetaria', {
           method: 'POST',
           body: formData
         });
@@ -131,7 +115,7 @@
           // ✅ Usa showSuccess invece di alert()
           showSuccess('successMessage', 'Donazione effettuata con successo!');
           setTimeout(() => {
-            window.location.href = 'home.html';
+            window.location.href = '/h';
           }, 2000);
         } else {
           showError('errorMessage', data.errore || 'Errore durante la donazione');
@@ -146,6 +130,5 @@
   </script>
   <!-- ✅ Chatbot integrato -->
   <script src="../chatbot/js/loader.js"></script>
-  
 </body>
 </html>

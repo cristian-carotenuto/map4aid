@@ -75,6 +75,59 @@ def admin_confirm():
         return jsonify({"message": "Email inviata"}), 200
     return jsonify({"error": "Email non inviata"}), 400
 
+#lista beneficiari in attesa di approvazione
+@auth_bp.route("/admin/beneficiari_pending", methods=["GET"])
+@require_admin
+def admin_beneficiari_pending():
+    pending = AccountBeneficiario.query.filter_by(accettato=False).all()
+    result = []
+    for b in pending:
+        result.append({
+            "id": b.id,
+            "nome": b.nome,
+            "cognome": b.cognome,
+            "email": b.email,
+            "codice_carta_identita": b.codice_carta_identita
+        })
+    return jsonify(result), 200
+
+
+#lista punti distribuzione in attesa di approvazione
+@auth_bp.route("/admin/punti_pending", methods=["GET"])
+@require_admin
+def admin_punti_pending():
+    pending = PuntoDistribuzione.query.filter_by(accettato=False).all()
+    result = []
+    for p in pending:
+        ente = p.ente_erogatore
+        result.append({
+            "id": p.id,
+            "nome": p.nome,
+            "giorni_apertura": p.giorni_apertura,
+            "orario_apertura": str(p.orario_apertura),
+            "orario_chiusura": str(p.orario_chiusura),
+            "latitudine": p.latitudine,
+            "longitudine": p.longitudine,
+            "ente": ente.nome_organizzazione if ente else "N/A"
+        })
+    return jsonify(result), 200
+
+
+#rifiuta punto distribuzione
+@auth_bp.route("/admin/rifiuta_punto", methods=["POST"])
+@require_admin
+def admin_rifiuta_punto():
+    punto_id = request.form.get("punto_id")
+    if not punto_id:
+        return jsonify({"error": "ID del punto mancante"}), 400
+    punto = PuntoDistribuzione.query.filter_by(id=punto_id).first()
+    if not punto:
+        return jsonify({"error": "Punto non trovato"}), 404
+    db.session.delete(punto)
+    db.session.commit()
+    return jsonify({"message": f"Punto '{punto.nome}' rifiutato e rimosso"}), 200
+
+
 @auth_bp.route("/admin/accetta_punto", methods=["POST"])
 @require_admin
 def admin_accetta_punto():
