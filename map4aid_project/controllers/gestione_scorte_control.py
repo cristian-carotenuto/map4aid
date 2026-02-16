@@ -1,7 +1,7 @@
 from flask import request, session, jsonify
 from controllers.routes import auth_bp
 from controllers.permessi import require_roles
-from models.models import AccountEnteErogatore, PuntoDistribuzione, Bene, SottoCategoria
+from models.models import AccountEnteErogatore, PuntoDistribuzione, Bene, SottoCategoria, MacroCategoria
 from config import db
 import threading
 
@@ -138,35 +138,47 @@ def aggiungi_bene():
 
         quantita = int(quantita)
 
-        #controllo del punto
-        punto = PuntoDistribuzione.query.filter_by(
-            id=punto_id,
-            ente_erogatore_id=ente.id
-        ).first()
-
+        # 1. Controllo del punto (usiamo .get per velocità se l'ID è PK)
+        punto = PuntoDistribuzione.query.filter_by(id=punto_id, ente_erogatore_id=ente.id).first()
         if not punto:
             return jsonify({"error": "Punto non autorizzato"}), 403
 
-        #controllo della sottovategoria
-        sottocategoria = SottoCategoria.query.filter_by(id=sottocategoria_id).first()
+        # 2. Controllo della sottocategoria
+        sottocategoria = SottoCategoria.query.get(sottocategoria_id)
         if not sottocategoria:
             return jsonify({"error": "Sottocategoria non valida"}), 400
 
-        tipo_bene = sottocategoria.categoria.nome.lower()
+        # 3. Recupero della MacroCategoria e mappatura del TIPO
+        # Usiamo la relazione definita nel model per comodità
+        macro = sottocategoria.macro_categoria
+        nome_macro = macro.nome  # Qui prendiamo la stringa, es: "Alimenti"
 
-        # Creiamo il bene passando anche il tipo/categoria
-        bene = Bene(
+        # Mappatura per far coincidere il nome della Macro con la polymorphic_identity
+        mappa_tipi = {
+            "Alimenti": "alimentare",
+            "Medicinale": "medicinale",
+            "Vestiario": "vestiario",
+            "Igiene": "igiene",
+            "Mobilità": "mobilita"
+        }
+
+        # Se il nome della macro non è nella mappa, usiamo "bene" come fallback
+        tipo_identita = mappa_tipi.get(nome_macro, "bene")
+
+        # 4. Creazione del bene
+        # SQLAlchemy userà 'tipo' per capire che è un'istanza polimorfica
+        nuovo_bene = Bene(
             nome=nome,
             quantita=quantita,
             punto_distribuzione_id=punto_id,
             sottocategoria_id=sottocategoria_id,
-            tipo=tipo_bene
+            tipo=tipo_identita
         )
 
-        db.session.add(bene)
+        db.session.add(nuovo_bene)
         db.session.commit()
 
-        return jsonify({"message": "Bene aggiunto", "id": bene.id}), 200
+        return jsonify({"message": f"Bene di tipo {tipo_identita} aggiunto", "id": nuovo_bene.id}), 200
 
 
 
