@@ -1,4 +1,16 @@
 import os
+import requests
+import json
+
+
+from difflib import SequenceMatcher
+from pathlib import Path
+from flask import request, jsonify
+
+from config import db, migrate
+from models import Account
+from tasks import start_scheduler
+
 from flask import Flask
 from flask_login import LoginManager
 
@@ -6,6 +18,43 @@ from config import db, migrate
 from models import Account
 from tasks import start_scheduler
 from flask import render_template
+
+ #chatbot api defs
+
+DATASET_PATH = Path(__file__).parent / "chatbot" / "data" / "training_data_expanded.jsonl"
+
+
+def _normalize(s: str) -> str:
+    return " ".join((s or "").strip().lower().split())
+
+
+def load_qa_pairs(jsonl_path: Path):
+    pairs = []
+    with jsonl_path.open("r", encoding="utf-8") as f:
+        for line in f:
+            obj = json.loads(line)
+            msgs = obj.get("messages", [])
+            user = next((m.get("content") for m in reversed(msgs) if m.get("role") == "user"), None)
+            assistant = next((m.get("content") for m in reversed(msgs) if m.get("role") == "assistant"), None)
+            if user and assistant:
+                pairs.append((_normalize(user), assistant.strip()))
+
+    uniq = {}
+    for q, a in pairs:
+        uniq[q] = a
+    return list(uniq.items())
+
+
+def best_match_answer(query: str, qa_pairs, threshold: float = 0.75):
+    qn = _normalize(query)
+    best_score, best_ans = 0.0, None
+    for q, ans in qa_pairs:
+        score = SequenceMatcher(None, qn, q).ratio()
+        if score > best_score:
+            best_score, best_ans = score, ans
+    if best_score >= threshold:
+        return best_ans, best_score
+    return None, best_score
 
 
 def create_app():
@@ -40,6 +89,9 @@ def create_app():
     def load_user(user_id):
         return Account.query.get(int(user_id))
 
+    # carica dataset UNA volta all'avvio
+    qa_pairs = load_qa_pairs(DATASET_PATH)
+
     from controllers.routes import auth_bp
     from controllers import admin_control
     from controllers import two_fa_control
@@ -59,7 +111,45 @@ def create_app():
     app.register_blueprint(feedback_bp)
     app.register_blueprint(api_punti.api, url_prefix="/api")
     app.register_blueprint(auth_bp, url_prefix="/auth")
+    
+    QWEN_URL = "http://127.0.0.1:8000/chat"
 
+    @app.post("/api/chat")
+    def api_chat():
+        data = request.get_json(silent=True) or {}
+        message = (data.get("message") or "").strip()
+        history = data.get("history") or []
+
+        if not message:
+            return jsonify({"reply": "Scrivi un messaggio."}), 400
+
+        # 1) prova risposta canonica dal dataset
+        ans, score = best_match_answer(message, qa_pairs, threshold=0.78)
+
+        if ans:
+            return jsonify({
+                "reply": ans,
+                "source": "dataset",
+                "score": score
+            })
+
+        return jsonify({
+            "reply": "Non sono in grado di aiutarti. (Prompt troppo vago o incomprensibile)",
+            "source": "default",
+            "score": score
+        })
+
+
+        # 2) fallback a Qwen
+        try:
+            r = requests.post(QWEN_URL, json={"message": message, "history": history}, timeout=60)
+            r.raise_for_status()
+            out = r.json()
+            return jsonify({"reply": out.get("reply", ""), "source": "qwen", "score": score})
+        except Exception:
+            return jsonify({"reply": "Errore: servizio Aidano non raggiungibile."}), 502
+    
+    
     print(">>>>>Flask root:", os.getcwd())
 
     @app.route("/")
