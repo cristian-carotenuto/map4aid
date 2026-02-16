@@ -152,7 +152,16 @@ def aggiungi_bene():
         if not sottocategoria:
             return jsonify({"error": "Sottocategoria non valida"}), 400
 
-        bene = Bene(nome=nome, quantita=quantita, punto_distribuzione_id=punto_id, sottocategoria_id=sottocategoria_id)
+        tipo_bene = sottocategoria.categoria.nome.lower()
+
+        # Creiamo il bene passando anche il tipo/categoria
+        bene = Bene(
+            nome=nome,
+            quantita=quantita,
+            punto_distribuzione_id=punto_id,
+            sottocategoria_id=sottocategoria_id,
+            tipo=tipo_bene
+        )
 
         db.session.add(bene)
         db.session.commit()

@@ -40,6 +40,9 @@ def get_beni_punto(id_punto):
 
     lista_beni = []
     for b in beni:
+        if b.tipo and b.tipo.strip().lower() == "alimentare":
+            print(f"DEBUG: Sto saltando {b.nome} perché è alimentare")  # Vedrai questo nel terminale
+            continue
         lista_beni.append({
             "id": b.id,
             "nome": b.nome,

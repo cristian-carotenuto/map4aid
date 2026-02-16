@@ -96,23 +96,18 @@
 
     // Protezione: solo utenti loggati
     if (!sessionStorage.getItem('isLoggedIn')) {
-      showError('errorMessage', 'Devi effettuare il login per prenotare un pacco');
-      setTimeout(() => window.location.href = 'login.html', 2000);
+      // Nota: assicurati che la funzione showError sia definita in auth.js
+      console.error('Login richiesto');
       setTimeout(() => window.location.href = '/login', 2000);
     }
 
-    /**
-     * Estrae l'ID del punto dall'URL
-     */
     function getPointIdFromUrl() {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get('id');
     }
 
     /**
-     * Carica i pacchi disponibili per il punto.
-     * L'endpoint restituisce tutti i beni + il pacco (tipo "pacco") se è assemblabile.
-     * Filtriamo lato client per mostrare solo i pacchi.
+     * Carica sia i pacchi che i beni singoli
      */
     async function caricaPacchi(puntoId) {
       const container = document.getElementById('pacchiContainer');
@@ -122,77 +117,89 @@
         const response = await fetch(`/auth/punti/${puntoId}/beni`);
         if (!response.ok) throw new Error('Errore nel caricamento');
 
-        const beni = await response.json();
-        const pacchi = beni.filter(b => b.tipo === 'pacco');
+        const tuttiIBeni = await response.json();
+        console.log("Dati ricevuti:", tuttiIBeni); // Per debug
 
-        if (pacchi.length === 0) {
-          container.innerHTML = '<div class="col-12 alert alert-info">Nessun pacco disponibile in questo punto al momento. I pacchi vengono resi disponibili quando tutte le categorie alimentari (Pasta, Pane, Acqua, Carne, Pesce, Verdura) sono presenti.</div>';
+        if (!tuttiIBeni || tuttiIBeni.length === 0) {
+          container.innerHTML = '<div class="col-12 alert alert-info">Nessun bene o pacco disponibile in questo punto.</div>';
           return;
         }
 
-        container.innerHTML = pacchi.map(pacco => `
-          <div class="col-md-6">
-            <div class="card bene-card" onclick="selezionaPacco(${JSON.stringify(pacco).replace(/"/g, '&quot;')})">
-              <div class="card-body">
-                <h6 class="card-title">${pacco.nome}</h6>
-                <p class="card-text text-muted small mb-2">Contiene:</p>
-                <ul class="pacco-contenuto list-unstyled mb-0">
-                  <li>&#8226; Pasta</li>
-                  <li>&#8226; Pane</li>
-                  <li>&#8226; Acqua</li>
-                  <li>&#8226; Carne</li>
-                  <li>&#8226; Pesce</li>
-                  <li>&#8226; Verdura</li>
-                </ul>
+        container.innerHTML = tuttiIBeni.map(item => {
+          const isPacco = item.tipo === 'pacco';
+          // Usiamo una stringa JSON sicura per l'attributo onclick
+          const itemJSON = JSON.stringify(item).replace(/"/g, '&quot;');
+
+          return `
+            <div class="col-md-6">
+              <div class="card bene-card ${isPacco ? 'border-primary' : ''}" onclick="selezionaBene(${itemJSON})">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h6 class="card-title mb-0">${item.nome}</h6>
+                    <span class="badge ${isPacco ? 'bg-primary' : 'bg-secondary'}">
+                      ${isPacco ? 'Pacco' : (item.sottocategoria || 'Bene')}
+                    </span>
+                  </div>
+
+                  ${isPacco ? `
+                    <p class="card-text text-muted small mb-2">Contenuto standard:</p>
+                    <ul class="pacco-contenuto list-unstyled mb-0">
+                      <li>&#8226; Pasta, Pane, Acqua, Carne, Pesce, Verdura</li>
+                    </ul>
+                  ` : `
+                    <p class="card-text text-muted small">Quantità disponibile: ${item.quantita || 1}</p>
+                  `}
+                </div>
               </div>
             </div>
-          </div>
-        `).join('');
+          `;
+        }).join('');
+
       } catch (error) {
-        console.error('Errore caricamento pacchi:', error);
-        container.innerHTML = '<div class="col-12 alert alert-danger">Errore nel caricamento dei pacchi. Riprova più tardi.</div>';
-        showError('errorMessage', 'Impossibile caricare i pacchi. Riprova più tardi.');
+        console.error('Errore caricamento:', error);
+        container.innerHTML = '<div class="col-12 alert alert-danger">Errore nel caricamento dei dati dal server.</div>';
       }
     }
 
-    /**
-     * Seleziona un pacco e mostra il riepilogo
-     */
-    function selezionaPacco(pacco) {
-      paccoSelezionato = pacco;
-      document.getElementById('riepilogoPaccoNome').textContent = pacco.nome;
-      document.getElementById('riepilogoPaccoDescrizione').textContent =
-        'Il pacco contiene: Pasta, Pane, Acqua, Carne, Pesce, Verdura. Conferma per completare la prenotazione.';
+    function selezionaBene(item) {
+      paccoSelezionato = item;
+      document.getElementById('riepilogoPaccoNome').textContent = item.nome;
+
+      const descrizione = item.tipo === 'pacco'
+        ? 'Riceverai un pacco alimentare completo contenente i beni di prima necessità.'
+        : `Stai prenotando il seguente bene singolo: ${item.nome}.`;
+
+      document.getElementById('riepilogoPaccoDescrizione').textContent = descrizione;
       goToStep(2);
     }
 
-    /**
-     * Cambia step
-     */
     function goToStep(step) {
       document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
       document.getElementById(`step${step}`).classList.add('active');
     }
 
-    /**
-     * Conferma la prenotazione del pacco
-     */
     async function confermaPrenotazione() {
-      if (!paccoSelezionato) {
-        showError('errorMessageStep2', 'Seleziona prima un pacco');
-        return;
-      }
+      if (!paccoSelezionato) return;
 
       const confermaBtn = document.getElementById('confermaPrenotazioneBtn');
+      const errorMsg = document.getElementById('errorMessageStep2');
+
       confermaBtn.disabled = true;
-      confermaBtn.textContent = 'Conferma in corso...';
+      confermaBtn.textContent = 'Inviando...';
+      errorMsg.style.display = 'none';
 
       try {
         const formData = new FormData();
         formData.append('id_punto_bisogno', puntoId);
         formData.append('id_bene', paccoSelezionato.id);
-        formData.append('is_pacco', 'True');
-        formData.append('is_medicinale', 'False');
+
+        // Conversione booleana per il backend Flask
+        const isPacco = paccoSelezionato.tipo === 'pacco' ? 'True' : 'False';
+        formData.append('is_pacco', isPacco);
+
+        // Se il bene singolo è un medicinale (gestito tramite sottocategoria)
+        const isMedicinale = (paccoSelezionato.sottocategoria === 'Medicinali') ? 'True' : 'False';
+        formData.append('is_medicinale', isMedicinale);
 
         const response = await fetch('/auth/prenotazione', {
           method: 'POST',
@@ -200,39 +207,35 @@
         });
 
         const data = await response.json();
-        if (response.ok && data.message) {
+        if (response.ok) {
           document.getElementById('qrCodePlaceholder').innerHTML = `
-            <div class="mb-2">Prenotazione confermata!</div>
-            <div class="fw-bold">${data.message}</div>
-            <div class="mt-2 small text-muted">Controlla la tua email per i dettagli</div>
+            <div class="mb-2 text-success">Prenotazione confermata con successo!</div>
+            <div class="h4 fw-bold">${data.codice || 'QR-GENERATO'}</div>
+            <div class="small text-muted">Mostra questo codice al punto di ritiro.</div>
           `;
           goToStep(3);
         } else {
-          showError('errorMessageStep2', data.error || 'Errore durante la prenotazione');
+          errorMsg.textContent = data.error || 'Errore durante la prenotazione';
+          errorMsg.style.display = 'block';
         }
       } catch (error) {
-        console.error('Errore prenotazione:', error);
-        showError('errorMessageStep2', 'Errore di connessione al server. Riprova più tardi.');
+        console.error('Errore invio:', error);
+        errorMsg.textContent = 'Errore di connessione al server.';
+        errorMsg.style.display = 'block';
       } finally {
         confermaBtn.disabled = false;
         confermaBtn.textContent = 'Conferma Prenotazione';
       }
     }
 
-    // Inizializza la pagina
+    // Inizializzazione
     document.addEventListener('DOMContentLoaded', () => {
-      if (typeof updateAuthButtons === 'function') updateAuthButtons();
-
       puntoId = getPointIdFromUrl();
       if (!puntoId) {
-        showError('errorMessage', 'ID punto non valido');
-        setTimeout(() => window.location.href = '/', 2000);
+        alert('ID punto non trovato nell\'URL');
         return;
       }
-
       caricaPacchi(puntoId);
-
-      // Gestione pulsante conferma
       document.getElementById('confermaPrenotazioneBtn').addEventListener('click', confermaPrenotazione);
     });
   </script>
