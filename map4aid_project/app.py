@@ -13,13 +13,10 @@ def create_app():
     app = Flask(
         __name__,
         instance_relative_config=True,
-<<<<<<< HEAD
         template_folder="html",
         static_folder=".",
-        static_url_path=""
-=======
+        static_url_path="",
         template_folder="html"
->>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
     )
 
     #mi assicuro che esista la cartella instance
@@ -69,17 +66,14 @@ def create_app():
     @app.route("/")
     def home():
         return render_template("home.html")
-<<<<<<< HEAD
 
     @app.route("/<path:page>.html")
     def serve_page(page):
         return render_template(f"{page}.html")
-=======
     
     @app.route("/login")
     def login_page():
         return render_template("login.html")
->>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
 
     @app.route("/register")
     def register_page():

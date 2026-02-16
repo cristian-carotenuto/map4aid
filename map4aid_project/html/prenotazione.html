@@ -97,11 +97,8 @@
     // Protezione: solo utenti loggati
     if (!sessionStorage.getItem('isLoggedIn')) {
       showError('errorMessage', 'Devi effettuare il login per prenotare un pacco');
-<<<<<<< HEAD
       setTimeout(() => window.location.href = 'login.html', 2000);
-=======
       setTimeout(() => window.location.href = '/login', 2000);
->>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
     }
 
     /**

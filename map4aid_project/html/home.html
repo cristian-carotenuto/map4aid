@@ -23,11 +23,8 @@
     .star-rating label { font-size: 2rem; color: #ddd; cursor: pointer; transition: color 0.2s; }
     .star-rating input:checked ~ label,
     .star-rating label:hover,
-<<<<<<< HEAD
     .star-rating label:hover ~ label { color: #ffc107; }
-=======
     .star-rating label:hover ~ label { color: #ffc107; }    
->>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
   </style>
 </head>
 <body>
@@ -61,7 +58,6 @@
           <!-- Pulsante geolocalizzazione -->
           <button id="btnGeolocalizza" class="btn btn-success w-100 mb-3">Usa la mia posizione</button>
 
-<<<<<<< HEAD
           <!-- Pulsante segnalazione punto (toggle modalità click sulla mappa) -->
           <button id="btnSegnalaMappa" class="btn btn-warning w-100 mb-3">Segnala un punto sulla mappa</button>
           <div id="segnalazioneHint" class="alert alert-warning py-2 mb-3" style="display:none;">
@@ -71,10 +67,10 @@
 
           <!-- Pulsante feedback -->
           <button id="btnFeedback" class="btn btn-info text-white w-100 mb-3" onclick="apriFeedbackModal()">Lascia un feedback</button>
-=======
+
           <!-- Pulsante segnalazione punto -->
           <a href="/segnalazione" class="btn btn-warning w-100 mb-3">📍 Segnala un punto di raccolta</a>
->>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
+
 
           <!-- Pulsante feedback -->
           <button id="btnFeedback" class="btn btn-info text-white w-100 mb-3" onclick="apriFeedbackModal()">Lascia un feedback</button>          
@@ -714,11 +710,8 @@
     async function apriFeedbackModal() {
       if (!sessionStorage.getItem('isLoggedIn')) {
         showError('errorMessage', 'Devi effettuare il login per lasciare un feedback');
-<<<<<<< HEAD
         setTimeout(() => { window.location.href = 'login.html'; }, 2000);
-=======
         setTimeout(() => { window.location.href = '/login'; }, 2000);
->>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
         return;
       }
 
@@ -813,10 +806,6 @@
         btn.textContent = 'Invia Feedback';
       }
     });
-<<<<<<< HEAD
-=======
-    
->>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
   </script>
   <!-- Chatbot integrato -->
   <script src="../chatbot/js/loader.js"></script>

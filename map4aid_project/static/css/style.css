@@ -1,16 +1,7 @@
 body {
   background-color: #f8f9fa;
-<<<<<<< HEAD
-<<<<<<< HEAD:map4aid_project/css/style.css
   min-height: 100vh;
-=======
->>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345:map4aid_project/static/css/style.css
-=======
-<<<<<<<< HEAD:map4aid_project/css/style.css
   min-height: 100vh;
-========
->>>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345:map4aid_project/static/css/style.css
->>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
   min-height: 100dvh;
   display: grid;
   grid-template-rows: auto 1fr auto;

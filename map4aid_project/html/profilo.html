@@ -20,15 +20,12 @@
     <div class="row">
       <!-- Sidebar dinamica per ruolo -->
       <div class="col-md-3">
-<<<<<<< HEAD
         <div id="sidebar" class="list-group">
           <a href="profilo.html" class="list-group-item list-group-item-action active">Profilo</a>
-=======
         <div class="list-group">
           <a href="/profilo" class="list-group-item list-group-item-action active">Profilo</a>
           <a href="/storico-prenotazioni" class="list-group-item list-group-item-action">Storico Prenotazioni</a>
           <a href="/storico-donazioni" class="list-group-item list-group-item-action">Storico Donazioni</a>
->>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
         </div>
       </div>
 
@@ -62,18 +59,15 @@
       showError('errorMessage', 'Devi effettuare il login per accedere al profilo');
       setTimeout(() => window.location.href = '/login', 2000);
     } else {
-<<<<<<< HEAD
       fetch('/auth/profilo')
         .then(r => {
           if (!r.ok) throw new Error();
           return r.json();
-=======
       // Carica dati profilo
       fetch('/auth/profilo')
         .then(response => {
           if (!response.ok) throw new Error('Errore nel caricamento del profilo');
           return response.json();
->>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
         })
         .then(data => {
           const tipo = data.tipo;
@@ -139,7 +133,8 @@
           document.getElementById('loadingMessage').style.display = 'none';
           showError('errorMessage', 'Impossibile caricare il profilo. Riprova più tardi.');
         });
-    }
+    })
+  }
   </script>
   <script src="../js/chatbot/js/loader.js"></script>
 </body>
