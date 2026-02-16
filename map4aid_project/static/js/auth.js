@@ -108,7 +108,6 @@ function updateAuthButtons() {
       <a href="/ente-punti" class="btn btn-light">I miei punti</a>
       <a href="/ente-prenotazioni" class="btn btn-light">Prenotazioni</a>
       <a href="/profilo" class="btn btn-light">Profilo</a>
-      <a href="/profilo" class="btn btn-light">Profilo</a>
       <button class="btn btn-light" onclick="handleLogout()">Logout</button>
     `;
   } else if (isLoggedIn() && role === 'donatore') {
@@ -116,7 +115,8 @@ function updateAuthButtons() {
       <a href="/" class="btn btn-light">Home</a>
       <a href="/donazione" class="btn btn-light">Donazione monetaria</a>
       <a href="/donazione-beni" class="btn btn-light">Donazione beni</a>
-      <a href="/profilo" class="btn btn-light">Profilo</a>`;
+      <a href="/profilo" class="btn btn-light">Profilo</a>
+      <button class="btn btn-light" onclick="handleLogout()">Logout</button>`;
    } else if (isLoggedIn()) {
     container.innerHTML = `
       <a href="/" class="btn btn-light">Home</a>
