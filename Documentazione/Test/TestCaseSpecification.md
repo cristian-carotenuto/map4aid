@@ -6,13 +6,13 @@
 
 # Sommario
 
-[**1. SPECIFICA [4](#specifica)**](#specifica)
+[**1. SPECIFICA** [**4**](#specifica)](#specifica)
 
-[**2. TEST DESIGN [1](#_Toc222091008)**](#_Toc222091008)
+[**2. TEST DESIGN** [**1**](#_Toc222091008)](#_Toc222091008)
 
-[**3. TEST FRAME [12](#test-frame)**](#test-frame)
+[**3. TEST FRAME** [**12**](#test-frame)](#test-frame)
 
-[**4. SPECIFICHE DEI TEST CASE [20](#specifiche-dei-test-case)**](#specifiche-dei-test-case)
+[**4. SPECIFICHE DEI TEST CASE** [**20**](#specifiche-dei-test-case)](#specifiche-dei-test-case)
 
 All’interno di questo documento viene riportata l’applicazione della metodologia di individuazione dei casi di test definita nel Test Plan (TP).
 
@@ -523,7 +523,7 @@ Se le tabelle delle categorie non esistono nello schema, il filtro viene ignorat
 </tbody>
 </table>
 
-## UC6 Segnalazione di un punto di bisogno
+## UC5 Prenotazione e Ritiro Beni di Prima Necessità
 
 <table>
 <colgroup>
@@ -536,6 +536,108 @@ Se le tabelle delle categorie non esistono nello schema, il filtro viene ignorat
 <th><h2 id="parametro-1" class="unnumbered">Parametro</h2></th>
 <th><h2 id="categoria-1" class="unnumbered">Categoria</h2></th>
 <th><h2 id="vincoli-e-proprietà-1" class="unnumbered">Vincoli e proprietà</h2></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><h2 id="id_punto_bisogno" class="unnumbered">id_punto_bisogno</h2></td>
+<td><h2 id="esistenza-punto-pd" class="unnumbered">Esistenza Punto (PD)</h2></td>
+<td><h2 id="il-punto-di-distribuzione-esiste-if-au_okproprietà-pd_ok" class="unnumbered">1. Il punto di distribuzione esiste → <strong>[IF AU_OK][Proprietà PD_OK]</strong></h2>
+<p>2. Punto mancante o inesistente → <strong>[IF AU_OK][ERR]</strong></p></td>
+</tr>
+<tr class="even">
+<td>tipo_prenotazione</td>
+<td>Tipo (<strong>TP)</strong></td>
+<td>1. is_pacco=True (pacco alimentare) → <strong>[IF PD_OK][Proprietà TP_PACCO]</strong><br />
+2. is_medicinale=True (bene medicinale) → <strong>[IF PD_OK][Proprietà TP_MED]</strong><br />
+3. Bene singolo generico/alimentare → <strong>[IF PD_OK][Proprietà TP_BENE]</strong></td>
+</tr>
+<tr class="odd">
+<td><h2 id="id_bene" class="unnumbered">id_bene</h2></td>
+<td><h2 id="esistenza-bene-be" class="unnumbered">Esistenza Bene (BE)</h2></td>
+<td><h2 id="il-bene-esiste-nel-punto-if-tp_bene-or-tp_medproprietà-be_ok" class="unnumbered">1. Il bene esiste nel punto → [IF TP_BENE OR TP_MED][Proprietà BE_OK]</h2>
+<p>2. Il bene non esiste → [IF TP_BENE OR TP_MED][ERR]</p>
+<h2 id="section-2" class="unnumbered"></h2></td>
+</tr>
+<tr class="even">
+<td><h2 id="utente" class="unnumbered">Utente</h2></td>
+<td><h2 id="utente-autenticato-ua" class="unnumbered">Utente Autenticato (UA)</h2></td>
+<td><h2 id="ruolo-autorizzato-ua_ok" class="unnumbered">1. Ruolo autorizzato → [UA_OK]</h2>
+<h2 id="utente-non-loggatonon-autorizzato-err" class="unnumbered">2. Utente non loggato/non autorizzato → [ERR]</h2></td>
+</tr>
+<tr class="odd">
+<td><h2 id="bene" class="unnumbered">bene</h2></td>
+<td><h2 id="disponibilità-bd" class="unnumbered">Disponibilità (BD)</h2></td>
+<td><h2 id="quantità-1-if-be_okproprietà-bd_ok" class="unnumbered">1. Quantità ≥ 1 → [IF BE_OK][Proprietà BD_OK]</h2>
+<p>2. Quantità &lt; 1 → [IF BE_OK][ERR]</p></td>
+</tr>
+<tr class="even">
+<td><h2 id="email-1" class="unnumbered">Email</h2></td>
+<td><h2 id="invio-email-em" class="unnumbered">Invio Email (EM)</h2></td>
+<td><h2 id="inviata-correttamente-a-tutti-em_ok" class="unnumbered">1. Inviata correttamente a tutti → [EM_OK]</h2></td>
+</tr>
+<tr class="odd">
+<td><h2 id="ricetta" class="unnumbered">ricetta</h2></td>
+<td><h2 id="presenza-file-rc" class="unnumbered">Presenza File <strong>(RC)</strong></h2></td>
+<td><h2 id="file-ricetta-presente-e-valido-if-tp_med-and-bd_okproprietà-rc_ok" class="unnumbered">1. File ricetta presente e valido → [IF TP_MED AND BD_OK][Proprietà RC_OK]</h2>
+<p>2. File ricetta mancante → [IF TP_MED AND BD_OK][ERR]</p></td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 26%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><h2 id="disponibilita_pacco" class="unnumbered">disponibilita_pacco</h2></th>
+<th><h2 id="craftable-cr" class="unnumbered">Craftable <strong>(CR)</strong></h2></th>
+<th><h2 id="tutti-i-beni-necessari-per-il-pacco-sono-disponibili-if-tp_paccoproprietà-cr_ok" class="unnumbered">1. Tutti i beni necessari per il pacco sono disponibili → [IF TP_PACCO][Proprietà CR_OK]</h2>
+<p>2. Uno o più beni mancanti o con quantità insufficiente → [IF TP_PACCO][ERR]</p></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+<table>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 26%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><h2 id="limite_prenotazioni" class="unnumbered">limite_prenotazioni</h2></th>
+<th><h2 id="checker-lm" class="unnumbered">Checker <strong>(LM)</strong></h2></th>
+<th><h2 id="lutente-può-ancora-prenotare-if-tp_pacco-and-cr_okproprietà-lm_ok" class="unnumbered">1. L'utente può ancora prenotare → [IF TP_PACCO AND CR_OK][Proprietà LM_OK]</h2>
+<p>2. L'utente ha raggiunto il limite di prenotazioni → [IF TP_PACCO AND CR_OK][ERR]</p></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+## 
+
+## 
+
+## UC6 Segnalazione di un punto di bisogno
+
+<table>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 26%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><h2 id="parametro-2" class="unnumbered">Parametro</h2></th>
+<th><h2 id="categoria-2" class="unnumbered">Categoria</h2></th>
+<th><h2 id="vincoli-e-proprietà-2" class="unnumbered">Vincoli e proprietà</h2></th>
 </tr>
 </thead>
 <tbody>
@@ -556,13 +658,13 @@ Se le tabelle delle categorie non esistono nello schema, il filtro viene ignorat
 <td><h2 id="validità-dati-vd" class="unnumbered">Validità Dati (VD)</h2></td>
 <td><h2 id="testo-presente-vd_ok" class="unnumbered">1. Testo presente → [VD_OK]</h2>
 <h2 id="campo-vuoto-err" class="unnumbered">2. Campo vuoto → [ERR]</h2>
-<h2 id="section-2" class="unnumbered"></h2></td>
+<h2 id="section-5" class="unnumbered"></h2></td>
 </tr>
 <tr class="even">
-<td><h2 id="utente" class="unnumbered">Utente</h2></td>
-<td><h2 id="utente-autenticato-ua" class="unnumbered">Utente Autenticato (UA)</h2></td>
-<td><h2 id="ruolo-autorizzato-ua_ok" class="unnumbered">1. Ruolo autorizzato → [UA_OK]</h2>
-<h2 id="utente-non-loggatonon-autorizzato-err" class="unnumbered">2. Utente non loggato/non autorizzato → [ERR]</h2></td>
+<td><h2 id="utente-1" class="unnumbered">Utente</h2></td>
+<td><h2 id="utente-autenticato-ua-1" class="unnumbered">Utente Autenticato (UA)</h2></td>
+<td><h2 id="ruolo-autorizzato-ua_ok-1" class="unnumbered">1. Ruolo autorizzato → [UA_OK]</h2>
+<h2 id="utente-non-loggatonon-autorizzato-err-1" class="unnumbered">2. Utente non loggato/non autorizzato → [ERR]</h2></td>
 </tr>
 <tr class="odd">
 <td><h2 id="enti-destinatari" class="unnumbered">Enti Destinatari</h2></td>
@@ -570,9 +672,9 @@ Se le tabelle delle categorie non esistono nello schema, il filtro viene ignorat
 <td><h2 id="lista-enti-erogatori-caricata-correttamente-im_ok" class="unnumbered">1. Lista enti erogatori caricata correttamente → [IM_OK]</h2></td>
 </tr>
 <tr class="even">
-<td><h2 id="email-1" class="unnumbered">Email</h2></td>
-<td><h2 id="invio-email-em" class="unnumbered">Invio Email (EM)</h2></td>
-<td><h2 id="inviata-correttamente-a-tutti-em_ok" class="unnumbered">1. Inviata correttamente a tutti → [EM_OK]</h2></td>
+<td><h2 id="email-2" class="unnumbered">Email</h2></td>
+<td><h2 id="invio-email-em-1" class="unnumbered">Invio Email (EM)</h2></td>
+<td><h2 id="inviata-correttamente-a-tutti-em_ok-1" class="unnumbered">1. Inviata correttamente a tutti → [EM_OK]</h2></td>
 </tr>
 <tr class="odd">
 <td><h2 id="esito" class="unnumbered">Esito</h2></td>
@@ -1014,7 +1116,7 @@ messaggio_errore --&gt; Descrittivo (<strong>DE</strong>)</td>
 <col style="width: 9%" />
 <col style="width: 9%" />
 <col style="width: 10%" />
-<col style="width: 10%" />
+<col style="width: 9%" />
 <col style="width: 9%" />
 <col style="width: 10%" />
 <col style="width: 10%" />
@@ -1128,6 +1230,21 @@ messaggio_errore --&gt; Descrittivo (<strong>DE</strong>)</td>
 </tbody>
 </table>
 
+**UC5** Prenotazione Ritiro Beni di Prima Necessità
+
+| **Test Case** | **AU**    | **PD**    | **TP**       | **CR**    | **LM**    | **BE**    | **BD**    | **RC**    | **EM**    | **Esito atteso**                         |
+|---------------|-----------|-----------|--------------|-----------|-----------|-----------|-----------|-----------|-----------|------------------------------------------|
+| **TC01**      | **ERR**   | **-**     | **-**        | **-**     | **-**     | **-**     | **-**     | **-**     | **-**     | \[ERR\] Non autenticato                  |
+| **TC02**      | **ERR**   | **-**     | **-**        | **-**     | **-**     | **-**     | **-**     | **-**     | **-**     | \[ERR\] Ruolo NON AUTORIZZATO            |
+| **TC03**      | **AU_OK** | **PD_OK** | **TP_BENE**  | **-**     | **-**     | **ERR**   | **-**     | **-**     | **-**     | \[ERR\] Bene non trovato                 |
+| **TC04**      | **AU_OK** | **PD_OK** | **TP_BENE**  | **-**     | **-**     | **BD_OK** | **ERR**   | **-**     | **-**     | \[ERR\] Bene non disponibile             |
+| **TC05**      | **AU_OK** | **PD_OK** | **TP_BENE**  | **-**     | **-**     | **BE_OK** | **BD_OK** | **-**     | **EM_OK** | Prenotazione bene completata disponibile |
+| **TC06**      | **AU_OK** | **PD_OK** | **TP_PACCO** | **ERR**   | **-**     | **BE_PK** | **BD_OK** | **-**     | **EM_OK** | ERR\] Beni non disponibili per il pqcco  |
+| **TC07**      | **AU_OK** | **PD_OK** | **TP_PACCO** | **CR_OK** | **ERR**   | **-**     | **-**     | **-**     | **-**     | \[ERR\] Limite prenotazioni raggiunto    |
+| **TC08**      | **AU_OK** | **PD_OK** | **TP_PACCO** | **CR_OK** | **LM_OK** | **-**     | **-**     | **-**     | **EM_OK** | Prenotazione pacco completata            |
+| **TC09**      | **AU_OK** | **BE_OK** | **TP_MED**   | **-**     | **-**     | **BE_OK** | **BD_OK** | **ERR**   | **-**     | \[ERR\] Ricetta mancante                 |
+| **TC10**      | **AU_OK** | **BE_OK** | **TP_MED**   | **-**     | **-**     | **BE_OK** | **BD_OK** | **RC_OK** | **EM_OK** | Prenotazione medicinale completata       |
+
 **UC6 Segnalazione di un punto di bisogno**
 
 | **Test Case** | **VP** | **VD** | **UA** | **IM** | **EM** | **ES** | **Esito atteso**                                 |
@@ -1227,22 +1344,6 @@ messaggio_errore --&gt; Descrittivo (<strong>DE</strong>)</td>
 | **TC05**      | **AU_OK** | **RU_DON** | **-**      | **DB_HAS** | **DM_HAS** | PDF Generato con successo con i dati presenti nel database                           |
 | **TC06**      | **AU_OK** | **RU_ENT** | **PR_0**   | **DB_0**   | **DM_0**   | PDF generato con successo ma vuoto perché non esistono attività associate all’utente |
 | **TC07**      | **AU_OK** | **RU_ENT** | **PR_HAS** | **DB_HAS** | **DM_HAS** | PDF Generato con successo con i dati presenti nel database                           |
-
-**UC10** **Invio Valutazione e Feedback**
-
-| **Test Case** | **AU**    | **BE**    | **ID**    | **PR**    | **OWN**    | **ST**    | **VR**    | **FB**    | **DB**    | **Esito atteso**                       |
-|---------------|-----------|-----------|-----------|-----------|------------|-----------|-----------|-----------|-----------|----------------------------------------|
-| **TC01**      | **AU_OK** | **BE_OK** | **ID_OK** | **PR_OK** | **OWN_OK** | **ST_OK** | **VR_OK** | **FB_OK** | **DB_OK** | 201 Feedback creato                    |
-| **TC02**      | **ERR**   | **-**     | **-**     | **-**     | **-**      | **-**     | **-**     | **-**     | **-**     | 401 Non autenticato                    |
-| **TC03**      | **AU_OK** | **BE_OK** | **ERR**   | **-**     | **-**      | **-**     | **-**     | **-**     | **-**     | 400 ID non valido                      |
-| **TC04**      | **AU_OK** | **BE_OK** | **ID_OK** | **PR_OK** | **OWN_OK** | **ST_OK** | **ERR**   | **-**     | **-**     | 400 Valutazione non valida             |
-| **TC05**      | **AU_OK** | **ERR**   | **-**     | **-**     | **-**      | **-**     | **-**     | **-**     | **-**     | 404 Beneficiario non trovato           |
-| **TC06**      | **AU_OK** | **BE_OK** | **ID_OK** | **ERR**   | **-**      | **-**     | **-**     | **-**     | **-**     | 404 Prenotazione non trovata           |
-| **TC07**      | **AU_OK** | **BE_OK** | **ID_OK** | **PR_OK** | **ERR**    | **-**     | **-**     | **-**     | **-**     | 403 Non autorizzato                    |
-| **TC08**      | **AU_OK** | **BE_OK** | **ID_OK** | **PR_OK** | **OWN_OK** | **ERR**   | **-**     | **-**     | **-**     | 400 Prenotazione non ritirata          |
-| **TC09**      | **AU_OK** | **BE_OK** | **ID_OK** | **PR_OK** | **OWN_OK** | **ST_OK** | **VR_OK** | **ERR**   | **-**     | 409 Feedback già inviato               |
-| **TC10**      | **AU_OK** | **BE_OK** | **ID_OK** | **PR_OK** | **OWN_OK** | **ST_OK** | **VR_OK** | **FB_OK** | **DB_OK** | 201 Feedback creato (recensione vuota) |
-| **TC11**      | **AU_OK** | **BE_OK** | **ID_OK** | **PR_OK** | **OWN_OK** | **ST_OK** | **VR_OK** | **FB_OK** | **ERR**   | 500 db_error                           |
 
 **UC11 Filtraggio della mappa**
 
@@ -1942,7 +2043,7 @@ Per ciascun test case vengono definiti:
 
 <table>
 <colgroup>
-<col style="width: 50%" />
+<col style="width: 49%" />
 <col style="width: 50%" />
 </colgroup>
 <thead>
@@ -2072,7 +2173,7 @@ Il feedback viene salvato nel database e viene restituito HTTP 201 – "Feedback
 
 <table>
 <colgroup>
-<col style="width: 50%" />
+<col style="width: 49%" />
 <col style="width: 50%" />
 </colgroup>
 <thead>
