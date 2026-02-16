@@ -21,7 +21,7 @@
       <!-- Sidebar dinamica per ruolo -->
       <div class="col-md-3">
         <div id="sidebar" class="list-group">
-          <a href="profilo.html" class="list-group-item list-group-item-action active">Profilo</a>
+          <a href="/profilo" class="list-group-item list-group-item-action active">Profilo</a>
         <div class="list-group">
           <a href="/profilo" class="list-group-item list-group-item-action active">Profilo</a>
           <a href="/storico-prenotazioni" class="list-group-item list-group-item-action">Storico Prenotazioni</a>
@@ -82,19 +82,19 @@
           // === SIDEBAR per ruolo ===
           if (tipo === 'beneficiario') {
             sidebar.innerHTML = `
-              <a href="profilo.html" class="list-group-item list-group-item-action active">Profilo</a>
-              <a href="storico-prenotazioni.html" class="list-group-item list-group-item-action">Storico Prenotazioni</a>
-              <a href="storico-donazioni.html" class="list-group-item list-group-item-action">Storico Donazioni</a>
+              <a href="/profilo" class="list-group-item list-group-item-action active">Profilo</a>
+              <a href="/storico-prenotazioni" class="list-group-item list-group-item-action">Storico Prenotazioni</a>
+              <a href="/storico-donazioni" class="list-group-item list-group-item-action">Storico Donazioni</a>
             `;
           } else if (tipo === 'donatore') {
             sidebar.innerHTML = `
-              <a href="profilo.html" class="list-group-item list-group-item-action active">Profilo</a>
-              <a href="storico-donazioni.html" class="list-group-item list-group-item-action">Storico Donazioni</a>
+              <a href="/profilo" class="list-group-item list-group-item-action active">Profilo</a>
+              <a href="/storico-donazioni" class="list-group-item list-group-item-action">Storico Donazioni</a>
             `;
           } else if (tipo === 'ente_erogatore') {
             sidebar.innerHTML = `
-              <a href="profilo.html" class="list-group-item list-group-item-action active">Profilo</a>
-              <a href="ente-punti.html" class="list-group-item list-group-item-action">I miei punti</a>
+              <a href="/profilo" class="list-group-item list-group-item-action active">Profilo</a>
+              <a href="/ente-punti" class="list-group-item list-group-item-action">I miei punti</a>
             `;
           }
 

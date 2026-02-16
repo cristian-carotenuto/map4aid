@@ -15,7 +15,7 @@
   <!-- Header dinamico -->
   <header class="header-bg text-white p-3 d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center">
-      <img src="../imgs/logo.png" alt="Logo Map4Aid" width="60" height="60" class="me-3 rounded-circle">
+      <img src="{{ url_for('static', filename='static/imgs/logo.png') }}" alt="Logo Map4Aid" width="60" height="60" class="me-3 rounded-circle">
       <h1 class="h4 mb-0 ms-3">MAP4AID</h1>
     </div>
     <div class="d-flex gap-2" id="auth-buttons"></div>
@@ -26,9 +26,9 @@
       <!-- Sidebar -->
       <div class="col-md-3">
         <div class="list-group">
-          <a href="profilo.html" class="list-group-item list-group-item-action">Profilo</a>
-          <a href="ente-punti.html" class="list-group-item list-group-item-action">I miei punti</a>
-          <a href="ente-prenotazioni.html" class="list-group-item list-group-item-action">Prenotazioni</a>
+          <a href="/profilo" class="list-group-item list-group-item-action">Profilo</a>
+          <a href="/ente-punti" class="list-group-item list-group-item-action">I miei punti</a>
+          <a href="/ente-prenotazioni" class="list-group-item list-group-item-action">Prenotazioni</a>
           <a href="#" class="list-group-item list-group-item-action active">Gestione scorte</a>
         </div>
       </div>
@@ -130,11 +130,11 @@
   <script>
     // Protezione accesso
     if (!isLoggedIn() || getUserRole() !== 'ente_erogatore') {
-      window.location.href = 'login.html';
+      window.location.href = '/login';
     }
 
     const puntoId = new URLSearchParams(window.location.search).get('punto_id');
-    if (!puntoId) window.location.href = 'ente-punti.html';
+    if (!puntoId) window.location.href = '/ente-punti';
 
     function showAlert(msg, type) {
       const area = document.getElementById('alertArea');
@@ -185,7 +185,7 @@
       try {
         const res = await fetch(`/auth/scorte_punto?punto_id=${puntoId}`);
         if (res.status === 401 || res.status === 403) {
-          window.location.href = 'login.html'; return;
+          window.location.href = '/login'; return;
         }
         if (!res.ok) throw new Error();
         const data = await res.json();

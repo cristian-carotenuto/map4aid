@@ -10,7 +10,7 @@
   <!-- Header dinamico -->
   <header class="header-bg text-white p-3 d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center">
-      <img src="../imgs/logo.png" alt="Logo Map4Aid" width="60" height="60" class="me-3 rounded-circle">
+      <img src="{{ url_for('static', filename='static/imgs/logo.png') }}" alt="Logo Map4Aid" width="60" height="60" class="me-3 rounded-circle">
       <h1 class="h4 mb-0 ms-3">MAP4AID</h1>
     </div>
     <div class="d-flex gap-2" id="auth-buttons"></div>
@@ -52,7 +52,7 @@
   <script>
     // Se già loggato come admin, reindirizza subito alla dashboard
     if (getUserRole() === 'admin' && isLoggedIn()) {
-      window.location.href = 'admin-dashboard.html';
+      window.location.href = '/admin-dashboard';
     }
 
     document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
@@ -75,7 +75,7 @@
           // Salva lo stato admin nello stesso modo degli utenti normali
           saveLoginState(document.getElementById('email').value, 'admin');
           sessionStorage.setItem('is_admin', 'true');
-          window.location.href = 'admin-dashboard.html';
+          window.location.href = '/admin-dashboard';
         } else {
           showError('errorMessage', data.error || 'Credenziali non valide');
         }

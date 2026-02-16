@@ -66,10 +66,6 @@ def create_app():
     def home():
         return render_template("home.html")
 
-    @app.route("/<path:page>.html")
-    def serve_page(page):
-        return render_template(f"{page}.html")
-    
     @app.route("/login")
     def login_page():
         return render_template("login.html")
@@ -78,6 +74,10 @@ def create_app():
     def register_page():
         return render_template("register.html")
 
+    @app.route("/profilo")
+    def profilo_page():
+        return render_template("profilo.html")
+    
     @app.route("/donazione")
     def donazione_page():
         return render_template("donazione.html")
@@ -110,6 +110,26 @@ def create_app():
     def prenotazione_page():
         return render_template("prenotazione.html")
     
+    @app.route("/ente-prenotazioni")
+    def enteprenotazione_page():
+        return render_template("ente-prenotazioni.html")
+    
+    @app.route("/ente-punti")
+    def entepunti_page():
+        return render_template("ente-punti.html")
+        
+    @app.route("/ente-scorte")
+    def entescorte_page():
+        return render_template("ente-scorte.html")
+            
+    @app.route("/admin-dashboard")
+    def admindashboard_page():
+        return render_template("admin-dashboard.html")
+
+    @app.route("/admin-login")
+    def adminlogin_page():
+        return render_template("admin-login.html")
+                            
     if os.environ.get('WERKZEUG_RUN_MAIN') == 'true' or not app.debug:
         start_scheduler(app)
 

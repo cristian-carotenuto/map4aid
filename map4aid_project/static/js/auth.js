@@ -98,8 +98,8 @@ function updateAuthButtons() {
   let role = getUserRole();
   if (isLoggedIn() && role === 'admin') {
     container.innerHTML = `
-      <a href="home.html" class="btn btn-light">Home</a>
-      <a href="admin-dashboard.html" class="btn btn-light">Pannello Admin</a>
+      <a href="/" class="btn btn-light">Home</a>
+      <a href="/admin-dashboard" class="btn btn-light">Pannello Admin</a>
       <button class="btn btn-light" onclick="handleLogout()">Logout</button>
     `;
   } else if (isLoggedIn() && role === 'ente_erogatore') {
@@ -108,7 +108,7 @@ function updateAuthButtons() {
       <a href="/ente-punti" class="btn btn-light">I miei punti</a>
       <a href="/ente-prenotazioni" class="btn btn-light">Prenotazioni</a>
       <a href="/profilo" class="btn btn-light">Profilo</a>
-      <a href="profilo.html" class="btn btn-light">Profilo</a>
+      <a href="/profilo" class="btn btn-light">Profilo</a>
       <button class="btn btn-light" onclick="handleLogout()">Logout</button>
     `;
   } else if (isLoggedIn() && role === 'donatore') {
@@ -126,10 +126,10 @@ function updateAuthButtons() {
     `;
   } else {
     container.innerHTML = `
-      <a href="home.html" class="btn btn-light">Home</a>
-      <a href="donazione.html" class="btn btn-light">Donazione monetaria</a>
-      <a href="login.html" class="btn btn-light">Login</a>
-      <a href="register.html" class="btn btn-light">Sign In</a>
+      <a href="/" class="btn btn-light">Home</a>
+      <a href="/donazione" class="btn btn-light">Donazione monetaria</a>
+      <a href="/login" class="btn btn-light">Login</a>
+      <a href="/register" class="btn btn-light">Sign In</a>
     `;
   }
 }

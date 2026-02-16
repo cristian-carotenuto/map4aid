@@ -14,7 +14,7 @@
   <!-- Header dinamico (uguale a tutte le altre pagine) -->
   <header class="header-bg text-white p-3 d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center">
-      <img src="../imgs/logo.png" alt="Logo Map4Aid" width="60" height="60" class="me-3 rounded-circle">
+      <img src="{{ url_for('static', filename='static/imgs/logo.png') }}" alt="Logo Map4Aid" width="60" height="60" class="me-3 rounded-circle">
       <h1 class="h4 mb-0 ms-3">MAP4AID</h1>
     </div>
     <div class="d-flex gap-2" id="auth-buttons"></div>
@@ -102,7 +102,7 @@
     // ====== PROTEZIONE ACCESSO ======
     // 1° livello rapido: sessionStorage
     if (!isLoggedIn() || getUserRole() !== 'admin') {
-      window.location.href = 'admin-login.html';
+      window.location.href = '/admin-login';
     }
 
     // 2° livello: verifica reale con il server
@@ -112,7 +112,7 @@
         if (res.status === 403 || res.status === 401) {
           clearLoginState();
           sessionStorage.removeItem('is_admin');
-          window.location.href = 'admin-login.html';
+          window.location.href = '/admin-login';
         }
       } catch (e) {
         // Errore di rete: lascia procedere
@@ -133,7 +133,7 @@
       if (res.status === 403 || res.status === 401) {
         clearLoginState();
         sessionStorage.removeItem('is_admin');
-        window.location.href = 'admin-login.html';
+        window.location.href = '/admin-login';
         return true;
       }
       return false;
