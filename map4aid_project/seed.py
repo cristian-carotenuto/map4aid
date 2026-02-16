@@ -32,13 +32,13 @@ def popola_db():
 
     #enti erogatori
     ente1 = AccountEnteErogatore(
-        email="ente@unisa.it",
+        email="nannidecaro@gmail.com",
         nome_organizzazione="UNISA - Università degli Studi di Salerno",
         indirizzo_sede="Via Giovanni Paolo II, 132 - Fisciano (SA)",
         tipologia_ente="università",
         iban=None
     )
-    ente1.set_password("password123")
+    ente1.set_password("ciaociao")
 
     ente2 = AccountEnteErogatore(
         email="caritas@salerno.it",
@@ -47,7 +47,7 @@ def popola_db():
         tipologia_ente="associazione",
         iban="IT00X0000000000000000000000"
     )
-    ente2.set_password("password123")
+    ente2.set_password("ciaociao")
 
     db.session.add_all([ente1, ente2])
     db.session.flush()
@@ -72,7 +72,7 @@ def popola_db():
         latitudine=40.6800,
         longitudine=14.7600,
         accettato=True,
-        ente_erogatore_id=ente2.id
+        ente_erogatore_id=ente1.id
     )
 
     punto3 = PuntoDistribuzione(
@@ -83,7 +83,7 @@ def popola_db():
         latitudine=40.6900,
         longitudine=14.8000,
         accettato=True,
-        ente_erogatore_id=ente2.id
+        ente_erogatore_id=ente1.id
     )
 
     db.session.add_all([punto1, punto2, punto3])
@@ -154,14 +154,14 @@ def popola_db():
 
     #beneficiari
     ben1 = AccountBeneficiario(
-        email="nico.rossi@example.com",
+        email="nicolaluciano01@gmail.com",
         nome="Nico",
-        cognome="Rossi",
+        cognome="Luciano",
         codice_carta_identita="ABC123",
         path_immagine_carta_identita="img1.png",
         accettato=True
     )
-    ben1.set_password("password123")
+    ben1.set_password("ciaociao")
 
     ben2 = AccountBeneficiario(
         email="gio.verdi@example.com",
@@ -171,20 +171,20 @@ def popola_db():
         path_immagine_carta_identita="img2.png",
         accettato=True
     )
-    ben2.set_password("password123")
+    ben2.set_password("ciaociao")
 
     db.session.add_all([ben1, ben2])
 
 
     #donatori
     don1 = AccountDonatore(
-        email="azienda@food.it",
+        email="n.luciano5@studenti.unisa.it",
         categoria="azienda",
         partita_iva="12345678901",
         nome_attivita="FoodCorp",
         indirizzo_sede="Via Industria 10, Salerno"
     )
-    don1.set_password("password123")
+    don1.set_password("ciaociao")
 
     don2 = AccountDonatore(
         email="privato@example.com",
@@ -192,27 +192,10 @@ def popola_db():
         nome="Giuseppe",
         cognome="Bianchi"
     )
-    don2.set_password("password123")
+    don2.set_password("ciaociao")
 
     db.session.add_all([don1, don2])
     db.session.flush()
-
-
-    #donazioni
-    donazione1 = DonazioneBene(
-        donatore_id=don1.id,
-        ente_erogatore_id=ente1.id,
-        bene_id=beni[0].id,
-        punto_id=punto1.id
-    )
-
-    donazione2 = DonazioneMonetaria(
-        donatore_id=don2.id,
-        ente_id=ente2.id,
-        importo=50.0
-    )
-
-    db.session.add_all([donazione1, donazione2])
 
 
     #pacco
@@ -226,43 +209,6 @@ def popola_db():
         verdura=1
     )
     db.session.add(pacco)
-
-
-
-    #prenotazioni
-    pren1 = Prenotazione(
-        beneficiario_id=ben1.id,
-        bene_id=beni[0].id,  # esempio: pasta
-        punto_id=punto1.id,
-        pacco_id=pacco.id,
-        stato="ritirata"
-    )
-
-    pren2 = Prenotazione(
-        beneficiario_id=ben2.id,
-        bene_id=beni[1].id,  # esempio: pane
-        punto_id=punto2.id,
-        pacco_id=pacco.id,
-        stato="ritirata"
-    )
-
-    db.session.add_all([pren1, pren2])
-    db.session.flush()
-
-    #feedback
-    fb1 = Feedback(
-        prenotazione_id=pren1.id,
-        valutazione=5,
-        recensione="Servizio impeccabile, personale gentilissimo."
-    )
-
-    fb2 = Feedback(
-        prenotazione_id=pren2.id,
-        valutazione=4,
-        recensione="Tutto ok, ma un po' di attesa."
-    )
-
-    db.session.add_all([fb1, fb2])
 
 
 
