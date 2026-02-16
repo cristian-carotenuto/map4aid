@@ -49,7 +49,7 @@
             <select id="filtroCategoria" class="form-select">
               <option value="">Tutte le categorie</option>
               <option value="alimentare">Alimentari</option>
-              <option value="medicinale">Medicinali</option>
+              <option value="medicinali">Medicinali</option>
               <option value="igiene">Igiene Personale</option>
               <option value="vestiario">Abbigliamento</option>
             </select>
@@ -253,27 +253,45 @@
       markerCorrenti = [];
       puntiCaricati = punti;
 
-      punti.forEach(punto => {
-        const marker = L.marker([punto.lat, punto.lng], {
-          keyboard: true,
-          alt: 'Punto di distribuzione: ' + punto.nome
-        }).addTo(map);
+      punti.forEach(async (punto) => { // Aggiungiamo 'async' qui
+  const marker = L.marker([punto.lat, punto.lng], {
+    keyboard: true,
+    alt: 'Punto di distribuzione: ' + punto.nome
+  }).addTo(map);
 
-        marker.on('keypress', function(e) {
-          if (e.originalEvent.key === 'Enter' || e.originalEvent.key === ' ') this.openPopup();
-        });
+  // 1. Creiamo un contenuto iniziale temporaneo
+  marker.bindPopup(`Caricamento indirizzo...`);
 
-        marker.bindPopup(`
-          <div role="region" aria-labelledby="popup-title-${punto.id}">
-            <h3 id="popup-title-${punto.id}">${punto.nome}</h3>
-            <p>${punto.indirizzo}</p>
-            <p><strong>Categoria:</strong> ${punto.categoria}</p>
-            <button class="btn btn-sm btn-primary mt-2" onclick="apriPrenotazione(${punto.id})">Prenota</button>
-            <button class="btn btn-sm btn-outline-primary mt-2 ms-1" onclick="calcolaPercorsoVerso(${punto.lat},${punto.lng},'${punto.nome.replace(/'/g, "\\'")}')">🗺️ Percorso</button>
-          </div>
-        `);
-        markerCorrenti.push(marker);
-      });
+  // 2. Al click sul marker, recuperiamo l'indirizzo reale
+  marker.on('click', async function() {
+    try {
+      // Chiamata a Nominatim per il Reverse Geocoding
+      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${punto.lat}&lon=${punto.lng}`);
+      const data = await response.json();
+
+      // Estraiamo l'indirizzo (o un fallback se non trovato)
+      const indirizzoReale = data.display_name || "Indirizzo non identificato";
+
+      // 3. Aggiorniamo il contenuto del popup con l'indirizzo trovato
+      const popupContent = `
+        <div role="region" aria-labelledby="popup-title-${punto.id}">
+          <h3 id="popup-title-${punto.id}">${punto.nome}</h3>
+          <p>📍 ${indirizzoReale}</p>
+          <p><strong>Categoria:</strong> ${punto.categoria}</p>
+          <button class="btn btn-sm btn-primary mt-2" onclick="apriPrenotazione(${punto.id})">Prenota</button>
+          <button class="btn btn-sm btn-outline-primary mt-2 ms-1" onclick="calcolaPercorsoVerso(${punto.lat},${punto.lng},'${punto.nome.replace(/'/g, "\\'")}')">🗺️ Percorso</button>
+        </div>
+      `;
+
+      marker.setPopupContent(popupContent);
+    } catch (error) {
+      console.error("Errore Geocoding:", error);
+      marker.setPopupContent("Impossibile recuperare l'indirizzo");
+    }
+  });
+
+  markerCorrenti.push(marker);
+});
 
       document.getElementById('btnCalcolaPercorso').style.display =
         (posizioneUtente && punti.length > 0) ? 'block' : 'none';
