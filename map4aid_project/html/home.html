@@ -268,7 +268,6 @@
             <h3 id="popup-title-${punto.id}">${punto.nome}</h3>
             <p>${punto.indirizzo}</p>
             <p><strong>Categoria:</strong> ${punto.categoria}</p>
-            <p><strong>Beni disponibili:</strong> ${punto.beni.join(', ')}</p>
             <button class="btn btn-sm btn-primary mt-2" onclick="apriPrenotazione(${punto.id})">Prenota</button>
             <button class="btn btn-sm btn-outline-primary mt-2 ms-1" onclick="calcolaPercorsoVerso(${punto.lat},${punto.lng},'${punto.nome.replace(/'/g, "\\'")}')">🗺️ Percorso</button>
           </div>
@@ -316,7 +315,7 @@
       id: p.id,
       nome: p.nome || 'Punto senza nome',
       // Usiamo i campi che hai nel backend (regione, citta, ecc.)
-      indirizzo: `${p.citta || ''} ${p.regione || ''}`.trim() || 'Indirizzo non disponibile',
+      indirizzo: p.indirizzo || `${p.citta || ''} ${p.regione || ''}`.trim() || 'Indirizzo non disponibile',
       lat: p.latitudine,
       lng: p.longitudine,
       categoria: categoria || "Tutte",
