@@ -22,13 +22,10 @@
       <div class="col-md-3">
         <div id="sidebar" class="list-group">
           <a href="/profilo" class="list-group-item list-group-item-action active">Profilo</a>
-        <div class="list-group">
-          <a href="/profilo" class="list-group-item list-group-item-action active">Profilo</a>
           <a href="/storico-prenotazioni" class="list-group-item list-group-item-action">Storico Prenotazioni</a>
           <a href="/storico-donazioni" class="list-group-item list-group-item-action">Storico Donazioni</a>
         </div>
       </div>
-
       <!-- Contenuto principale -->
       <div class="col-md-9">
         <div class="card">
@@ -59,10 +56,6 @@
       showError('errorMessage', 'Devi effettuare il login per accedere al profilo');
       setTimeout(() => window.location.href = '/login', 2000);
     } else {
-      fetch('/auth/profilo')
-        .then(r => {
-          if (!r.ok) throw new Error();
-          return r.json();
       // Carica dati profilo
       fetch('/auth/profilo')
         .then(response => {
@@ -133,9 +126,8 @@
           document.getElementById('loadingMessage').style.display = 'none';
           showError('errorMessage', 'Impossibile caricare il profilo. Riprova più tardi.');
         });
-    })
-  }
+    }
   </script>
-  <script src="../js/chatbot/js/loader.js"></script>
+  <script src="../chatbot/js/loader.js"></script>
 </body>
 </html>

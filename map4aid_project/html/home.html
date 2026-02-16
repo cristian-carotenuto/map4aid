@@ -208,12 +208,20 @@
   <!-- Footer -->
   <footer class="bg-dark text-white text-center py-3 mt-4">
     <p>&copy; 2026 Map4Aid - Progetto Universitario</p>
-    <p class="mb-0"><a href="/admin-login" class="text-white-50 small">Accesso amministratore</a></p>
+    <p class="mb-0" id="adminAccessLink"><a href="/admin-login" class="text-white-50 small">Accesso amministratore</a></p>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="{{ url_for('static', filename='static/js/auth.js') }}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const adminLink = document.getElementById('adminAccessLink');
+      if (adminLink) {
+        adminLink.style.display = isLoggedIn() ? 'none' : '';
+      }
+    });
+  </script>
   <script>
     // ====== MAPPA ======
     const map = L.map('map', {
