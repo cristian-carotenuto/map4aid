@@ -89,16 +89,17 @@
               <label class="form-label">Giorni di apertura <span class="text-danger">*</span></label>
               <input type="text" class="form-control" id="np_giorni" required placeholder="Es. Lunedì-Venerdì oppure Lun,Mer,Ven">
             </div>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label class="form-label">Latitudine <span class="text-danger">*</span></label>
-                <input type="number" class="form-control" id="np_lat" step="any" required placeholder="Es. 40.8518">
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label">Longitudine <span class="text-danger">*</span></label>
-                <input type="number" class="form-control" id="np_lng" step="any" required placeholder="Es. 14.2681">
-              </div>
+            <div class="mb-3">
+            <label class="form-label">Indirizzo completo <span class="text-danger">*</span></label>
+              <div class="input-group">
+              <input type="text" class="form-control" id="np_indirizzo" required placeholder="Es. Via Roma 10, Milano">
+              <button class="btn btn-outline-secondary" type="button" id="btnCercaCoordinate">Verifica Indirizzo</button>
             </div>
+            <div id="geocodingFeedback" class="form-text mt-1" style="display:none;"></div>
+          </div>
+
+              <input type="hidden" id="np_lat">
+              <input type="hidden" id="np_lng">
             <div id="modalError" class="text-danger" style="display:none;"></div>
           </form>
         </div>
@@ -196,66 +197,128 @@
       }
     }
 
+    async function cercaCoordinate() {
+  const indirizzo = document.getElementById('np_indirizzo').value.trim();
+  const feedback = document.getElementById('geocodingFeedback');
+  const btn = document.getElementById('btnCercaCoordinate');
+
+  if (indirizzo.length < 5) {
+    feedback.style.display = 'block';
+    feedback.className = 'form-text text-danger';
+    feedback.textContent = 'Inserisci un indirizzo più dettagliato.';
+    return false;
+  }
+
+  btn.disabled = true;
+  feedback.style.display = 'block';
+  feedback.className = 'form-text text-muted';
+  feedback.textContent = 'Ricerca coordinate in corso...';
+
+  try {
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(indirizzo)}&limit=1`);
+    const data = await response.json();
+
+    if (data && data.length > 0) {
+      document.getElementById('np_lat').value = data[0].lat;
+      document.getElementById('np_lng').value = data[0].lon;
+
+      feedback.className = 'form-text text-success';
+      feedback.textContent = `📍 Localizzato con successo! (${parseFloat(data[0].lat).toFixed(4)}, ${parseFloat(data[0].lon).toFixed(4)})`;
+      btn.disabled = false;
+      return true;
+    } else {
+      feedback.className = 'form-text text-danger';
+      feedback.textContent = 'Indirizzo non trovato. Controlla la precisione.';
+      btn.disabled = false;
+      return false;
+    }
+  } catch (error) {
+    feedback.textContent = 'Errore di connessione al servizio mappe.';
+    btn.disabled = false;
+    return false;
+  }
+}
+
+// Collega il pulsante "Verifica"
+document.getElementById('btnCercaCoordinate').addEventListener('click', cercaCoordinate);
+
     // Invia richiesta nuovo punto
     document.getElementById('btnInviaPunto').addEventListener('click', async () => {
-      const nome = document.getElementById('np_nome').value.trim();
-      const orario_apertura = document.getElementById('np_orario_apertura').value;
-      const orario_chiusura = document.getElementById('np_orario_chiusura').value;
-      const giorni = document.getElementById('np_giorni').value.trim();
-      const lat = parseFloat(document.getElementById('np_lat').value);
-      const lng = parseFloat(document.getElementById('np_lng').value);
-      const errDiv = document.getElementById('modalError');
+    const nome = document.getElementById('np_nome').value.trim();
+    const orario_apertura = document.getElementById('np_orario_apertura').value;
+    const orario_chiusura = document.getElementById('np_orario_chiusura').value;
+    const giorni = document.getElementById('np_giorni').value.trim();
+    const indirizzo = document.getElementById('np_indirizzo').value.trim();
+    const errDiv = document.getElementById('modalError');
 
-      if (!nome || !orario_apertura || !orario_chiusura || !giorni || isNaN(lat) || isNaN(lng)) {
+    // 1. LOGICA GEOCODING AUTOMATICA
+    let lat = document.getElementById('np_lat').value;
+    let lng = document.getElementById('np_lng').value;
+
+    if (!lat || !lng) {
+        const trovato = await cercaCoordinate();
+        if (!trovato) return;
+        lat = document.getElementById('np_lat').value;
+        lng = document.getElementById('np_lng').value;
+    }
+
+    // 2. CONTROLLO CAMPI (Semplificato e unico)
+    if (!nome || !orario_apertura || !orario_chiusura || !giorni || !indirizzo) {
         errDiv.textContent = 'Compila tutti i campi obbligatori';
         errDiv.style.display = 'block';
         return;
-      }
-      errDiv.style.display = 'none';
+    }
+    errDiv.style.display = 'none';
 
-      if (!enteId) {
-        errDiv.textContent = 'Errore: impossibile identificare l\'ente. Ricarica la pagina.';
+    if (!enteId) {
+        errDiv.textContent = 'Errore: profilo ente non caricato. Ricarica la pagina.';
         errDiv.style.display = 'block';
         return;
-      }
+    }
 
-      const btn = document.getElementById('btnInviaPunto');
-      btn.disabled = true;
-      btn.textContent = 'Invio in corso...';
+    const btn = document.getElementById('btnInviaPunto');
+    btn.disabled = true;
+    btn.textContent = 'Invio in corso...';
 
-      try {
+    try {
         const res = await fetch('/api/gestione-punto', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            nome,
-            giorni_apertura: giorni,
-            orario_apertura: orario_apertura + ':00',
-            orario_chiusura: orario_chiusura + ':00',
-            latitudine: lat,
-            longitudine: lng,
-            ente_erogatore_id: enteId
-          })
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                nome,
+                indirizzo, // Ti consiglio di inviare anche questo al server
+                giorni_apertura: giorni,
+                orario_apertura: orario_apertura + ':00',
+                orario_chiusura: orario_chiusura + ':00',
+                latitudine: parseFloat(lat),
+                longitudine: parseFloat(lng),
+                ente_erogatore_id: enteId
+            })
         });
-        const data = await res.json();
 
+        const data = await res.json();
         if (res.ok) {
-          bootstrap.Modal.getInstance(document.getElementById('modalNuovoPunto')).hide();
-          document.getElementById('formNuovoPunto').reset();
-          showAlert('Richiesta inviata con successo. In attesa di approvazione dall\'amministratore.', 'success');
-          caricaPunti();
+            bootstrap.Modal.getInstance(document.getElementById('modalNuovoPunto')).hide();
+            document.getElementById('formNuovoPunto').reset();
+            // Pulisci anche i campi nascosti e il feedback
+            document.getElementById('np_lat').value = '';
+            document.getElementById('np_lng').value = '';
+            document.getElementById('geocodingFeedback').style.display = 'none';
+
+            showAlert('Richiesta inviata con successo!', 'success');
+            caricaPunti();
         } else {
-          errDiv.textContent = data.message || data.error || 'Errore durante la creazione';
-          errDiv.style.display = 'block';
+            errDiv.textContent = data.message || data.error || 'Errore durante la creazione';
+            errDiv.style.display = 'block';
         }
-      } catch (err) {
+    } catch (err) {
         errDiv.textContent = 'Errore di connessione al server';
         errDiv.style.display = 'block';
-      } finally {
+    } finally {
         btn.disabled = false;
         btn.textContent = 'Invia richiesta';
-      }
-    });
+    }
+});
 
     // Reset errori modal alla chiusura
     document.getElementById('modalNuovoPunto').addEventListener('hidden.bs.modal', () => {
