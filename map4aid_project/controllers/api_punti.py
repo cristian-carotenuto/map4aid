@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify, current_app
 from sqlalchemy import text
 from config import db
 from controllers.permessi import require_roles
+from controllers.prenotazione_control import is_craftable
 
 api = Blueprint("api_punti", __name__)
 
@@ -109,56 +110,76 @@ def result_to_dicts(res):
         out.append(dict(zip(keys, row)))
     return out
 
+
+@api.route("/punti-distribuzione", methods=["GET"])
 @api.route("/punti-distribuzione", methods=["GET"])
 def get_punti_distribuzione():
     categoria = request.args.get("categoria", type=str)
+
     try:
         with db.engine.connect() as conn:
+            # 1. Preparazione colonne (standard)
             pragma = pragma_table_info(conn, "punti_distribuzione")
             real_cols = [r["name"] for r in pragma if r["name"]]
             required_cols = ["id", "nome", "regione", "citta", "latitudine", "longitudine", "ente_erogatore_id"]
             select_cols = [c for c in required_cols if c in real_cols]
 
             if not select_cols:
-                current_app.logger.error("punti_distribuzione non contiene colonne utili.")
                 return jsonify({"error": "schema punti_distribuzione non valido"}), 500
 
-            # se è stata richiesta categoria e le tabelle esistono, proviamo il join
+            cols_sql = ", ".join(f"p.{c}" for c in select_cols)
+            has_accettato = "accettato" in real_cols
+            accettato_cond = "AND p.accettato = 1" if has_accettato else ""
+
+            # --- CASO FILTRATO ---
             if categoria and all(table_exists(conn, t) for t in ("beni", "sotto_categorie", "macro_categorie")):
-                has_accettato = "accettato" in real_cols
-                cols_sql = ", ".join(f"p.{c}" for c in select_cols)
-                if has_accettato:
-                    sql = f"""
-                        SELECT DISTINCT {cols_sql}
-                        FROM punti_distribuzione p
-                        JOIN beni b ON p.id = b.punto_distribuzione_id
-                        JOIN sotto_categorie sc ON sc.id = b.sottocategoria_id
-                        JOIN macro_categorie mc ON mc.id = sc.macro_categoria_id
-                        WHERE lower(mc.nome) LIKE :cat AND (p.accettato = 1)
-                    """
-                else:
-                    sql = f"""
-                        SELECT DISTINCT {cols_sql}
-                        FROM punti_distribuzione p
-                        JOIN beni b ON p.id = b.punto_distribuzione_id
-                        JOIN sotto_categorie sc ON sc.id = b.sottocategoria_id
-                        JOIN macro_categorie mc ON mc.id = sc.macro_categoria_id
-                        WHERE lower(mc.nome) LIKE :cat
-                    """
-                res = conn.execute(text(sql), {"cat": f"%{categoria.lower()}%"})
-                data = result_to_dicts(res)
-                return jsonify({"data": data}), 200
+                cat_lower = categoria.lower().strip()
+
+                # Se è alimentare, cerchiamo i punti che hanno ALMENO un bene alimentare
+                # (per poi scremarli con is_craftable)
+                search_term = f"%{cat_lower}%"
+                if "alimen" in cat_lower: search_term = "%alimen%"
+
+                sql = f"""
+                    SELECT DISTINCT {cols_sql}
+                    FROM punti_distribuzione p
+                    JOIN beni b ON p.id = b.punto_distribuzione_id
+                    JOIN sotto_categorie sc ON sc.id = b.sottocategoria_id
+                    JOIN macro_categorie mc ON mc.id = sc.macro_categoria_id
+                    WHERE lower(mc.nome) LIKE :cat 
+                    AND b.quantita > 0 
+                    {accettato_cond}
+                """
+
+                res = conn.execute(text(sql), {"cat": search_term})
+                punti_candidati = result_to_dicts(res)
+
+                # --- LOGICA RIGIDA PACCO ALIMENTARE ---
+                if "alimen" in cat_lower:
+                    punti_pacco_completo = []
+
+                    for punto in punti_candidati:
+                        # CHIAMATA ALLA LOGICA: is_craftable deve controllare se ci sono
+                        # TUTTI i beni necessari (pasta, olio, latte, ecc.)
+                        if is_craftable(punto['id']):
+                            punti_pacco_completo.append(punto)
+
+                    # RESTITUIAMO SOLO QUELLI CON PACCO COMPLETO
+                    current_app.logger.info(
+                        f"Filtro Alimentare: {len(punti_candidati)} candidati, {len(punti_pacco_completo)} validi.")
+                    return jsonify({"data": punti_pacco_completo}), 200
+
+                # Per le altre categorie (es. Vestiario), basta che ci sia almeno un bene
+                return jsonify({"data": punti_candidati}), 200
+
+            # --- CASO TUTTI I PUNTI ---
             else:
-                cols_sql = ", ".join(select_cols)
-                where_clause = "WHERE accettato = 1" if "accettato" in real_cols else ""
-                sql = f"SELECT {cols_sql} FROM punti_distribuzione {where_clause} ORDER BY id"
+                where_clause = "WHERE accettato = 1" if has_accettato else ""
+                sql = f"SELECT {', '.join(select_cols)} FROM punti_distribuzione {where_clause} ORDER BY id"
                 res = conn.execute(text(sql))
                 data = result_to_dicts(res)
-                meta = {}
-                if categoria and not all(table_exists(conn, t) for t in ("beni", "sotto_categorie", "macro_categorie")):
-                    meta["categoria_ignored"] = True
-                    meta["reason"] = "tabelle categorie non presenti nello schema"
-                return jsonify({"data": data, "meta": meta}), 200
+                return jsonify({"data": data}), 200
+
     except Exception as e:
         current_app.logger.error("DB error on GET punti_distribuzione", exc_info=e)
         return jsonify({"error": "db_error", "message": str(e)}), 500

@@ -48,10 +48,10 @@
             <label for="filtroCategoria" class="form-label fw-bold">Filtra per categoria</label>
             <select id="filtroCategoria" class="form-select">
               <option value="">Tutte le categorie</option>
-              <option value="alimentari">Alimentari</option>
-              <option value="medicinali">Medicinali</option>
+              <option value="alimentare">Alimentari</option>
+              <option value="medicinale">Medicinali</option>
               <option value="igiene">Igiene Personale</option>
-              <option value="abbigliamento">Abbigliamento</option>
+              <option value="vestiario">Abbigliamento</option>
             </select>
           </div>
 
@@ -292,35 +292,73 @@
     }
 
     // ====== CARICA PUNTI ======
-    async function caricaPunti() {
-      try {
-        const response = await fetch('/api/punti-distribuzione');
-        if (!response.ok) throw new Error('API non disponibile');
-        const data = await response.json();
-        return data.data.map(p => ({
-          id: p.id,
-          nome: p.nome || 'Punto senza nome',
-          indirizzo: ((p.citta || '') + ', ' + (p.regione || '')).trim() || 'Indirizzo non disponibile',
-          lat: p.latitudine,
-          lng: p.longitudine,
-          categoria: "generico",
-          beni: ["Bene disponibile"]
-        }));
-      } catch (error) {
-        console.warn("Fallback a dati simulati:", error);
-        return puntiSimulati;
-      }
+   async function caricaPunti(categoria = "") {
+  try {
+    // 1. Costruiamo l'URL corretto per il backend
+    let url = '/api/punti-distribuzione';
+    if (categoria) {
+      url += `?categoria=${encodeURIComponent(categoria)}`;
     }
+
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Risposta del server non valida');
+
+    const result = await response.json();
+
+    // Se il server restituisce dati vuoti, non passare ai simulati,
+    // restituisci un array vuoto (così la mappa si pulisce correttamente)
+    if (!result.data || result.data.length === 0) {
+      return [];
+    }
+
+    // 2. Mappatura dei dati reali (convertiamo i nomi delle colonne SQL in quelli della mappa)
+    return result.data.map(p => ({
+      id: p.id,
+      nome: p.nome || 'Punto senza nome',
+      // Usiamo i campi che hai nel backend (regione, citta, ecc.)
+      indirizzo: `${p.citta || ''} ${p.regione || ''}`.trim() || 'Indirizzo non disponibile',
+      lat: p.latitudine,
+      lng: p.longitudine,
+      categoria: categoria || "Tutte",
+      beni: ["Disponibilità verificata dal sistema"]
+    }));
+
+  } catch (error) {
+    console.error("Errore critico caricamento punti:", error);
+    // Visualizziamo l'errore nella UI
+    showError('errorMessage', 'Connessione al database fallita. Visualizzazione dati offline.');
+
+    // SOLO in caso di errore di rete restituiamo i 4 punti di test
+    return categoria === '' ? puntiSimulati : puntiSimulati.filter(p => p.categoria === categoria);
+  }
+}
 
     caricaPunti().then(punti => aggiungiMarker(punti));
 
-    // ====== FILTRO CATEGORIE ======
-    document.getElementById('filtroCategoria').addEventListener('change', (e) => {
-      const cat = e.target.value;
-      caricaPunti().then(punti => {
-        aggiungiMarker(cat === '' ? punti : punti.filter(p => p.categoria === cat));
-      });
-    });
+    // ====== FILTRO CATEGORIE AGGIORNATO (LATO SERVER) ======
+  document.getElementById('filtroCategoria').addEventListener('change', async (e) => {
+  const cat = e.target.value;
+  const statusDiv = document.getElementById('mappaStatus');
+
+  // Feedback visivo
+  statusDiv.innerHTML = '⏳ Aggiornamento mappa in corso...';
+
+  try {
+    // Chiamiamo la funzione caricaPunti passando la categoria selezionata
+    const punti = await caricaPunti(cat);
+
+    // La funzione aggiungiMarker() pulisce già i vecchi e mette i nuovi
+    aggiungiMarker(punti);
+
+    if (punti.length === 0) {
+      statusDiv.innerHTML = `⚠️ Nessun punto disponibile per la categoria: <strong>${cat}</strong>`;
+    } else {
+      statusDiv.innerHTML = `✅ Trovati ${punti.length} punti per ${cat || 'tutte le categorie'}`;
+    }
+  } catch (error) {
+    showError('errorMessage', 'Errore nel caricamento dei dati filtrati.');
+  }
+});
 
     // ====== GEOLOCALIZZAZIONE ======
     document.getElementById('btnGeolocalizza').addEventListener('click', () => {
