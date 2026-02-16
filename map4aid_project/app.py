@@ -16,7 +16,6 @@ def create_app():
         template_folder="html",
         static_folder=".",
         static_url_path="",
-        template_folder="html"
     )
 
     #mi assicuro che esista la cartella instance

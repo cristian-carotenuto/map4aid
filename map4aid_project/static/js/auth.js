@@ -96,103 +96,40 @@ function updateAuthButtons() {
   // Escape sicuro dell'email per prevenire XSS
   const safeEmail = getUserEmail().replace(/</g, '&lt;').replace(/>/g, '&gt;');
   let role = getUserRole();
-
-<<<<<<< HEAD
-<<<<<<< HEAD:map4aid_project/js/auth.js
-  if (isLoggedIn() && role === 'admin') {
-    container.innerHTML = `
-      <a href="/" class="btn btn-light">Home</a>
-      <a href="/admin-dashboard" class="btn btn-light">Pannello Admin</a>
-=======
-<<<<<<<< HEAD:map4aid_project/js/auth.js
   if (isLoggedIn() && role === 'admin') {
     container.innerHTML = `
       <a href="home.html" class="btn btn-light">Home</a>
       <a href="admin-dashboard.html" class="btn btn-light">Pannello Admin</a>
->>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
       <button class="btn btn-light" onclick="handleLogout()">Logout</button>
     `;
   } else if (isLoggedIn() && role === 'ente_erogatore') {
     container.innerHTML = `
-<<<<<<< HEAD
       <a href="/" class="btn btn-light">Home</a>
       <a href="/ente-punti" class="btn btn-light">I miei punti</a>
       <a href="/ente-prenotazioni" class="btn btn-light">Prenotazioni</a>
       <a href="/profilo" class="btn btn-light">Profilo</a>
-=======
-      <a href="home.html" class="btn btn-light">Home</a>
-      <a href="ente-punti.html" class="btn btn-light">I miei punti</a>
-      <a href="ente-prenotazioni.html" class="btn btn-light">Prenotazioni</a>
       <a href="profilo.html" class="btn btn-light">Profilo</a>
->>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
       <button class="btn btn-light" onclick="handleLogout()">Logout</button>
     `;
   } else if (isLoggedIn() && role === 'donatore') {
     container.innerHTML = `
-<<<<<<< HEAD
-      <a href="/" class="btn btn-light">Home</a>
-=======
-  if (isLoggedIn() && role === 'donatore') {
-    container.innerHTML = `
-      <a href="/" class="btn btn-light">Home</a>
->>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345:map4aid_project/static/js/auth.js
-      <a href="/donazione" class="btn btn-light">Donazione monetaria</a>
-      <a href="/donazione-beni" class="btn btn-light">Donazione beni</a>
-      <a href="/profilo" class="btn btn-light">Profilo</a>
-=======
-      <a href="home.html" class="btn btn-light">Home</a>
-      <a href="donazione.html" class="btn btn-light">Donazione monetaria</a>
-      <a href="donazione-beni.html" class="btn btn-light">Donazione beni</a>
-      <a href="profilo.html" class="btn btn-light">Profilo</a>
-========
-  if (isLoggedIn() && role === 'donatore') {
-    container.innerHTML = `
       <a href="/" class="btn btn-light">Home</a>
       <a href="/donazione" class="btn btn-light">Donazione monetaria</a>
       <a href="/donazione-beni" class="btn btn-light">Donazione beni</a>
-      <a href="/profilo" class="btn btn-light">Profilo</a>
->>>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345:map4aid_project/static/js/auth.js
->>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
-      <button class="btn btn-light" onclick="handleLogout()">Logout</button>
-    `;
-  } else if (isLoggedIn()) {
+      <a href="/profilo" class="btn btn-light">Profilo</a>`;
+   } else if (isLoggedIn()) {
     container.innerHTML = `
-<<<<<<< HEAD
       <a href="/" class="btn btn-light">Home</a>
       <a href="/donazione" class="btn btn-light">Donazione monetaria</a>
       <a href="/profilo" class="btn btn-light">Profilo</a>
-=======
-<<<<<<<< HEAD:map4aid_project/js/auth.js
-      <a href="home.html" class="btn btn-light">Home</a>
-      <a href="donazione.html" class="btn btn-light">Donazione monetaria</a>
-      <a href="profilo.html" class="btn btn-light">Profilo</a>
-========
-      <a href="/" class="btn btn-light">Home</a>
-      <a href="/donazione" class="btn btn-light">Donazione monetaria</a>
-      <a href="/profilo" class="btn btn-light">Profilo</a>
->>>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345:map4aid_project/static/js/auth.js
->>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
       <button class="btn btn-light" onclick="handleLogout()">Logout</button>
     `;
   } else {
     container.innerHTML = `
-<<<<<<< HEAD
-=======
-<<<<<<<< HEAD:map4aid_project/js/auth.js
       <a href="home.html" class="btn btn-light">Home</a>
       <a href="donazione.html" class="btn btn-light">Donazione monetaria</a>
       <a href="login.html" class="btn btn-light">Login</a>
       <a href="register.html" class="btn btn-light">Sign In</a>
-========
->>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
-      <a href="/" class="btn btn-light">Home</a>
-      <a href="/donazione" class="btn btn-light">Donazione monetaria</a>
-      <a href="/login" class="btn btn-light">Login</a>
-      <a href="/register" class="btn btn-light">Sign In</a>
-<<<<<<< HEAD
-=======
->>>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345:map4aid_project/static/js/auth.js
->>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
     `;
   }
 }
