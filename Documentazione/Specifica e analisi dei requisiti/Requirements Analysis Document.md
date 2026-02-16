@@ -2868,8 +2868,16 @@ Il codice risulta non valido o per corrispondenza, o per la terminazione della s
 <p>I filtri devono essere combinabili e facilmente re-impostabili.</p>
 <p>La mappa deve restare leggibile anche con molti punti (es. raggruppamento dei marker).</p></td>
 </tr>
+<tr class="even">
+<td colspan="4"></td>
+<td colspan="4"></td>
+</tr>
 </tbody>
 </table>
+
+- **Use case model**
+
+<img src="media/image2.PNG" style="width:7.26681in;height:5.67376in" />
 
 # OGGETTI ENTITY, BOUNDARY E CONTROL
 
@@ -3236,23 +3244,23 @@ Il codice risulta non valido o per corrispondenza, o per la terminazione della s
 
 - **Donazione Monetaria**
 
-<img src="media/image2.png" style="width:6.15625in;height:4.25863in" alt="Immagine che contiene testo, diagramma, Parallelo, Disegno tecnico Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
+<img src="media/image3.png" style="width:6.15625in;height:4.25863in" alt="Immagine che contiene testo, diagramma, Parallelo, Disegno tecnico Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
 
 - **Segnalazione di un Punto di Bisogno**
 
-<img src="media/image3.png" style="width:6in;height:3.54655in" alt="Immagine che contiene testo, diagramma, Disegno tecnico, Parallelo Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
+<img src="media/image4.png" style="width:6in;height:3.54655in" alt="Immagine che contiene testo, diagramma, Disegno tecnico, Parallelo Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
 
 - **Gestione delle Scorte**
 
-<img src="media/image4.png" style="width:5.70833in;height:4.56738in" alt="Immagine che contiene testo, diagramma, Disegno tecnico, Piano Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
+<img src="media/image5.png" style="width:5.70833in;height:4.56738in" alt="Immagine che contiene testo, diagramma, Disegno tecnico, Piano Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
 
 - **Donazione di un Bene**
 
-<img src="media/image5.png" style="width:6.89167in;height:5.69375in" alt="Immagine che contiene testo, diagramma, Parallelo, Rettangolo" />
+<img src="media/image6.png" style="width:6.89167in;height:5.69375in" alt="Immagine che contiene testo, diagramma, Parallelo, Rettangolo" />
 
 - **Prenotazione di un bene**
 
-<img src="media/image6.PNG" style="width:6.96824in;height:6.95118in" />
+<img src="media/image7.PNG" style="width:6.96824in;height:6.95118in" />
 
 # STATECHART DIAGRAMS
 
@@ -3260,20 +3268,20 @@ Il codice risulta non valido o per corrispondenza, o per la terminazione della s
 
 **––**
 
-<img src="media/image7.png" style="width:5.75676in;height:8.35417in" alt="Immagine che contiene diagramma, Disegno tecnico, Piano, schematico Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
+<img src="media/image8.png" style="width:5.75676in;height:8.35417in" alt="Immagine che contiene diagramma, Disegno tecnico, Piano, schematico Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
 
 - **SegnalazioneControl**
 
-<img src="media/image8.png" style="width:6.89167in;height:5.87917in" alt="Immagine che contiene diagramma, testo, Piano, linea Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
+<img src="media/image9.png" style="width:6.89167in;height:5.87917in" alt="Immagine che contiene diagramma, testo, Piano, linea Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
 
 - **DonazioneMonetariaControl**
 
-<img src="media/image9.png" style="width:4.86667in;height:6.9in" alt="Immagine che contiene testo, schermata, diagramma, linea Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
+<img src="media/image10.png" style="width:4.86667in;height:6.9in" alt="Immagine che contiene testo, schermata, diagramma, linea Il contenuto generato dall&#39;IA potrebbe non essere corretto." />
 
 - **AccountBeneficiario**
 
-<img src="media/image10.jpeg" style="width:5.83611in;height:7.19375in" />
+<img src="media/image11.jpeg" style="width:5.83611in;height:7.19375in" />
 
 # ACTIVITY DIAGRAM
 
-<img src="media/image11.PNG" style="width:6.14912in;height:7.96875in" />
+<img src="media/image12.PNG" style="width:6.14912in;height:7.96875in" />
