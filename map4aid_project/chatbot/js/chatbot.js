@@ -141,7 +141,6 @@
   window.addEventListener("keydown", (e) => {
     if (!overlay.hidden && e.key === "Escape") close();
   });
-
 	// prova backend 1 
 	const API_URL = "/api/chat";
 
