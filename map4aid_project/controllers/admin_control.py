@@ -75,6 +75,7 @@ def admin_confirm():
         return jsonify({"message": "Email inviata"}), 200
     return jsonify({"error": "Email non inviata"}), 400
 
+<<<<<<< HEAD
 #lista beneficiari in attesa di approvazione
 @auth_bp.route("/admin/beneficiari_pending", methods=["GET"])
 @require_admin
@@ -128,6 +129,8 @@ def admin_rifiuta_punto():
     return jsonify({"message": f"Punto '{punto.nome}' rifiutato e rimosso"}), 200
 
 
+=======
+>>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
 @auth_bp.route("/admin/accetta_punto", methods=["POST"])
 @require_admin
 def admin_accetta_punto():

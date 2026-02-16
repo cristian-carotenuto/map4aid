@@ -13,9 +13,13 @@ def create_app():
     app = Flask(
         __name__,
         instance_relative_config=True,
+<<<<<<< HEAD
         template_folder="html",
         static_folder=".",
         static_url_path=""
+=======
+        template_folder="html"
+>>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
     )
 
     #mi assicuro che esista la cartella instance
@@ -65,11 +69,54 @@ def create_app():
     @app.route("/")
     def home():
         return render_template("home.html")
+<<<<<<< HEAD
 
     @app.route("/<path:page>.html")
     def serve_page(page):
         return render_template(f"{page}.html")
+=======
+    
+    @app.route("/login")
+    def login_page():
+        return render_template("login.html")
+>>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
 
+    @app.route("/register")
+    def register_page():
+        return render_template("register.html")
+
+    @app.route("/donazione")
+    def donazione_page():
+        return render_template("donazione.html")
+
+    @app.route("/donazione-beni")
+    def donazione_beni_page():
+        return render_template("donazione-beni.html")
+    
+    @app.route("/recupero-password")
+    def recupero_password_page():
+        return render_template("recupero-password.html")
+
+    @app.route("/cambio-password")
+    def cambio_password_page():
+        return render_template("cambio-password.html")
+    
+    @app.route("/storico-donazioni")
+    def storico_donazioni_page():
+        return render_template("storico-donazioni.html")      
+
+    @app.route("/storico-prenotazioni")
+    def storico_prenotazioni_page():
+        return render_template("storico-prenotazioni.html") 
+          
+    @app.route("/segnalazione")
+    def segnalazione_page():
+        return render_template("segnalazione.html")
+
+    @app.route("/prenotazione")
+    def prenotazione_page():
+        return render_template("prenotazione.html")
+    
     if os.environ.get('WERKZEUG_RUN_MAIN') == 'true' or not app.debug:
         start_scheduler(app)
 

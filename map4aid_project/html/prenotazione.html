@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Prenota Pacco - Map4Aid</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <style>
     .step { display: none; }
     .step.active { display: block; }
@@ -20,7 +20,7 @@
   <!-- Header dinamico -->
   <header class="header-bg text-white p-3 d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center">
-      <img src="../imgs/logo.png" alt="Logo Map4Aid" width="60" height="60" class="me-3 rounded-circle">
+      <img src="{{ url_for('static', filename='imgs/logo.png') }}" alt="Logo Map4Aid" width="60" height="60" class="me-3 rounded-circle">
       <h1 class="h4 mb-0 ms-3">MAP4AID</h1>
     </div>
     <div class="d-flex gap-2" id="auth-buttons"></div>
@@ -74,7 +74,7 @@
                 </div>
               </div>
               <div class="mt-3">
-                <a href="home.html" class="btn btn-primary">Torna alla home</a>
+                <a href="/" class="btn btn-primary">Torna alla home</a>
               </div>
             </div>
           </div>
@@ -88,7 +88,7 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../js/auth.js"></script>
+  <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
   <script>
     // Dati globali
     let puntoId = null;
@@ -97,7 +97,11 @@
     // Protezione: solo utenti loggati
     if (!sessionStorage.getItem('isLoggedIn')) {
       showError('errorMessage', 'Devi effettuare il login per prenotare un pacco');
+<<<<<<< HEAD
       setTimeout(() => window.location.href = 'login.html', 2000);
+=======
+      setTimeout(() => window.location.href = '/login', 2000);
+>>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
     }
 
     /**
@@ -225,7 +229,7 @@
       puntoId = getPointIdFromUrl();
       if (!puntoId) {
         showError('errorMessage', 'ID punto non valido');
-        setTimeout(() => window.location.href = 'home.html', 2000);
+        setTimeout(() => window.location.href = '/', 2000);
         return;
       }
 

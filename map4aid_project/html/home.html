@@ -5,7 +5,7 @@
   <title>Map4Aid - Home</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <style>
     .leaflet-popup-content { font-size: 1.05rem; line-height: 1.5; }
     .leaflet-popup .btn { min-height: 2.5rem; font-size: 1rem; }
@@ -23,14 +23,18 @@
     .star-rating label { font-size: 2rem; color: #ddd; cursor: pointer; transition: color 0.2s; }
     .star-rating input:checked ~ label,
     .star-rating label:hover,
+<<<<<<< HEAD
     .star-rating label:hover ~ label { color: #ffc107; }
+=======
+    .star-rating label:hover ~ label { color: #ffc107; }    
+>>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
   </style>
 </head>
 <body>
   <!-- Header dinamico -->
   <header class="header-bg text-white p-3 d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center">
-      <img src="../imgs/logo.png" alt="Logo Map4Aid" width="60" height="60" class="me-3 rounded-circle">
+      <img src="{{ url_for('static', filename='imgs/logo.png') }}" alt="Logo Map4Aid" width="60" height="60" class="me-3 rounded-circle">
       <h1 class="h4 mb-0 ms-3">MAP4AID</h1>
     </div>
     <div class="d-flex gap-2" id="auth-buttons"></div>
@@ -57,6 +61,7 @@
           <!-- Pulsante geolocalizzazione -->
           <button id="btnGeolocalizza" class="btn btn-success w-100 mb-3">Usa la mia posizione</button>
 
+<<<<<<< HEAD
           <!-- Pulsante segnalazione punto (toggle modalità click sulla mappa) -->
           <button id="btnSegnalaMappa" class="btn btn-warning w-100 mb-3">Segnala un punto sulla mappa</button>
           <div id="segnalazioneHint" class="alert alert-warning py-2 mb-3" style="display:none;">
@@ -66,7 +71,14 @@
 
           <!-- Pulsante feedback -->
           <button id="btnFeedback" class="btn btn-info text-white w-100 mb-3" onclick="apriFeedbackModal()">Lascia un feedback</button>
+=======
+          <!-- Pulsante segnalazione punto -->
+          <a href="/segnalazione" class="btn btn-warning w-100 mb-3">📍 Segnala un punto di raccolta</a>
+>>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
 
+          <!-- Pulsante feedback -->
+          <button id="btnFeedback" class="btn btn-info text-white w-100 mb-3" onclick="apriFeedbackModal()">Lascia un feedback</button>          
+          
           <!-- Pulsante calcolo percorso AI -->
           <button id="btnCalcolaPercorso" class="btn btn-primary w-100 mb-3" style="display:none;">
             🤖 Calcola percorso AI ottimale
@@ -198,6 +210,82 @@
     </div>
   </div>
 
+  <!-- Modal Feedback -->
+  <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="feedbackModalLabel">Lascia un Feedback</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted">Seleziona una prenotazione ritirata e lascia la tua valutazione.</p>
+          <div class="mb-3">
+            <label for="feedbackPrenotazione" class="form-label">Prenotazione</label>
+            <select class="form-select" id="feedbackPrenotazione" required>
+              <option value="" disabled selected>Caricamento...</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Valutazione</label>
+            <div class="star-rating">
+              <input type="radio" id="fStar5" name="feedbackValutazione" value="5"><label for="fStar5">&#9733;</label>
+              <input type="radio" id="fStar4" name="feedbackValutazione" value="4"><label for="fStar4">&#9733;</label>
+              <input type="radio" id="fStar3" name="feedbackValutazione" value="3"><label for="fStar3">&#9733;</label>
+              <input type="radio" id="fStar2" name="feedbackValutazione" value="2"><label for="fStar2">&#9733;</label>
+              <input type="radio" id="fStar1" name="feedbackValutazione" value="1"><label for="fStar1">&#9733;</label>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="feedbackRecensione" class="form-label">Recensione <small class="text-muted">(facoltativa)</small></label>
+            <textarea class="form-control" id="feedbackRecensione" rows="3" placeholder="Scrivi qui la tua esperienza..."></textarea>
+          </div>
+          <div id="feedbackModalError" class="text-danger" style="display:none;"></div>
+          <div id="feedbackModalSuccess" class="text-success" style="display:none;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+          <button type="button" class="btn btn-success" id="btnInviaFeedback">Invia Feedback</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Segnalazione -->
+  <div class="modal fade" id="segnalazioneModal" tabindex="-1" aria-labelledby="segnalazioneModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="segnalazioneModalLabel">Segnala punto di raccolta</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted">Conferma i dati del punto selezionato sulla mappa.</p>
+          <div class="mb-3">
+            <label for="segnalazioneIndirizzo" class="form-label">Indirizzo</label>
+            <input type="text" class="form-control" id="segnalazioneIndirizzo" placeholder="Caricamento indirizzo...">
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              <label class="form-label">Latitudine</label>
+              <input type="text" class="form-control" id="segnalazioneLat" readonly>
+            </div>
+            <div class="col">
+              <label class="form-label">Longitudine</label>
+              <input type="text" class="form-control" id="segnalazioneLng" readonly>
+            </div>
+          </div>
+          <div id="segnalazioneModalError" class="text-danger" style="display:none;"></div>
+          <div id="segnalazioneModalSuccess" class="text-success" style="display:none;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+          <button type="button" class="btn btn-success" id="btnInviaSegnalazione">Invia segnalazione</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer class="bg-dark text-white text-center py-3 mt-4">
     <p>&copy; 2026 Map4Aid - Progetto Universitario</p>
@@ -206,7 +294,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="../js/auth.js"></script>
+  <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
   <script>
     // ====== MAPPA ======
     const map = L.map('map', {
@@ -270,10 +358,10 @@
       document.getElementById('a11y-status').textContent = `Apertura modulo prenotazione per il punto ID: ${idPunto}`;
       if (!sessionStorage.getItem('isLoggedIn')) {
         showError('mappaStatus', 'Devi effettuare il login per prenotare un bene');
-        setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+        setTimeout(() => { window.location.href = '/login'; }, 2000);
         return;
       }
-      window.location.href = `prenotazione.html?id=${idPunto}`;
+      window.location.href = `/prenotazione?id=${idPunto}`;
     }
 
     // ====== CARICA PUNTI ======
@@ -626,7 +714,11 @@
     async function apriFeedbackModal() {
       if (!sessionStorage.getItem('isLoggedIn')) {
         showError('errorMessage', 'Devi effettuare il login per lasciare un feedback');
+<<<<<<< HEAD
         setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+=======
+        setTimeout(() => { window.location.href = '/login'; }, 2000);
+>>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
         return;
       }
 
@@ -721,6 +813,10 @@
         btn.textContent = 'Invia Feedback';
       }
     });
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 1ca7b9f6fadb59d5b02a57a54ce4193daefa1345
   </script>
   <!-- Chatbot integrato -->
   <script src="../chatbot/js/loader.js"></script>
