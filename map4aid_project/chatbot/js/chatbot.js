@@ -96,7 +96,7 @@
           // input resta bloccato finché non clicchi "Ho un’altra domanda"
         } else {
           setInputEnabled(true);
-          addMsg("Certo. Scrivimi pure la tua domanda qui sotto.", "bot");
+          addMsg("Certo. Scrivimi pure la tua domanda qui sotto. (Mantieni le domande brevi a precise, altrimenti potrei non capire!)", "bot");
           input.focus();
         }
       });
