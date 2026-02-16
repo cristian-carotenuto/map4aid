@@ -6,13 +6,13 @@
 
 # Sommario
 
-[**1. SPECIFICA** [**4**](#specifica)](#specifica)
+[**1. SPECIFICA [4](#specifica)**](#specifica)
 
-[**2. TEST DESIGN** [**1**](#_Toc222091008)](#_Toc222091008)
+[**2. TEST DESIGN [1](#_Toc222091008)**](#_Toc222091008)
 
-[**3. TEST FRAME** [**12**](#test-frame)](#test-frame)
+[**3. TEST FRAME [12](#test-frame)**](#test-frame)
 
-[**4. SPECIFICHE DEI TEST CASE** [**20**](#specifiche-dei-test-case)](#specifiche-dei-test-case)
+[**4. SPECIFICHE DEI TEST CASE [20](#specifiche-dei-test-case)**](#specifiche-dei-test-case)
 
 All’interno di questo documento viene riportata l’applicazione della metodologia di individuazione dei casi di test definita nel Test Plan (TP).
 
@@ -582,42 +582,18 @@ Se le tabelle delle categorie non esistono nello schema, il filtro viene ignorat
 <td><h2 id="file-ricetta-presente-e-valido-if-tp_med-and-bd_okproprietà-rc_ok" class="unnumbered">1. File ricetta presente e valido → [IF TP_MED AND BD_OK][Proprietà RC_OK]</h2>
 <p>2. File ricetta mancante → [IF TP_MED AND BD_OK][ERR]</p></td>
 </tr>
-</tbody>
-</table>
-
-<table>
-<colgroup>
-<col style="width: 18%" />
-<col style="width: 26%" />
-<col style="width: 55%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th><h2 id="disponibilita_pacco" class="unnumbered">disponibilita_pacco</h2></th>
-<th><h2 id="craftable-cr" class="unnumbered">Craftable <strong>(CR)</strong></h2></th>
-<th><h2 id="tutti-i-beni-necessari-per-il-pacco-sono-disponibili-if-tp_paccoproprietà-cr_ok" class="unnumbered">1. Tutti i beni necessari per il pacco sono disponibili → [IF TP_PACCO][Proprietà CR_OK]</h2>
-<p>2. Uno o più beni mancanti o con quantità insufficiente → [IF TP_PACCO][ERR]</p></th>
+<tr class="even">
+<td><h2 id="disponibilita_pacco" class="unnumbered">disponibilita_pacco</h2></td>
+<td><h2 id="craftable-cr" class="unnumbered">Craftable <strong>(CR)</strong></h2></td>
+<td><h2 id="tutti-i-beni-necessari-per-il-pacco-sono-disponibili-if-tp_paccoproprietà-cr_ok" class="unnumbered">1. Tutti i beni necessari per il pacco sono disponibili → [IF TP_PACCO][Proprietà CR_OK]</h2>
+<p>2. Uno o più beni mancanti o con quantità insufficiente → [IF TP_PACCO][ERR]</p></td>
 </tr>
-</thead>
-<tbody>
-</tbody>
-</table>
-
-<table>
-<colgroup>
-<col style="width: 18%" />
-<col style="width: 26%" />
-<col style="width: 55%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th><h2 id="limite_prenotazioni" class="unnumbered">limite_prenotazioni</h2></th>
-<th><h2 id="checker-lm" class="unnumbered">Checker <strong>(LM)</strong></h2></th>
-<th><h2 id="lutente-può-ancora-prenotare-if-tp_pacco-and-cr_okproprietà-lm_ok" class="unnumbered">1. L'utente può ancora prenotare → [IF TP_PACCO AND CR_OK][Proprietà LM_OK]</h2>
-<p>2. L'utente ha raggiunto il limite di prenotazioni → [IF TP_PACCO AND CR_OK][ERR]</p></th>
+<tr class="odd">
+<td><h2 id="limite_prenotazioni" class="unnumbered">limite_prenotazioni</h2></td>
+<td><h2 id="checker-lm" class="unnumbered">Checker <strong>(LM)</strong></h2></td>
+<td><h2 id="lutente-può-ancora-prenotare-if-tp_pacco-and-cr_okproprietà-lm_ok" class="unnumbered">1. L'utente può ancora prenotare → [IF TP_PACCO AND CR_OK][Proprietà LM_OK]</h2>
+<p>2. L'utente ha raggiunto il limite di prenotazioni → [IF TP_PACCO AND CR_OK][ERR]</p></td>
 </tr>
-</thead>
-<tbody>
 </tbody>
 </table>
 
@@ -1860,6 +1836,125 @@ Per ciascun test case vengono definiti:
 | **Quantità del bene**                                                                                                                                                                                                                                                            | **3**                                          |
 | **OUTPUT**                                                                                                                                                                                                                                                                       |                                                |
 | **Tutti i campi del form sono inseriti correttamente, la donazione viene effettuata con successo e vengono notificati tramite mail sia l’utente donatore che l’ente erogatore. L’utente donatore verrà notificato a schermo con un messaggio di “Donazione di bene effettuata”** |                                                |
+
+**UC05 Prenotazione Ritiro Beni di Prima Necessità**
+
+| **ID TEST FRAME**                                                                                                       |                         |
+|-------------------------------------------------------------------------------------------------------------------------|-------------------------|
+| TC 01                                                                                                                   |                         |
+| **INPUT**                                                                                                               | **VALORE**              |
+| Utente                                                                                                                  | Nessun login effettuato |
+| id_punto_bisogno                                                                                                        | 2                       |
+| is_medicinale                                                                                                           | False                   |
+| id_bene                                                                                                                 | 7                       |
+| is_pacco                                                                                                                | False                   |
+| **Output**                                                                                                              |                         |
+| La prenotazione non va a buon fine perché l'utente non è autenticato e il sistema restituisce errore: "Non autenticato" |                         |
+
+| **ID TEST FRAME**                                                                                                                           |                     |
+|---------------------------------------------------------------------------------------------------------------------------------------------|---------------------|
+| TC 02                                                                                                                                       |                     |
+| **INPUT**                                                                                                                                   | **VALORE**          |
+| Utente                                                                                                                                      | privato@example.com |
+| id_punto_bisogno                                                                                                                            | 2                   |
+| is_medicinale                                                                                                                               | False               |
+| id_bene                                                                                                                                     | 7                   |
+| is_pacco                                                                                                                                    | False               |
+| **Output**                                                                                                                                  |                     |
+| La prenotazione non va a buon fine perché l'utente non ha il ruolo di beneficiario e il sistema restituisce errore: "Ruolo non autorizzato" |                     |
+
+| **ID TEST FRAME**                                                                                                                                     |                     |
+|-------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|
+| TC 03                                                                                                                                                 |                     |
+| **INPUT**                                                                                                                                             | **VALORE**          |
+| Utente                                                                                                                                                | privato@example.com |
+| id_punto_bisogno                                                                                                                                      | 2                   |
+| is_medicinale                                                                                                                                         | False               |
+| id_bene                                                                                                                                               | 9999                |
+| is_pacco                                                                                                                                              | False               |
+| **Output**                                                                                                                                            |                     |
+| La prenotazione non va a buon fine perché il bene richiesto non esiste nel punto di distribuzione e il sistema restituisce errore: "Bene non trovato" |                     |
+
+| **ID TEST FRAME**                                                                                                                             |                            |
+|-----------------------------------------------------------------------------------------------------------------------------------------------|----------------------------|
+| TC 04                                                                                                                                         |                            |
+| **INPUT**                                                                                                                                     | **VALORE**                 |
+| Utente                                                                                                                                        | privato@example.com        |
+| id_punto_bisogno                                                                                                                              | 2                          |
+| is_medicinale                                                                                                                                 | False                      |
+| id_bene                                                                                                                                       | 15 (bene con quantità = 0) |
+| is_pacco                                                                                                                                      | False                      |
+| **Output**                                                                                                                                    |                            |
+| La prenotazione non va a buon fine perché il bene richiesto ha quantità insufficiente e il sistema restituisce errore: "Bene non disponibile" |                            |
+
+| **ID TEST FRAME**                                                                                                                                                                                                                  |                     |
+|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|
+| TC 05                                                                                                                                                                                                                              |                     |
+| **INPUT**                                                                                                                                                                                                                          | **VALORE**          |
+| Utente                                                                                                                                                                                                                             | privato@example.com |
+| id_punto_bisogno                                                                                                                                                                                                                   | 2                   |
+| is_medicinale                                                                                                                                                                                                                      | False               |
+| id_bene                                                                                                                                                                                                                            | 7                   |
+| is_pacco                                                                                                                                                                                                                           | False               |
+| **Output**                                                                                                                                                                                                                         |                     |
+| La prenotazione va a buon fine, viene registrata nel database, la quantità del bene viene decrementata di 1 e il sistema invia email di conferma al beneficiario e all'ente erogatore. Il sistema mostra: "Prenotazione effetuata" |                     |
+
+| **ID TEST FRAME**                                                                                                                                                                                        |                                        |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------|
+| TC 06                                                                                                                                                                                                    |                                        |
+| **INPUT**                                                                                                                                                                                                | **VALORE**                             |
+| Utente                                                                                                                                                                                                   | <privato@example.com> ( beneficiario ) |
+| id_punto_bisogno                                                                                                                                                                                         | 3 (punto con beni insufficienti)       |
+| is_medicinale                                                                                                                                                                                            | False                                  |
+| is_pacco                                                                                                                                                                                                 | True                                   |
+| **Output**                                                                                                                                                                                               |                                        |
+| La prenotazione del pacco alimentare non va a buon fine perché il punto di distribuzione non ha tutti i beni necessari e il sistema restituisce errore: "Prenotazione non effetuata,beni non diponibili" |                                        |
+
+| **ID TEST FRAME**                                                                                                                                                                                                                                                                   |                                                                           |
+|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|
+| TC 07                                                                                                                                                                                                                                                                               |                                                                           |
+| **INPUT**                                                                                                                                                                                                                                                                           | **VALORE**                                                                |
+| Utente                                                                                                                                                                                                                                                                              | <privato@example.com> ( beneficiario, ha già prenotato pacco di recente ) |
+| id_punto_bisogno                                                                                                                                                                                                                                                                    | 2                                                                         |
+| is_medicinale                                                                                                                                                                                                                                                                       | False                                                                     |
+| is_pacco                                                                                                                                                                                                                                                                            | True                                                                      |
+| **Output**                                                                                                                                                                                                                                                                          |                                                                           |
+| La prenotazione del pacco alimentare non va a buon fine perché l'utente ha effettuato una prenotazione troppo recentemente e il sistema restituisce errore: "Puoi prenotare un bene di tipo 'pacco' solo ogni 30 giorni"                                                            |                                                                           |
+| **ID TEST FRAME**                                                                                                                                                                                                                                                                   |                                                                           |
+| TC 08                                                                                                                                                                                                                                                                               |                                                                           |
+| **INPUT**                                                                                                                                                                                                                                                                           | **VALORE**                                                                |
+| Utente                                                                                                                                                                                                                                                                              | <privato@example.com> ( beneficiario )                                    |
+| id_punto_bisogno                                                                                                                                                                                                                                                                    | 2                                                                         |
+| is_medicinale                                                                                                                                                                                                                                                                       | False                                                                     |
+| is_pacco                                                                                                                                                                                                                                                                            | True                                                                      |
+| **Output**                                                                                                                                                                                                                                                                          |                                                                           |
+| La prenotazione del pacco alimentare va a buon fine, il pacco viene creato con tutti i beni necessari (pane, pasta, acqua, carne, pesce, verdura), le quantità vengono decrementate di 1 ciascuna e il sistema invia email di conferma. Il sistema mostra: "Prenotazione effetuata" |                                                                           |
+
+| **ID TEST FRAME**                                                                                                                                               |                                        |
+|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------|
+| TC 09                                                                                                                                                           |                                        |
+| **INPUT**                                                                                                                                                       | **VALORE**                             |
+| Utente                                                                                                                                                          | <privato@example.com> ( beneficiario ) |
+| id_punto_bisogno                                                                                                                                                | 2                                      |
+| is_medicinale                                                                                                                                                   | True                                   |
+| is_pacco                                                                                                                                                        | False                                  |
+| id_bene                                                                                                                                                         | 12                                     |
+| ricetta                                                                                                                                                         | (mancante)                             |
+| **Output**                                                                                                                                                      |                                        |
+| La prenotazione del bene medicinale non va a buon fine perché la ricetta medica non è stata allegata e il sistema restituisce errore: "Ricetta medica mancante" |                                        |
+
+| **ID TEST FRAME**                                                                                                                                                                                                                                                      |                                        |
+|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------|
+| TC 10                                                                                                                                                                                                                                                                  |                                        |
+| **INPUT**                                                                                                                                                                                                                                                              | **VALORE**                             |
+| Utente                                                                                                                                                                                                                                                                 | <privato@example.com> ( beneficiario ) |
+| id_punto_bisogno                                                                                                                                                                                                                                                       | 2                                      |
+| is_medicinale                                                                                                                                                                                                                                                          | True                                   |
+| is_pacco                                                                                                                                                                                                                                                               | False                                  |
+| id_bene                                                                                                                                                                                                                                                                | 12                                     |
+| ricetta                                                                                                                                                                                                                                                                | ricetta_medica.pdf (file valido)       |
+| **Output**                                                                                                                                                                                                                                                             |                                        |
+| La prenotazione del bene medicinale va a buon fine, viene registrata nel database con stato "in_validazione", la quantità del bene viene decrementata di 1, la ricetta viene salvata e il sistema invia email di conferma. Il sistema mostra: "Prenotazione effetuata" |                                        |
 
 **UC06 Segnalazione di un punto di bisogno**
 
