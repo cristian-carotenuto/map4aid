@@ -56,7 +56,7 @@ Per gli utenti di tipo beneficiario, l’accesso è consentito solo se l’accou
 
 Se l’OTP è errato, mancante o non più valido, il login non viene completato.
 
-**UC04 Donazione monetaria**
+**UC03 Donazione monetaria**
 
 Un utente autenticato (donatore, beneficiario o ente erogatore) effettua una donazione monetaria verso un ente erogatore selezionato.
 
@@ -79,6 +79,14 @@ Se la transazione viene accettata, il sistema registra la donazione nel database
 Al termine, il sistema invia una email di conferma all’ente erogatore con i dettagli della donazione.
 
 Se l’email non può essere inviata, la donazione rimane comunque registrata, ma il sistema notifica che la conferma via email non è stata inviata.
+
+**UC04 Donazione di beni**
+
+Un utente autenticato come donatore decide di effettuare una donazione di beni compilando il form nella pagina dedicata. L’utente inserisce i dati per la donazione e il sistema ne verifica la validità.
+
+Se i dati sono validi il sistema simula la donazione e al termine invia una mail sia all’utente donatore sia all’ente erogatore a cui è stata effettuata la donazione.
+
+In caso di errore nell’invio delle mail la donazione sarà comunque effettuata ma si verrà notificati dell’errore con il messaggio “Donazione effettuata ma mail non inviate”
 
 **UC06 Segnalazione di un punto di bisogno**
 
@@ -339,7 +347,7 @@ Se le tabelle delle categorie non esistono nello schema, il filtro viene ignorat
 </tbody>
 </table>
 
-**UC04 Donazione Monetaria**
+**UC03 Donazione Monetaria**
 
 <table>
 <colgroup>
@@ -438,6 +446,83 @@ Se le tabelle delle categorie non esistono nello schema, il filtro viene ignorat
 
 ## 
 
+## UC4 Donazione di beni
+
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 21%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><h2 id="parametro" class="unnumbered">Parametro</h2></th>
+<th><h2 id="categoria" class="unnumbered">Categoria</h2></th>
+<th><h2 id="vincoli-e-proprietà" class="unnumbered">Vincoli e proprietà</h2></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><h2 id="punto_distribuzione" class="unnumbered">punto_distribuzione</h2></td>
+<td><h2 id="punto-esistentepe" class="unnumbered">Punto Esistente(PE)</h2></td>
+<td><ol type="1">
+<li><p>Il punto esiste nel DB ed è inserito nel campo → <strong>[Propietà PE_OK]</strong></p></li>
+<li><p>Il punto non esiste → <strong>[ERR]</strong></p></li>
+<li><p>Campo mancante → <strong>[ERR]</strong></p></li>
+</ol></td>
+</tr>
+<tr class="even">
+<td><h2 id="tipo_bene" class="unnumbered">tipo_bene</h2></td>
+<td><h2 id="tipo-esistete" class="unnumbered">Tipo Esiste(TE)</h2></td>
+<td><h2 id="il-tipo-esiste-nel-db-ed-è-inserito-nel-campo-propietà-te_ok">Il tipo esiste nel DB ed è inserito nel campo → [Propietà TE_OK]</h2>
+<ol type="1">
+<li><p>Il tipo non esiste → <strong>[ERR]</strong></p></li>
+<li><p>Campo mancante → <strong>[ERR]</strong></p></li>
+</ol></td>
+</tr>
+<tr class="odd">
+<td><h2 id="nome_bene" class="unnumbered">nome_bene</h2></td>
+<td><h2 id="inseritonb" class="unnumbered">Inserito(NB)</h2></td>
+<td><h2 id="il-nome-del-bene-da-donare-è-inserito-correttamente-nel-campo-proprietà-nb_ok">Il nome del bene da donare è inserito correttamente nel campo → [Proprietà NB_OK]</h2>
+<ol type="1">
+<li><p>Campo mancante → <strong>[ERR]</strong></p></li>
+</ol></td>
+</tr>
+<tr class="even">
+<td><h2 id="quantità_bene" class="unnumbered">quantità_bene</h2></td>
+<td><h2 id="inseritoqb" class="unnumbered">Inserito(QB)</h2></td>
+<td><h2 id="la-quantità-del-bene-da-donare-è-inserito-correttamente-nel-campo-proprietà-qb_ok">La quantità del bene da donare è inserito correttamente nel campo → [Proprietà QB_OK]</h2>
+<ol type="1">
+<li><p>Campo mancante → <strong>[ERR]</strong></p></li>
+</ol></td>
+</tr>
+<tr class="odd">
+<td><h2 id="campi_specifici" class="unnumbered">campi_specifici</h2></td>
+<td><h2 id="completezzacs" class="unnumbered">Completezza(CS)</h2></td>
+<td><h2 id="tutti-i-campi-obbligatori-per-la-donazione-sono-stati-inseriti-if-pe_ok-and-te_ok-and-nb_ok-and-qb_ok-proprietà-cs_ok">Tutti i campi obbligatori per la donazione sono stati inseriti → [IF PE_OK AND TE_OK AND NB_OK AND QB_OK] [Proprietà CS_OK]</h2>
+<ol type="1">
+<li><p>Uno o più campi obbligatori non sono stati inseriti → <strong>[IF PE_OK ORTE_OK OR NB_OK OR QB_OK] [ERR]</strong></p></li>
+</ol></td>
+</tr>
+<tr class="even">
+<td><h2 id="donazione" class="unnumbered">donazione</h2></td>
+<td><h2 id="esito-donazionedn" class="unnumbered">Esito Donazione(DN)</h2></td>
+<td><h2 id="la-donazione-viene-effettuata-if-cs_ok-proprietà-dn_ok">La donazione viene effettuata → [IF CS_OK] [Proprietà DN_OK]</h2>
+<ol type="1">
+<li><p>La donazione viene rifiutata dal sistema → <strong>[IF NOT CS_OK] [ERR]</strong></p></li>
+</ol></td>
+</tr>
+<tr class="odd">
+<td><h2 id="email" class="unnumbered">email</h2></td>
+<td><h2 id="invio-emailem" class="unnumbered">Invio email(EM)</h2></td>
+<td><h2 id="la-mail-di-conferma-è-inviata-correttamente-if-dn_ok-proprietà-em_ok">La mail di conferma è inviata correttamente → [IF DN_OK] [Proprietà EM_OK]</h2>
+<ol type="1">
+<li><p>La mail di conferma non viene inviata → <strong>[IF DN_OK]</strong> <strong>[ERR NON BLOCCANTE]</strong></p></li>
+</ol></td>
+</tr>
+</tbody>
+</table>
+
 ## UC6 Segnalazione di un punto di bisogno
 
 <table>
@@ -448,9 +533,9 @@ Se le tabelle delle categorie non esistono nello schema, il filtro viene ignorat
 </colgroup>
 <thead>
 <tr class="header">
-<th><h2 id="parametro" class="unnumbered">Parametro</h2></th>
-<th><h2 id="categoria" class="unnumbered">Categoria</h2></th>
-<th><h2 id="vincoli-e-proprietà" class="unnumbered">Vincoli e proprietà</h2></th>
+<th><h2 id="parametro-1" class="unnumbered">Parametro</h2></th>
+<th><h2 id="categoria-1" class="unnumbered">Categoria</h2></th>
+<th><h2 id="vincoli-e-proprietà-1" class="unnumbered">Vincoli e proprietà</h2></th>
 </tr>
 </thead>
 <tbody>
@@ -485,7 +570,7 @@ Se le tabelle delle categorie non esistono nello schema, il filtro viene ignorat
 <td><h2 id="lista-enti-erogatori-caricata-correttamente-im_ok" class="unnumbered">1. Lista enti erogatori caricata correttamente → [IM_OK]</h2></td>
 </tr>
 <tr class="even">
-<td><h2 id="email" class="unnumbered">Email</h2></td>
+<td><h2 id="email-1" class="unnumbered">Email</h2></td>
 <td><h2 id="invio-email-em" class="unnumbered">Invio Email (EM)</h2></td>
 <td><h2 id="inviata-correttamente-a-tutti-em_ok" class="unnumbered">1. Inviata correttamente a tutti → [EM_OK]</h2></td>
 </tr>
@@ -906,7 +991,7 @@ messaggio_errore --&gt; Descrittivo (<strong>DE</strong>)</td>
 | **TC11**      | FM_OK  | RG_OK  | OK_CR  | IS_BN  | AC_OK  | LN_OK    | ERR    | **\[ERR\]**Codice non valido      |
 | **TC12**      | FM_OK  | RG_OK  | OK_CR  | IS_BN  | AC_OK  | LN_OK    | CT_OK  | Login completato                  |
 
-**UC04 Donazione Monetaria**
+**UC03 Donazione Monetaria**
 
 |               |        |        |        |        |        |        |        |        |                                          |
 |---------------|--------|--------|--------|--------|--------|--------|--------|--------|------------------------------------------|
@@ -920,6 +1005,128 @@ messaggio_errore --&gt; Descrittivo (<strong>DE</strong>)</td>
 | **TC07**      | IM_OK  | NC_OK  | SC_OK  | CV_OK  | EN_OK  | IB_OK  | TR_OK  | ERR    | **\[ERR\]**Email di conferma non inviata |
 | **TC08**      | IM_OK  | NC_OK  | SC_OK  | CV_OK  | EN_OK  | IB_OK  | ERR    | **-**  | **\[ERR\]** Errore generico transazione  |
 | **TC09**      | IM_OK  | NC_OK  | SC_OK  | CV_OK  | EN_OK  | IB_OK  | TR_OK  | EM_OK  | Donazione registrata + email inviata     |
+
+## UC4 Donazione di beni
+
+<table>
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 9%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 22%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><p><strong>Test</strong></p>
+<p><strong>Case</strong></p></th>
+<th><strong>PE</strong></th>
+<th><strong>TE</strong></th>
+<th><strong>NB</strong></th>
+<th><strong>QB</strong></th>
+<th><strong>CS</strong></th>
+<th><strong>DN</strong></th>
+<th><strong>EM</strong></th>
+<th><p><strong>Esito</strong></p>
+<p><strong>Atteso</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>TC01</strong></td>
+<td><strong>ERR</strong></td>
+<td><strong>-</strong></td>
+<td><strong>-</strong></td>
+<td><strong>-</strong></td>
+<td><strong>-</strong></td>
+<td><strong>-</strong></td>
+<td><strong>-</strong></td>
+<td><strong>[ERR] Punto non valido</strong></td>
+</tr>
+<tr class="even">
+<td><strong>TC02</strong></td>
+<td><strong>-</strong></td>
+<td><strong>ERR</strong></td>
+<td><strong>-</strong></td>
+<td><strong>-</strong></td>
+<td><strong>-</strong></td>
+<td><strong>-</strong></td>
+<td><strong>-</strong></td>
+<td><strong>[ERR] Tipo non valido</strong></td>
+</tr>
+<tr class="odd">
+<td><strong>TC03</strong></td>
+<td><strong>-</strong></td>
+<td><strong>-</strong></td>
+<td><strong>ERR</strong></td>
+<td><strong>-</strong></td>
+<td><strong>-</strong></td>
+<td><strong>-</strong></td>
+<td><strong>-</strong></td>
+<td><strong>[ERR] Nome bene non valido</strong></td>
+</tr>
+<tr class="even">
+<td><strong>TC04</strong></td>
+<td><strong>-</strong></td>
+<td><strong>-</strong></td>
+<td><strong>-</strong></td>
+<td><strong>ERR</strong></td>
+<td><strong>-</strong></td>
+<td><strong>-</strong></td>
+<td><strong>-</strong></td>
+<td><strong>[ERR] Quantità bene non valida</strong></td>
+</tr>
+<tr class="odd">
+<td><strong>TC05</strong></td>
+<td><strong>PE_OK</strong></td>
+<td><strong>TE_OK</strong></td>
+<td><strong>NB_OK</strong></td>
+<td><strong>ERR</strong></td>
+<td><strong>ERR</strong></td>
+<td></td>
+<td></td>
+<td><strong>[ERR] Campi specifici non validi</strong></td>
+</tr>
+<tr class="even">
+<td><strong>TC06</strong></td>
+<td><strong>PE_OK</strong></td>
+<td><strong>TE_OK</strong></td>
+<td><strong>NB_OK</strong></td>
+<td><strong>QB_OK</strong></td>
+<td><strong>ERR</strong></td>
+<td><strong>ERR</strong></td>
+<td></td>
+<td><p><strong>[ERR]</strong></p>
+<p><strong>Donazione rifiutata dal sistema</strong></p></td>
+</tr>
+<tr class="odd">
+<td><strong>TC07</strong></td>
+<td><strong>PE_OK</strong></td>
+<td><strong>TE_OK</strong></td>
+<td><strong>NB_OK</strong></td>
+<td><strong>QB_OK</strong></td>
+<td><strong>CS_OK</strong></td>
+<td><strong>DN_OK</strong></td>
+<td><strong>ERR</strong></td>
+<td><strong>[ERR] E-mail non inviata</strong></td>
+</tr>
+<tr class="even">
+<td><strong>TC08</strong></td>
+<td><strong>PE_OK</strong></td>
+<td><strong>TE_OK</strong></td>
+<td><strong>NB_OK</strong></td>
+<td><strong>QB_OK</strong></td>
+<td><strong>CS_OK</strong></td>
+<td><strong>DN_OK</strong></td>
+<td><strong>EM_OK</strong></td>
+<td><strong>[SUCCESS] Donazione effettuata con successo e mail inviate</strong></td>
+</tr>
+</tbody>
+</table>
 
 **UC6 Segnalazione di un punto di bisogno**
 
@@ -1354,7 +1561,7 @@ Per ciascun test case vengono definiti:
 | **Esito atteso**            |                       |
 | L’utente logga con successo |                       |
 
-**UC04 Donazione Monetaria**
+**UC03 Donazione Monetaria**
 
 |                                                                                                                                |                  |
 |--------------------------------------------------------------------------------------------------------------------------------|------------------|
@@ -1459,6 +1666,99 @@ Per ciascun test case vengono definiti:
 | importo                                                                                                                                     | 50               |
 | **OUTPUT**                                                                                                                                  |                  |
 | La donazione va a buon fine, viene registrata nel database e il sistema mostra un messaggio: “Donazione monetaria completata con successo”. |                  |
+
+**UC04 Donazione di beni**
+
+| **ID TEST FRAME**                                                                                   |                |
+|-----------------------------------------------------------------------------------------------------|----------------|
+| **TC01**                                                                                            |                |
+| **INPUT**                                                                                           | **VALORE**     |
+| **Punto di ritiro**                                                                                 | **(vuoto)**    |
+| **Tipo di bene**                                                                                    | **Alimentare** |
+| **Nome del bene**                                                                                   | **Pane**       |
+| **Quantità del bene**                                                                               | **3**          |
+| **OUTPUT**                                                                                          |                |
+| **Il Punto di ritiro non viene inserito e l’utente non può inviare il form finchè non lo inserirà** |                |
+
+| **ID TEST FRAME**                                                                                |                                                |
+|--------------------------------------------------------------------------------------------------|------------------------------------------------|
+| **TC02**                                                                                         |                                                |
+| **INPUT**                                                                                        | **VALORE**                                     |
+| **Punto di ritiro**                                                                              | **Centro Colosseo - Via del Colosseo 1, Roma** |
+| **Tipo di bene**                                                                                 | **(vuoto)**                                    |
+| **Nome del bene**                                                                                | **Pane**                                       |
+| **Quantità del bene**                                                                            | **3**                                          |
+| **OUTPUT**                                                                                       |                                                |
+| **Il Tipo di bene non viene inserito e l’utente non può inviare il form finchè non lo inserirà** |                                                |
+
+| **ID TEST FRAME**                                                                                 |                                                |
+|---------------------------------------------------------------------------------------------------|------------------------------------------------|
+| **TC03**                                                                                          |                                                |
+| **INPUT**                                                                                         | **VALORE**                                     |
+| **Punto di ritiro**                                                                               | **Centro Colosseo - Via del Colosseo 1, Roma** |
+| **Tipo di bene**                                                                                  | **Alimentare**                                 |
+| **Nome del bene**                                                                                 | **(vuoto)**                                    |
+| **Quantità del bene**                                                                             | **3**                                          |
+| **OUTPUT**                                                                                        |                                                |
+| **Il Nome del bene non viene inserito e l’utente non può inviare il form finchè non lo inserirà** |                                                |
+
+| **ID TEST FRAME**                                                                                     |                                                |
+|-------------------------------------------------------------------------------------------------------|------------------------------------------------|
+| **TC04**                                                                                              |                                                |
+| **INPUT**                                                                                             | **VALORE**                                     |
+| **Punto di ritiro**                                                                                   | **Centro Colosseo - Via del Colosseo 1, Roma** |
+| **Tipo di bene**                                                                                      | **Alimentare**                                 |
+| **Nome del bene**                                                                                     | **Pane**                                       |
+| **Quantità del bene**                                                                                 | **(vuoto)**                                    |
+| **OUTPUT**                                                                                            |                                                |
+| **La Quantità del bene non viene inserita e l’utente non può inviare il form finchè non lo inserirà** |                                                |
+
+| **ID TEST FRAME**                                                                                                     |                                                |
+|-----------------------------------------------------------------------------------------------------------------------|------------------------------------------------|
+| **TC05**                                                                                                              |                                                |
+| **INPUT**                                                                                                             | **VALORE**                                     |
+| **Punto di ritiro**                                                                                                   | **Centro Colosseo - Via del Colosseo 1, Roma** |
+| **Tipo di bene**                                                                                                      | **(vuoto)**                                    |
+| **Nome del bene**                                                                                                     | **Pane**                                       |
+| **Quantità del bene**                                                                                                 | **(vuoto)**                                    |
+| **OUTPUT**                                                                                                            |                                                |
+| **Uno o più campi del form non sono stati completati e l’utente non potrà inviarlo finchè non inserirà tutti i dati** |                                                |
+
+| **ID TEST FRAME**                                                                                                     |                                                |
+|-----------------------------------------------------------------------------------------------------------------------|------------------------------------------------|
+| **TC06**                                                                                                              |                                                |
+| **INPUT**                                                                                                             | **VALORE**                                     |
+| **Punto di ritiro**                                                                                                   | **Centro Colosseo - Via del Colosseo 1, Roma** |
+| **Tipo di bene**                                                                                                      | **Alimentare**                                 |
+| **Nome del bene**                                                                                                     | **Pane**                                       |
+| **Quantità del bene**                                                                                                 | **3**                                          |
+| **OUTPUT**                                                                                                            |                                                |
+| **Tutti i campi del form sono inseriti correttamente ma per un errore del sistema la donazione non verrà effettuata** |                                                |
+
+**  
+**
+
+| **ID TEST FRAME**                                                                                                                                                                                                                                                                       |                                                |
+|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------|
+| **TC07**                                                                                                                                                                                                                                                                                |                                                |
+| **INPUT**                                                                                                                                                                                                                                                                               | **VALORE**                                     |
+| **Punto di ritiro**                                                                                                                                                                                                                                                                     | **Centro Colosseo - Via del Colosseo 1, Roma** |
+| **Tipo di bene**                                                                                                                                                                                                                                                                        | **Alimentare**                                 |
+| **Nome del bene**                                                                                                                                                                                                                                                                       | **Pane**                                       |
+| **Quantità del bene**                                                                                                                                                                                                                                                                   | **3**                                          |
+| **OUTPUT**                                                                                                                                                                                                                                                                              |                                                |
+| **Tutti i campi del form sono inseriti correttamente e la donazione viene effettuata, ma per un errore del sistema non vengono inviate le mail all’utente donatore e all’ente erogatore. notificando l’utente donatore con un messaggio di “Donazione effettuata ma mail non inviate”** |                                                |
+
+| **ID TEST FRAME**                                                                                                                                                                                                                                                                |                                                |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------|
+| **TC08**                                                                                                                                                                                                                                                                         |                                                |
+| **INPUT**                                                                                                                                                                                                                                                                        | **VALORE**                                     |
+| **Punto di ritiro**                                                                                                                                                                                                                                                              | **Centro Colosseo - Via del Colosseo 1, Roma** |
+| **Tipo di bene**                                                                                                                                                                                                                                                                 | **Alimentare**                                 |
+| **Nome del bene**                                                                                                                                                                                                                                                                | **Pane**                                       |
+| **Quantità del bene**                                                                                                                                                                                                                                                            | **3**                                          |
+| **OUTPUT**                                                                                                                                                                                                                                                                       |                                                |
+| **Tutti i campi del form sono inseriti correttamente, la donazione viene effettuata con successo e vengono notificati tramite mail sia l’utente donatore che l’ente erogatore. L’utente donatore verrà notificato a schermo con un messaggio di “Donazione di bene effettuata”** |                                                |
 
 **UC06 Segnalazione di un punto di bisogno**
 
