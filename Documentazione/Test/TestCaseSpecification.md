@@ -6,13 +6,13 @@
 
 # Sommario
 
-[**1. SPECIFICA [4](#specifica)**](#specifica)
+[**1. SPECIFICA** [**4**](#specifica)](#specifica)
 
-[**2. TEST DESIGN [1](#_Toc222091008)**](#_Toc222091008)
+[**2. TEST DESIGN** [**1**](#_Toc222091008)](#_Toc222091008)
 
-[**3. TEST FRAME [12](#test-frame)**](#test-frame)
+[**3. TEST FRAME** [**12**](#test-frame)](#test-frame)
 
-[**4. SPECIFICHE DEI TEST CASE [20](#specifiche-dei-test-case)**](#specifiche-dei-test-case)
+[**4. SPECIFICHE DEI TEST CASE** [**20**](#specifiche-dei-test-case)](#specifiche-dei-test-case)
 
 All’interno di questo documento viene riportata l’applicazione della metodologia di individuazione dei casi di test definita nel Test Plan (TP).
 
@@ -146,6 +146,42 @@ L’ente può scegliere una delle seguenti operazioni:
 Al termine dell’operazione il sistema salva le modifiche nel database e aggiorna la disponibilità dei beni visibile agli utenti.
 
 Se una delle verifiche fallisce (utente non autorizzato, bene inesistente, quantità non valida, errore database), l’operazione non viene completata e viene restituito un messaggio di errore.
+
+**UC 08 Richiesta aggiunta di un punto di distribuzione**
+
+Un ente erogatore autenticato accede alla sezione dedicata alla gestione dei propri punti di distribuzione.
+
+L’ente seleziona l’opzione “Aggiungi nuovo punto”.
+
+Il sistema verifica che l’utente sia autenticato e che abbia il ruolo di ente erogatore.
+
+Il sistema visualizza il form per l’inserimento dei dati del nuovo punto di distribuzione.
+
+L’ente compila i campi richiesti con le informazioni del nuovo punto.
+
+L’ente conferma l’invio della richiesta.
+
+Il sistema verifica la validità formale dei dati inseriti (campi obbligatori compilati, formato corretto).
+
+Se i dati sono validi:
+
+- Il sistema registra la richiesta nel database in stato “in attesa di approvazione”.
+
+- Il sistema notifica all’ente erogatore l’avvenuto inoltro della richiesta.
+
+- Il sistema notifica l’amministratore della presenza di una nuova richiesta di aggiunta punto.
+
+Se l’ente annulla l’operazione prima dell’invio:
+
+- Il sistema scarta i dati inseriti.
+
+- Nessuna richiesta viene registrata.
+
+Se i dati risultano mancanti o non validi:
+
+- Il sistema non registra la richiesta.
+
+- Il sistema mostra un messaggio di errore evidenziando i campi da correggere.
 
 **UC 09 Storico attività e reportistica**
 
@@ -542,7 +578,7 @@ Se le tabelle delle categorie non esistono nello schema, il filtro viene ignorat
 <tr class="odd">
 <td><h2 id="id_punto_bisogno" class="unnumbered">id_punto_bisogno</h2></td>
 <td><h2 id="esistenza-punto-pd" class="unnumbered">Esistenza Punto (PD)</h2></td>
-<td><h2 id="il-punto-di-distribuzione-esiste-if-au_okproprietà-pd_ok" class="unnumbered">1. Il punto di distribuzione esiste → <strong>[IF AU_OK][Proprietà PD_OK]</strong></h2>
+<td><h2 id="il-punto-di-distribuzione-esiste-if-au_okproprietà-pd_ok" class="unnumbered">1. Il punto di distribuzione esiste → [IF AU_OK][Proprietà PD_OK]</h2>
 <p>2. Punto mancante o inesistente → <strong>[IF AU_OK][ERR]</strong></p></td>
 </tr>
 <tr class="even">
@@ -578,19 +614,19 @@ Se le tabelle delle categorie non esistono nello schema, il filtro viene ignorat
 </tr>
 <tr class="odd">
 <td><h2 id="ricetta" class="unnumbered">ricetta</h2></td>
-<td><h2 id="presenza-file-rc" class="unnumbered">Presenza File <strong>(RC)</strong></h2></td>
+<td><h2 id="presenza-file-rc" class="unnumbered">Presenza File (RC)</h2></td>
 <td><h2 id="file-ricetta-presente-e-valido-if-tp_med-and-bd_okproprietà-rc_ok" class="unnumbered">1. File ricetta presente e valido → [IF TP_MED AND BD_OK][Proprietà RC_OK]</h2>
 <p>2. File ricetta mancante → [IF TP_MED AND BD_OK][ERR]</p></td>
 </tr>
 <tr class="even">
 <td><h2 id="disponibilita_pacco" class="unnumbered">disponibilita_pacco</h2></td>
-<td><h2 id="craftable-cr" class="unnumbered">Craftable <strong>(CR)</strong></h2></td>
+<td><h2 id="craftable-cr" class="unnumbered">Craftable (CR)</h2></td>
 <td><h2 id="tutti-i-beni-necessari-per-il-pacco-sono-disponibili-if-tp_paccoproprietà-cr_ok" class="unnumbered">1. Tutti i beni necessari per il pacco sono disponibili → [IF TP_PACCO][Proprietà CR_OK]</h2>
 <p>2. Uno o più beni mancanti o con quantità insufficiente → [IF TP_PACCO][ERR]</p></td>
 </tr>
 <tr class="odd">
 <td><h2 id="limite_prenotazioni" class="unnumbered">limite_prenotazioni</h2></td>
-<td><h2 id="checker-lm" class="unnumbered">Checker <strong>(LM)</strong></h2></td>
+<td><h2 id="checker-lm" class="unnumbered">Checker (LM)</h2></td>
 <td><h2 id="lutente-può-ancora-prenotare-if-tp_pacco-and-cr_okproprietà-lm_ok" class="unnumbered">1. L'utente può ancora prenotare → [IF TP_PACCO AND CR_OK][Proprietà LM_OK]</h2>
 <p>2. L'utente ha raggiunto il limite di prenotazioni → [IF TP_PACCO AND CR_OK][ERR]</p></td>
 </tr>
@@ -842,6 +878,73 @@ messaggio_errore --&gt; Descrittivo (<strong>DE</strong>)</td>
 <td><strong>AG</strong>:<br />
 1. L'interfaccia della dashboard mostra i dati aggiornati in tempo reale<br />
 2. L'interfaccia non si aggiorna o mostra dati obsoleti</td>
+</tr>
+</tbody>
+</table>
+
+**UC 08 Richiesta aggiunta punto di distribuzione**
+
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Parametro</strong></th>
+<th><strong>Categoria</strong></th>
+<th><strong>Vincoli e proprietà</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Sessione_Utente</td>
+<td>Autenticato (<strong>AU</strong>)</td>
+<td><p>1. L’utente è autenticato <strong>[Proprietà AU_OK]</strong></p>
+<p>2. L’utente non è autenticato <strong>[ERR]</strong></p></td>
+</tr>
+<tr class="even">
+<td>Ruolo_Utente</td>
+<td>Ruolo (<strong>RU</strong>)</td>
+<td>1. Utente è Ente erogatore [IF AU_OK] → <strong>Proprietà RU_ENTI</strong><br />
+2. Utente ≠ Ente erogatore [IF AU_OK] → <strong>[ERR]</strong></td>
+</tr>
+<tr class="odd">
+<td>Nome_Punto</td>
+<td>Presenza (<strong>NP</strong>)</td>
+<td>1. Nome compilato → <strong>Proprietà NP_OK</strong><br />
+2. Nome vuoto → <strong>[ERR]</strong></td>
+</tr>
+<tr class="even">
+<td>Orario_Apertura</td>
+<td>Formato (<strong>OA</strong>)</td>
+<td>1. Orario valido (formato HH:MM) → <strong>Proprietà OA_OK</strong><br />
+2. Orario mancante → <strong>[ERR]</strong></td>
+</tr>
+<tr class="odd">
+<td>Orario_Chiusura</td>
+<td>Formato (<strong>OC</strong>)</td>
+<td>1. Orario valido (formato HH:MM) → <strong>Proprietà OA_OK</strong><br />
+2. Orario mancante → <strong>[ERR]</strong></td>
+</tr>
+<tr class="even">
+<td>Giorni_Apertura</td>
+<td>Completezza (<strong>GA</strong>)</td>
+<td>1. Almeno un giorno indicato → <strong>Proprietà GA_OK</strong><br />
+2. Campo vuoto → <strong>[ERR]</strong></td>
+</tr>
+<tr class="odd">
+<td>Latitudine</td>
+<td>Range (<strong>LAT</strong>)</td>
+<td>1. Valore numerico ∈ [-90, 90] → <strong>Proprietà LAT_OK</strong><br />
+2. Fuori range / non numerico → <strong>[ERR]</strong></td>
+</tr>
+<tr class="even">
+<td>Longitudine</td>
+<td>Range (<strong>LON</strong>)</td>
+<td>1. Valore numerico ∈ [-180, 180] → <strong>Proprietà LON_OK</strong><br />
+2. Fuori range / non numerico → <strong>[ERR]</strong></td>
 </tr>
 </tbody>
 </table>
@@ -1308,6 +1411,21 @@ messaggio_errore --&gt; Descrittivo (<strong>DE</strong>)</td>
 </tr>
 </tbody>
 </table>
+
+**UC 08 Richiesta aggiunta punto di distribuzione**
+
+|               |        |         |        |        |        |        |         |         |                                                                    |
+|---------------|--------|---------|--------|--------|--------|--------|---------|---------|--------------------------------------------------------------------|
+| **Test case** | **AU** | **RU**  | **NP** | **OA** | **OC** | **GA** | **LAT** | **LON** | **Esito atteso**                                                   |
+| **TC01**      | AU_OK  | RU_ENTI | NP_OK  | OA_OK  | OC_OK  | GA_OK  | LAT_OK  | LON_OK  | Richiesta inviata correttamente, stato “in attesa di approvazione” |
+| **TC02**      | ERR    | **-**   | **-**  | **-**  | **-**  | **-**  | **-**   | **-**   | \[**ERR**\] Non autenticato                                        |
+| **TC03**      | AU_OK  | ERR     | \-     | **-**  | **-**  | **-**  | **-**   | **-**   | \[**ERR**\] Ruolo non autorizzato                                  |
+| **TC04**      | AU_OK  | RU_ENTI | ERR    | OK     | OK     | OK     | OK      | OK      | \[**ERR**\] Nome punto mancante                                    |
+| **TC05**      | AU_OK  | RU_ENTI | OK     | OK     | OK     | ERR    | OK      | OK      | \[**ERR**\] Giorni di apertura mancanti                            |
+| **TC06**      | AU_OK  | RU_ENTI | OK     | ERR    | OK     | OK     | OK      | OK      | **\[ERR\]** Orario apertura mancante                               |
+| **TC07**      | AU_OK  | RU_ENTI | OK     | OK     | ERR    | OK     | OK      | OK      | **\[ERR\]** Orario chiusura mancante                               |
+| **TC08**      | AU_OK  | RU_ENTI | OK     | OK     | OK     | OK     | ERR     | OK      | **\[ERR\]** Latitudine mancante                                    |
+| **TC09**      | AU_OK  | RU_ENTI | OK     | OK     | OK     | OK     | OK      | ERR     | **\[ERR\]** Longitudine mancante                                   |
 
 **UC 09 Storico e Reportistica**
 
@@ -2053,6 +2171,548 @@ Per ciascun test case vengono definiti:
 | tipo_operazione                                                                                                                                                                                                                                                  | INCREMENTO                                     |
 | **OUTPUT**                                                                                                                                                                                                                                                       |                                                |
 | Il sistema nega l'accesso alla funzionalità di gestione scorte, restituisce codice errore 401 (Unauthorized), mostra il messaggio "Autenticazione richiesta. Effettuare il login per accedere alla gestione scorte" e reindirizza l'utente alla pagina di login. |                                                |
+
+**UC 08 Richiesta aggiunta punto di distribuzione**
+
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 72%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th colspan="2"><strong>ID TEST FRAME</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td colspan="2">TC01</td>
+</tr>
+<tr class="even">
+<td><strong>INPUT</strong></td>
+<td><strong>VALORE</strong></td>
+</tr>
+<tr class="odd">
+<td><strong>INPUT</strong></td>
+<td><strong>VALORE</strong></td>
+</tr>
+<tr class="even">
+<td>Sessione Utente</td>
+<td>Autenticato</td>
+</tr>
+<tr class="odd">
+<td>Ruolo Utente</td>
+<td>Ente Erogatore</td>
+</tr>
+<tr class="even">
+<td>Nome Punto</td>
+<td>Punto Creativo</td>
+</tr>
+<tr class="odd">
+<td>Orario Apertura</td>
+<td>8:00</td>
+</tr>
+<tr class="even">
+<td>Orario Chiusura</td>
+<td>20:00</td>
+</tr>
+<tr class="odd">
+<td>Giorni Apertura</td>
+<td>Lun-Ven</td>
+</tr>
+<tr class="even">
+<td>Latitudine</td>
+<td>40</td>
+</tr>
+<tr class="odd">
+<td colspan="2"><strong>OUTPUT</strong></td>
+</tr>
+<tr class="even">
+<td colspan="2">L’operazione viene completata con successo.<br />
+Il sistema valida correttamente tutti i campi, registra la richiesta nel database con stato “In attesa di approvazione” e mostra un messaggio di conferma all’ente erogatore.</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 72%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th colspan="2"><strong>ID TEST FRAME</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td colspan="2">TC02</td>
+</tr>
+<tr class="even">
+<td><strong>INPUT</strong></td>
+<td><strong>VALORE</strong></td>
+</tr>
+<tr class="odd">
+<td>Sessione Utente</td>
+<td>Non autenticato</td>
+</tr>
+<tr class="even">
+<td>Ruolo Utente</td>
+<td>N/A</td>
+</tr>
+<tr class="odd">
+<td>Nome Punto</td>
+<td>N/A</td>
+</tr>
+<tr class="even">
+<td>Orario Apertura</td>
+<td>N/A</td>
+</tr>
+<tr class="odd">
+<td>Orario Chiusura</td>
+<td>N/A</td>
+</tr>
+<tr class="even">
+<td>Giorni Apertura</td>
+<td>N/A</td>
+</tr>
+<tr class="odd">
+<td>Latitudine</td>
+<td>N/A</td>
+</tr>
+<tr class="even">
+<td>Longitudine</td>
+<td>N/A</td>
+</tr>
+<tr class="odd">
+<td colspan="2"><strong>OUTPUT</strong></td>
+</tr>
+<tr class="even">
+<td colspan="2">L’operazione non viene eseguita.<br />
+Il sistema impedisce l’accesso alla funzionalità e reindirizza l’utente alla schermata di login.</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 72%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th colspan="2"><strong>ID TEST FRAME</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td colspan="2">TC03</td>
+</tr>
+<tr class="even">
+<td><strong>INPUT</strong></td>
+<td><strong>VALORE</strong></td>
+</tr>
+<tr class="odd">
+<td>Sessione Utente</td>
+<td>Autenticato</td>
+</tr>
+<tr class="even">
+<td>Ruolo Utente</td>
+<td>Ente Donatore</td>
+</tr>
+<tr class="odd">
+<td>Nome Punto</td>
+<td>N/A</td>
+</tr>
+<tr class="even">
+<td>Orario Apertura</td>
+<td>N/A</td>
+</tr>
+<tr class="odd">
+<td>Orario Chiusura</td>
+<td>N/A</td>
+</tr>
+<tr class="even">
+<td>Giorni Apertura</td>
+<td>N/A</td>
+</tr>
+<tr class="odd">
+<td>Latitudine</td>
+<td>N/A</td>
+</tr>
+<tr class="even">
+<td>Longitudine</td>
+<td>N/A</td>
+</tr>
+<tr class="odd">
+<td colspan="2"><strong>OUTPUT</strong></td>
+</tr>
+<tr class="even">
+<td colspan="2">L’operazione non viene eseguita.<br />
+Il sistema blocca l’accesso alla funzionalità poiché il ruolo dell’utente non è autorizzato all’aggiunta di un punto di distribuzione.</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 72%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th colspan="2"><strong>ID TEST FRAME</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td colspan="2">TC04</td>
+</tr>
+<tr class="even">
+<td><strong>INPUT</strong></td>
+<td><strong>VALORE</strong></td>
+</tr>
+<tr class="odd">
+<td>Sessione Utente</td>
+<td>Autenticato</td>
+</tr>
+<tr class="even">
+<td>Ruolo Utente</td>
+<td>Ente Erogatore</td>
+</tr>
+<tr class="odd">
+<td>Nome Punto</td>
+<td>N/A</td>
+</tr>
+<tr class="even">
+<td>Orario Apertura</td>
+<td>8:00</td>
+</tr>
+<tr class="odd">
+<td>Orario Chiusura</td>
+<td>20:00</td>
+</tr>
+<tr class="even">
+<td>Giorni Apertura</td>
+<td>Lun-Ven</td>
+</tr>
+<tr class="odd">
+<td>Latitudine</td>
+<td>40</td>
+</tr>
+<tr class="even">
+<td>Longitudine</td>
+<td>40</td>
+</tr>
+<tr class="odd">
+<td colspan="2"><strong>OUTPUT</strong></td>
+</tr>
+<tr class="even">
+<td colspan="2">Il sistema non salva la richiesta.<br />
+Viene mostrato un messaggio di errore che indica l’obbligatorietà del campo “Nome del punto”.</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 72%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th colspan="2"><strong>ID TEST FRAME</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td colspan="2">TC05</td>
+</tr>
+<tr class="even">
+<td><strong>INPUT</strong></td>
+<td><strong>VALORE</strong></td>
+</tr>
+<tr class="odd">
+<td>Sessione Utente</td>
+<td>Autenticato</td>
+</tr>
+<tr class="even">
+<td>Ruolo Utente</td>
+<td>Ente Erogatore</td>
+</tr>
+<tr class="odd">
+<td>Nome Punto</td>
+<td>Punto Creativo</td>
+</tr>
+<tr class="even">
+<td>Orario Apertura</td>
+<td>N/A</td>
+</tr>
+<tr class="odd">
+<td>Orario Chiusura</td>
+<td>20:00</td>
+</tr>
+<tr class="even">
+<td>Giorni Apertura</td>
+<td>Lun-Ven</td>
+</tr>
+<tr class="odd">
+<td>Latitudine</td>
+<td>40</td>
+</tr>
+<tr class="even">
+<td>Longitudine</td>
+<td>40</td>
+</tr>
+<tr class="odd">
+<td colspan="2"><strong>OUTPUT</strong></td>
+</tr>
+<tr class="even">
+<td colspan="2">Il sistema non salva la richiesta.<br />
+Viene mostrato un messaggio di errore che segnala un valore non valido o mancante per “Orario apertura”.</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 72%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th colspan="2"><strong>ID TEST FRAME</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td colspan="2">TC06</td>
+</tr>
+<tr class="even">
+<td><strong>INPUT</strong></td>
+<td><strong>VALORE</strong></td>
+</tr>
+<tr class="odd">
+<td>Sessione Utente</td>
+<td>Autenticato</td>
+</tr>
+<tr class="even">
+<td>Ruolo Utente</td>
+<td>Ente Erogatore</td>
+</tr>
+<tr class="odd">
+<td>Nome Punto</td>
+<td>Punto Creativo</td>
+</tr>
+<tr class="even">
+<td>Orario Apertura</td>
+<td>8:00</td>
+</tr>
+<tr class="odd">
+<td>Orario Chiusura</td>
+<td>N/A</td>
+</tr>
+<tr class="even">
+<td>Giorni Apertura</td>
+<td>Lun-Ven</td>
+</tr>
+<tr class="odd">
+<td>Latitudine</td>
+<td>40</td>
+</tr>
+<tr class="even">
+<td>Longitudine</td>
+<td>40</td>
+</tr>
+<tr class="odd">
+<td colspan="2"><strong>OUTPUT</strong></td>
+</tr>
+<tr class="even">
+<td colspan="2">Il sistema non salva la richiesta.<br />
+Viene mostrato un messaggio di errore che segnala un valore non valido o mancante per “Orario chiusura”.</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 72%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th colspan="2"><strong>ID TEST FRAME</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td colspan="2">TC07</td>
+</tr>
+<tr class="even">
+<td><strong>INPUT</strong></td>
+<td><strong>VALORE</strong></td>
+</tr>
+<tr class="odd">
+<td>Sessione Utente</td>
+<td>Autenticato</td>
+</tr>
+<tr class="even">
+<td>Ruolo Utente</td>
+<td>Ente Erogatore</td>
+</tr>
+<tr class="odd">
+<td>Nome Punto</td>
+<td>Punto Creativo</td>
+</tr>
+<tr class="even">
+<td>Orario Apertura</td>
+<td>8:00</td>
+</tr>
+<tr class="odd">
+<td>Orario Chiusura</td>
+<td>20:00</td>
+</tr>
+<tr class="even">
+<td>Giorni Apertura</td>
+<td>N/A</td>
+</tr>
+<tr class="odd">
+<td>Latitudine</td>
+<td>40</td>
+</tr>
+<tr class="even">
+<td>Longitudine</td>
+<td>40</td>
+</tr>
+<tr class="odd">
+<td colspan="2"><strong>OUTPUT</strong></td>
+</tr>
+<tr class="even">
+<td colspan="2">Il sistema non salva la richiesta.<br />
+Viene mostrato un messaggio di errore che indica l’obbligatorietà del campo “Giorni di apertura”.</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 72%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th colspan="2"><strong>ID TEST FRAME</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td colspan="2">TC08</td>
+</tr>
+<tr class="even">
+<td><strong>INPUT</strong></td>
+<td><strong>VALORE</strong></td>
+</tr>
+<tr class="odd">
+<td>Sessione Utente</td>
+<td>Autenticato</td>
+</tr>
+<tr class="even">
+<td>Ruolo Utente</td>
+<td>Ente Erogatore</td>
+</tr>
+<tr class="odd">
+<td>Nome Punto</td>
+<td>Punto Creativo</td>
+</tr>
+<tr class="even">
+<td>Orario Apertura</td>
+<td>8:00</td>
+</tr>
+<tr class="odd">
+<td>Orario Chiusura</td>
+<td>20:00</td>
+</tr>
+<tr class="even">
+<td>Giorni Apertura</td>
+<td>Lun-Ven</td>
+</tr>
+<tr class="odd">
+<td>Latitudine</td>
+<td>N/A</td>
+</tr>
+<tr class="even">
+<td>Longitudine</td>
+<td>40</td>
+</tr>
+<tr class="odd">
+<td colspan="2"><strong>OUTPUT</strong></td>
+</tr>
+<tr class="even">
+<td colspan="2">Il sistema non salva la richiesta.<br />
+Viene mostrato un messaggio di errore che indica l’obbligatorietà del campo “Latitudine”.</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 72%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th colspan="2"><strong>ID TEST FRAME</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td colspan="2">TC09</td>
+</tr>
+<tr class="even">
+<td><strong>INPUT</strong></td>
+<td><strong>VALORE</strong></td>
+</tr>
+<tr class="odd">
+<td>Sessione Utente</td>
+<td>Autenticato</td>
+</tr>
+<tr class="even">
+<td>Ruolo Utente</td>
+<td>Ente Erogatore</td>
+</tr>
+<tr class="odd">
+<td>Nome Punto</td>
+<td>Punto Creativo</td>
+</tr>
+<tr class="even">
+<td>Orario Apertura</td>
+<td>8:00</td>
+</tr>
+<tr class="odd">
+<td>Orario Chiusura</td>
+<td>20:00</td>
+</tr>
+<tr class="even">
+<td>Giorni Apertura</td>
+<td>Lun-Ven</td>
+</tr>
+<tr class="odd">
+<td>Latitudine</td>
+<td>40</td>
+</tr>
+<tr class="even">
+<td>Longitudine</td>
+<td>N/A</td>
+</tr>
+<tr class="odd">
+<td colspan="2"><strong>OUTPUT</strong></td>
+</tr>
+<tr class="even">
+<td colspan="2">Il sistema non salva la richiesta.<br />
+Viene mostrato un messaggio di errore che indica l’obbligatorietà del campo “Longitudine”.</td>
+</tr>
+</tbody>
+</table>
 
 **UC 09 Storico e reportistica**
 
