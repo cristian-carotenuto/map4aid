@@ -1,7 +1,7 @@
 .cb {
     position: fixed;
     right: 18px;
-    bottom: 18px;
+    bottom: 80px;
     z-index: 9999;
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
@@ -176,4 +176,52 @@
 .cb__chip:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+#cb-intro-bubble {
+    position: fixed;
+    bottom: 185px;
+    right: 20px;
+    background: white;
+    color: #333;
+    padding: 10px 14px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    font-size: 14px;
+    z-index: 9999;
+
+    opacity: 0;
+    transform: translateY(10px);
+    animation: cbFadeIn 2.2s ease forwards;
+}
+
+/* Freccetta */
+#cb-intro-bubble::after{
+  content: "";
+  position: absolute;
+  bottom: -8px;     /* attaccata sotto */
+  right: 28px;      /* allineata verso il centro del FAB */
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  transform: rotate(45deg);
+  box-shadow: 3px 3px 8px rgba(0,0,0,0.08);
+}
+
+@keyframes cbFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.cb-hide {
+    animation: cbFadeOut 2.2s ease forwards;
+}
+
+@keyframes cbFadeOut {
+    to {
+        opacity: 0;
+        transform: translateY(10px);
+    }
 }

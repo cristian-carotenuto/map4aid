@@ -18,14 +18,14 @@ def test_basic_inference():
     # Test 1: Saluto semplice
     print("\n>> Test 1: Saluto semplice")
     prompt1 = "Ciao, come stai?"
-    response1 = client.generate_response(prompt1, max_length=100)
+    response1 = client.generate_response(prompt1, max_new_tokens=100)
     print(f"Prompt: {prompt1}")
     print(f"Risposta: {response1}\n")
     
     # Test 2: Domanda generica
     print(">> Test 2: Domanda generica")
     prompt2 = "Quali sono i vantaggi dell'intelligenza artificiale?"
-    response2 = client.generate_response(prompt2, max_length=150)
+    response2 = client.generate_response(prompt2, max_new_tokens=150)
     print(f"Prompt: {prompt2}")
     print(f"Risposta: {response2}\n")
     
