@@ -3,9 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="55397952-be6e-4a64-8a4f-522745ebe921" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_project/controllers/api_punti.py" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/controllers/api_punti.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_project/html/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/html/home.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/map4aid_project/html/prenotazione.html" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/html/prenotazione.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map4aid_project/html/donazione-beni.html" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/html/donazione-beni.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/map4aid_project/instance/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/map4aid_project/instance/database.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

@@ -54,9 +54,11 @@
 
               <!-- Sottocategoria del bene -->
               <div class="mb-3">
-                <label for="sottocategoria" class="form-label">Sottocategoria</label>
-                <input type="text" class="form-control" id="sottocategoria" name="sottocategoria" placeholder="Es. Pasta, Tachipirina, Sapone..." required>
-              </div>
+              <label for="sottocategoria" class="form-label">Sottocategoria</label>
+              <select class="form-select" id="sottocategoria" name="sottocategoria" required>
+                <option value="">Seleziona prima una categoria</option>
+              </select>
+            </div>
 
               <div id="campiAlimentare" style="display: none;">
                 <div class="mb-3">
@@ -166,96 +168,124 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{{ url_for('static', filename='static/js/auth.js') }}"></script>
-  <script>
-    selectGood();
-    // Protezione: solo utenti loggati possono donare beni
-    if (!sessionStorage.getItem('isLoggedIn')) {
-      showError('errorMessage', 'Devi effettuare il login per donare un bene');
-      setTimeout(() => window.location.href = '/login', 2000);
+ <script>
+  // 1. Mappatura Sottocategorie
+  const opzioniSottocat = {
+    'alimentare': ['Pasta', 'Acqua', 'Pane', 'Carne', 'Pesce', 'Verdura'],
+    'medicinale': ['Oki', 'Tachipirina'],
+    'igiene': ['Sapone', 'Shampoo'],
+    'vestiario': ['Magliette', 'Pantaloni'],
+    'mobilità': ['Sedia a rotelle', 'Stampella singola']
+  };
+
+  // 2. Mappatura Div dei campi extra
+  const sezioniExtra = {
+    'alimentare': 'campiAlimentare',
+    'medicinale': 'campiMedicinale',
+    'igiene': 'campiIgiene',
+    'vestiario': 'campiAbbigliamento',
+    'mobilità': 'campiMobilità'
+  };
+
+  // 3. Funzione principale
+  function selectGood() {
+    const tipoSelezionato = document.getElementById("tipo").value;
+    const selectSottocat = document.getElementById("sottocategoria");
+
+    console.log("Categoria selezionata:", tipoSelezionato); // Debug in console
+
+    // --- Gestione Sottocategoria ---
+    selectSottocat.innerHTML = '<option value="">Seleziona una sottocategoria</option>';
+    if (opzioniSottocat[tipoSelezionato]) {
+      opzioniSottocat[tipoSelezionato].forEach(sub => {
+        const opt = document.createElement('option');
+        opt.value = sub;
+        opt.textContent = sub;
+        selectSottocat.appendChild(opt);
+      });
     }
 
-    document.getElementById("tipo").addEventListener("change", selectGood);
-    function selectGood()
-    {
-      let goods = document.getElementById("tipo").value;
-      const sezioni = {
-        'alimentare': 'campiAlimentare',
-        'medicinale': 'campiMedicinale',
-        'igiene': 'campiIgiene',
-        'vestiario': 'campiAbbigliamento',
-        'mobilità': 'campiMobilità'
-      };
-
-      // Nascondi e disabilita tutte le sezioni
-      Object.values(sezioni).forEach(id => {
-        const div = document.getElementById(id);
+    // --- Gestione Visibilità Campi Extra ---
+    // Nascondiamo tutto prima
+    Object.values(sezioniExtra).forEach(id => {
+      const div = document.getElementById(id);
+      if (div) {
         div.style.display = 'none';
         div.querySelectorAll('input').forEach(inp => { inp.disabled = true; });
-      });
-
-      // Mostra e abilita solo la sezione selezionata
-      if (sezioni[goods]) {
-        const div = document.getElementById(sezioni[goods]);
-        div.style.display = 'block';
-        div.querySelectorAll('input').forEach(inp => { inp.disabled = false; });
-      }
-    }
-
-    // Carica punti di distribuzione dal backend
-    async function caricaPuntiSelect() {
-      try {
-        const response = await fetch('/api/punti-distribuzione');
-        if (!response.ok) throw new Error('API non disponibile');
-        const data = await response.json();
-        const select = document.getElementById('punto_distribuzione');
-        while (select.options.length > 1) select.remove(1);
-        data.data.forEach(p => {
-          const opt = document.createElement('option');
-          opt.value = p.nome;
-          opt.textContent = `${p.nome || 'Punto'} - ${p.citta || ''}, ${p.regione || ''}`;
-          select.appendChild(opt);
-        });
-      } catch (error) {
-        console.warn('Errore caricamento punti:', error);
-      }
-    }
-    caricaPuntiSelect();
-
-    // Invio form donazione bene
-    document.getElementById('donazioneBeniForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const submitBtn = e.target.querySelector('button[type="submit"]');
-      const originalText = submitBtn.textContent;
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Invio in corso...';
-
-      const formData = new FormData(e.target);
-
-      try {
-        // ✅ Endpoint per donazione beni (TODO: da collegare al backend reale)
-        const response = await fetch('/auth/donazioneBene', {
-          method: 'POST',
-          body: formData
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.message) {
-          showSuccess('successMessage', 'Donazione bene registrata con successo! Grazie per il tuo contributo.');
-          document.getElementById('donazioneBeniForm').reset();
-          setTimeout(() => window.location.href = '/', 2500);
-        } else {
-          showError('errorMessage', data.errore || data.error || 'Errore durante l\'invio della donazione');
-        }
-      } catch (error) {
-        showError('errorMessage', 'Errore di connessione al server');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
       }
     });
-  </script>
+
+    // Mostriamo solo quello selezionato
+    const idSezioneDaMostrare = sezioniExtra[tipoSelezionato];
+    if (idSezioneDaMostrare) {
+      const divDaMostrare = document.getElementById(idSezioneDaMostrare);
+      if (divDaMostrare) {
+        divDaMostrare.style.display = 'block';
+        divDaMostrare.querySelectorAll('input').forEach(inp => { inp.disabled = false; });
+      }
+    }
+  }
+
+  // 4. Caricamento Punti di Distribuzione
+  async function caricaPuntiSelect() {
+    try {
+      const response = await fetch('/api/punti-distribuzione');
+      const data = await response.json();
+      const select = document.getElementById('punto_distribuzione');
+      if (!select) return;
+
+      while (select.options.length > 1) select.remove(1);
+      data.data.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.nome;
+        opt.textContent = `${p.nome || 'Punto'} - ${p.citta || ''}`;
+        select.appendChild(opt);
+      });
+    } catch (error) {
+      console.error('Errore caricamento punti:', error);
+    }
+  }
+
+  // 5. Inizializzazione al caricamento
+  document.addEventListener("DOMContentLoaded", function() {
+    // Colleghiamo l'evento al cambio di categoria
+    const selectTipo = document.getElementById("tipo");
+    if (selectTipo) {
+      selectTipo.addEventListener("change", selectGood);
+    }
+
+    // Carichiamo i punti
+    caricaPuntiSelect();
+
+    // Verifichiamo il login
+    if (!sessionStorage.getItem('isLoggedIn')) {
+      alert('Devi effettuare il login per donare un bene');
+      window.location.href = '/login';
+    }
+  });
+
+  // 6. Gestione invio Form
+  document.getElementById('donazioneBeniForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+
+    try {
+      const response = await fetch('/auth/donazioneBene', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+      if (response.ok) {
+        alert('Donazione registrata con successo!');
+        window.location.href = '/';
+      } else {
+        alert('Errore: ' + (data.error || 'Invio fallito'));
+      }
+    } catch (error) {
+      alert('Errore di connessione');
+    }
+  });
+</script>
   <!-- Chatbot integrato -->
   <script src="../chatbot/js/loader.js"></script>
 </body>
