@@ -156,7 +156,7 @@ def aggiungi_bene():
         # Mappatura per far coincidere il nome della Macro con la polymorphic_identity
         mappa_tipi = {
             "Alimenti": "alimentare",
-            "Medicinale": "medicinale",
+            "Medicinali": "medicinale",
             "Vestiario": "vestiario",
             "Igiene": "igiene",
             "Mobilità": "mobilita"
