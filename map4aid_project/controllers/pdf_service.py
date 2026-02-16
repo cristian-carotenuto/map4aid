@@ -9,16 +9,13 @@ def genera_pdf_storico(titolo, righe):
     pdf = canvas.Canvas(buffer, pagesize=A4)
 
     # Registrazione font Unicode
-    pdfmetrics.registerFont(TTFont("DejaVuSans", "DejaVuSans.ttf"))
 
     pdf.setTitle(titolo)
-    pdf.setFont("DejaVuSans", 16)
 
     y = 800
     pdf.drawString(50, y, str(titolo))
     y -= 40
 
-    pdf.setFont("DejaVuSans", 11)
 
     for riga in righe:
         pdf.drawString(50, y, str(riga))
@@ -27,7 +24,6 @@ def genera_pdf_storico(titolo, righe):
         # Nuova pagina se finisce lo spazio
         if y < 50:
             pdf.showPage()
-            pdf.setFont("DejaVuSans", 11)
             y = 800
 
     pdf.save()
