@@ -70,15 +70,11 @@ Lo sviluppo di **MAP4AID** si basa su una serie di principi cardine, definiti pe
 
 - Il sistema deve garantire la privacy degli utenti chiedendo solo dati essenziali
 
-4.  **Accessibilità**
-
-- Il sistema deve essere accessibile da diversi dispositivi
-
-5.  **Affidabilità**
+4.  **Affidabilità**
 
 - Il sistema deve garantire la correttezza delle informazioni sui beni disponibili.
 
-6.  **Scalabilità**
+5.  **Scalabilità**
 
 - Il sistema deve poter gestire un gran numero di utenti e beni in modo efficiente
 
