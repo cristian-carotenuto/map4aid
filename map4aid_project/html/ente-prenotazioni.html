@@ -99,36 +99,57 @@
       setTimeout(() => div.remove(), 6000);
     }
 
-    // Carica prenotazioni
+    // --- FUNZIONE CARICAMENTO PRINCIPALE ---
     async function caricaPrenotazioni() {
       const loading = document.getElementById('loading');
       const empty = document.getElementById('emptyState');
       const lista = document.getElementById('listaPrenotazioni');
+      const errorMessage = document.getElementById('errorMessage');
 
+      // Reset interfaccia
       loading.style.display = '';
       empty.style.display = 'none';
+      if (errorMessage) errorMessage.style.display = 'none';
       lista.innerHTML = '';
 
       try {
         const res = await fetch('/auth/prenotazioni_ente');
+
+        // Se non autenticato, redirect
         if (res.status === 401 || res.status === 403) {
-          window.location.href = '/login'; return;
+          window.location.href = '/login';
+          return;
         }
-        if (!res.ok) throw new Error();
+
+        if (!res.ok) throw new Error("Errore server");
         const data = await res.json();
 
+        // NASCONDI LOADER (Punto fondamentale)
         loading.style.display = 'none';
 
-        if (data.length === 0) { empty.style.display = ''; return; }
+        // Se lista vuota
+        if (data.length === 0) {
+          empty.style.display = '';
+          return;
+        }
 
+        // Generazione HTML
         lista.innerHTML = data.map(p => {
           const isValidazione = p.stato === 'in_validazione';
+
+          // Badge di stato
           const statoBadge = isValidazione
             ? '<span class="badge bg-warning text-dark">In validazione ricetta</span>'
             : '<span class="badge bg-primary">In attesa ritiro</span>';
 
+          // Bottone Validazione (appare solo se serve validare)
+          const btnValida = isValidazione
+            ? `<button class="btn btn-sm btn-info text-white me-1" onclick="approvaRicetta(${p.id}, this)">✅ Valida</button>`
+            : '';
+
+          // Bottone Conferma (disabilitato se serve validare)
           const btnConferma = isValidazione
-            ? `<button class="btn btn-sm btn-secondary" disabled title="In attesa di validazione ricetta">Conferma ritiro</button>`
+            ? `<button class="btn btn-sm btn-secondary" disabled title="Prima devi validare la ricetta">Conferma ritiro</button>`
             : `<button class="btn btn-sm btn-success" onclick="confermaRitiro(${p.id}, this)">Conferma ritiro</button>`;
 
           return `
@@ -146,21 +167,61 @@
                     <p class="card-text small text-muted mb-0"><strong>Data:</strong> ${p.data_prenotazione}</p>
                   </div>
                   <div class="d-flex flex-column gap-2 align-items-end">
-                    ${btnConferma}
-                    <button class="btn btn-sm btn-outline-danger"
+                    <div>
+                        ${btnValida}
+                        ${btnConferma}
+                    </div>
+                    <button class="btn btn-sm btn-outline-danger mt-2"
                       onclick="annullaPrenotazione(${p.id}, this)">Annulla</button>
                   </div>
                 </div>
               </div>
             </div>`;
         }).join('');
+
       } catch (err) {
+        console.error("Errore JS:", err);
         loading.style.display = 'none';
-        showError('errorMessage', 'Impossibile caricare le prenotazioni. Riprova più tardi.');
+        if (errorMessage) {
+            errorMessage.textContent = 'Errore caricamento dati.';
+            errorMessage.style.display = 'block';
+        }
       }
     }
 
-    // Conferma ritiro singolo
+    // --- FUNZIONE APPROVA RICETTA ---
+    async function approvaRicetta(prenotazioneId, btn) {
+        if (!confirm("Confermi che la ricetta è valida?")) return;
+
+        const originalHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '...';
+
+        try {
+            const res = await fetch(`/auth/approva_ricetta`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id_prenotazione: prenotazioneId })
+            });
+
+            if (res.ok) {
+                // Ricarica la lista per aggiornare i bottoni
+                await caricaPrenotazioni();
+                showAlert("Ricetta validata con successo!", "success");
+            } else {
+                const err = await res.json();
+                alert(err.message || "Errore validazione");
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
+        } catch (e) {
+            alert("Errore di connessione");
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+        }
+    }
+
+    // --- ALTRE FUNZIONI ESISTENTI ---
     async function confermaRitiro(id, btn) {
       const card = btn.closest('.card');
       card.style.opacity = '0.6';
@@ -172,93 +233,48 @@
 
         if (res.ok) {
           card.remove();
-          showAlert(`Ritiro #${id} confermato con successo.`, 'success');
+          showAlert(`Ritiro #${id} confermato.`, 'success');
+          // Se non ci sono più card, mostra empty state
           if (!document.querySelector('#listaPrenotazioni .card')) {
-            document.getElementById('emptyState').style.display = '';
+             document.getElementById('emptyState').style.display = '';
           }
         } else {
-          showAlert(data.error || 'Errore durante la conferma.', 'danger');
+          showAlert(data.error || 'Errore.', 'danger');
           card.style.opacity = '1';
           btn.disabled = false;
         }
       } catch (err) {
-        showAlert('Errore di connessione.', 'danger');
+        showAlert('Errore connessione.', 'danger');
         card.style.opacity = '1';
         btn.disabled = false;
       }
     }
 
-    // Annulla prenotazione (dal lato ente)
     async function annullaPrenotazione(id, btn) {
-      if (!confirm('Sei sicuro di voler annullare questa prenotazione?')) return;
-      const card = btn.closest('.card');
-      card.style.opacity = '0.6';
-      btn.disabled = true;
+      if (!confirm('Annullare questa prenotazione?')) return;
 
       try {
         const formData = new FormData();
         formData.append('id_prenotazione', id);
-
         const res = await fetch('/auth/cancella_prenotazione_ente', { method: 'POST', body: formData });
-        const data = await res.json();
 
         if (res.ok) {
-          card.remove();
-          showAlert(`Prenotazione #${id} annullata. Il beneficiario è stato avvisato via email.`, 'warning');
-          if (!document.querySelector('#listaPrenotazioni .card')) {
-            document.getElementById('emptyState').style.display = '';
+          btn.closest('.card').remove();
+          showAlert(`Prenotazione #${id} annullata.`, 'warning');
+           if (!document.querySelector('#listaPrenotazioni .card')) {
+             document.getElementById('emptyState').style.display = '';
           }
         } else {
-          showAlert(data.error || 'Errore durante l\'annullamento.', 'danger');
-          card.style.opacity = '1';
-          btn.disabled = false;
+            alert("Errore durante l'annullamento");
         }
-      } catch (err) {
-        showAlert('Errore di connessione.', 'danger');
-        card.style.opacity = '1';
-        btn.disabled = false;
+      } catch (e) {
+        alert("Errore di rete");
       }
     }
 
-    // Conferma rapida via ID inserito manualmente (corrispondenza QR)
-    document.getElementById('btnConfermaRapida').addEventListener('click', async () => {
-      const id = parseInt(document.getElementById('inputIdPrenotazione').value);
-      const errDiv = document.getElementById('confermaRapidaError');
-
-      if (!id || id < 1) {
-        errDiv.textContent = 'Inserisci un ID prenotazione valido.';
-        errDiv.style.display = 'block';
-        return;
-      }
-      errDiv.style.display = 'none';
-
-      const btn = document.getElementById('btnConfermaRapida');
-      btn.disabled = true;
-      btn.textContent = 'Conferma in corso...';
-
-      try {
-        const res = await fetch(`/auth/conferma_prenotazione?id_prenotazione=${id}`);
-        const data = await res.json();
-
-        if (res.ok) {
-          document.getElementById('inputIdPrenotazione').value = '';
-          showAlert(`Ritiro #${id} confermato con successo.`, 'success');
-          caricaPrenotazioni();
-        } else {
-          errDiv.textContent = data.error || 'Errore durante la conferma.';
-          errDiv.style.display = 'block';
-        }
-      } catch (err) {
-        errDiv.textContent = 'Errore di connessione.';
-        errDiv.style.display = 'block';
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Conferma ritiro';
-      }
-    });
-
+    // Avvio al caricamento della pagina
     document.addEventListener('DOMContentLoaded', caricaPrenotazioni);
-  </script>
+</script>
   <script src="../js/chatbot/js/loader.js"></script>
 </body>
 </html>

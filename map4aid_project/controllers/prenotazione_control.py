@@ -345,13 +345,18 @@ def cancella_prenotazione_beneficiario():
 
 
 
-@auth_bp.route("/approva_ricetta", methods=["GET"])
+@auth_bp.route("/approva_ricetta", methods=["POST"])
 @require_roles("ente_erogatore")
 def approva_ricetta():
     mail_sender = EmailControlBridge()
-    id = request.args.get("id_prenotazione", type=int)
-    prenotazione = Prenotazione.query.filter_by(id=id).first()
+    data = request.get_json()
 
+    # Estrai l'ID (se data è None o la chiave manca, gestisci l'errore)
+    if not data or "id_prenotazione" not in data:
+        return jsonify({"error": "Dati mancanti"}), 400
+
+    id = data.get("id_prenotazione")
+    prenotazione = Prenotazione.query.filter_by(id=id).first()
     if not prenotazione:
         return jsonify({"error": "Prenotazione non trovata"}), 404
 
