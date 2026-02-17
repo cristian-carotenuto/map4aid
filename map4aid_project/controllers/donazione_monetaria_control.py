@@ -1,6 +1,6 @@
 from datetime import timezone, datetime
 
-from flask import request, session
+from flask import request, session, jsonify
 from controllers.routes import auth_bp
 from controllers.service_email.email_control_bridge import EmailControlBridge
 from models import AccountEnteErogatore
@@ -95,3 +95,11 @@ def esegui_transazione(numero_carta, scadenza, cvv,
         return False
     return True
 
+
+@auth_bp.route("/lista_enti", methods=["GET"])
+def lista_enti():
+    # Recupera tutti gli enti dal database
+    enti = AccountEnteErogatore.query.all()
+    # Restituisce solo i nomi in una lista semplice
+    nomi_enti = [ente.nome_organizzazione for ente in enti]
+    return jsonify(nomi_enti), 200

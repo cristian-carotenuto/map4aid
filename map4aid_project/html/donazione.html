@@ -32,15 +32,13 @@
                 - Metodo: POST, form-data
             -->
             <form id="donazioneForm">
-              <div class="mb-3">
-                <label for="nome_ente_erogatore" class="form-label">Seleziona l'ente</label>
-                <select class="form-select" id="nome_ente_erogatore" name="nome_ente_erogatore" required>
-                  <option value="">Seleziona un ente</option>
-                  <option value="Caritas Roma">Caritas Roma</option>
-                  <option value="Croce Rossa">Croce Rossa</option>
-                  <option value="Comune di Roma">Comune di Roma</option>
-                </select>
-              </div>
+                  <div class="mb-3">
+                    <label for="nome_ente_erogatore" class="form-label">Seleziona l'ente</label>
+                  <select class="form-select" id="nome_ente_erogatore" name="nome_ente_erogatore" required>
+                    <option value="">Caricamento enti...</option>
+                    </select>
+                  </div>
+
 
               <div class="mb-3">
                 <label for="importo" class="form-label">Importo (€)</label>
@@ -88,44 +86,72 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{{ url_for('static', filename='static/js/auth.js') }}"></script>
   <script>
-    // Protezione: solo utenti loggati possono donare
-    if (!sessionStorage.getItem('isLoggedIn')) {
-      showError('errorMessage', 'Devi effettuare il login per donare');
-      setTimeout(() => {
-        window.location.href = '/login';
-      }, 2000);
-    }
-    document.getElementById('donazioneForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const submitBtn = e.target.querySelector('button[type="submit"]');
-      const originalText = submitBtn.textContent;
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Elaborazione...';
+    async function caricaEnti() {
+        const selectEnte = document.getElementById('nome_ente_erogatore');
 
-      try {
-        // ✅ Endpoint corretto con /auth/
-        const response = await fetch('/auth/donazioneMonetaria', {
-          method: 'POST',
-          body: formData
-        });
-        const data = await response.json();
+        try {
+            const response = await fetch('/auth/lista_enti');
+            if (!response.ok) throw new Error("Errore nel caricamento enti");
 
-        if (response.ok && data.messaggio) {
-          // ✅ Usa showSuccess invece di alert()
-          showSuccess('successMessage', 'Donazione effettuata con successo!');
-          setTimeout(() => {
-            window.location.href = '/h';
-          }, 2000);
-        } else {
-          showError('errorMessage', data.errore || 'Errore durante la donazione');
+            const enti = await response.json();
+
+            // Pulisce le opzioni statiche attuali (tranne la prima)
+            selectEnte.innerHTML = '<option value="">Seleziona un ente</option>';
+
+            // Aggiunge gli enti ricevuti dal DB
+            enti.forEach(nome => {
+                const option = document.createElement('option');
+                option.value = nome;
+                option.textContent = nome;
+                selectEnte.appendChild(option);
+            });
+        } catch (error) {
+            console.error("Errore:", error);
+            showError('errorMessage', 'Impossibile caricare la lista degli enti');
         }
-      } catch (error) {
-        showError('errorMessage', 'Errore di connessione al server');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-      }
+    }
+    // --- PROTEZIONE ACCESSO ---
+    if (!sessionStorage.getItem('isLoggedIn')) {
+        // Usa alert se showError non è ancora disponibile
+        alert('Devi effettuare il login per donare');
+        window.location.href = '/login';
+    }
+
+    // --- ESECUZIONE AL CARICAMENTO ---
+    // Questo è il pezzo che ti mancava!
+    document.addEventListener('DOMContentLoaded', () => {
+        caricaEnti();
+    });
+
+    // --- GESTIONE INVIO FORM ---
+    document.getElementById('donazioneForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Elaborazione...';
+
+        try {
+            const response = await fetch('/auth/donazioneMonetaria', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+
+            if (response.ok && data.messaggio) {
+                alert('Donazione effettuata con successo!');
+                window.location.href = '/';
+            } else {
+                alert(data.errore || 'Errore durante la donazione');
+            }
+        } catch (error) {
+            alert('Errore di connessione al server');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        }
     });
   </script>
   <!-- ✅ Chatbot integrato -->
