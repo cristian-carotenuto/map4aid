@@ -77,22 +77,21 @@
               card.className = 'card mb-3';
               card.innerHTML = `
                 <div class="card-body">
-                <h5 class="card-title">
-                  ${d.tipo === "monetaria" ? "Donazione monetaria" : "Donazione di beni"}
-                </h5>
+                  <h5 class="card-title">
+                    ${d.tipo === "monetaria" ? "Donazione monetaria" : "Donazione di beni"}
+                  </h5>
 
-                <p class="card-text">
-                  ${d.tipo === "monetaria"
-                  ? <strong>Importo:</strong> €${d.importo}<br>
-                  : <strong>Bene:</strong> ${d.bene}<br>
-                }
-
-                <strong>Ente:</strong> ${d.ente}<br>
-                <strong>Data:</strong> ${d.data}
-              </p>
-            </div>
-          `;
-
+                  <p class="card-text">
+                    ${d.tipo === "monetaria"
+                      ? `<strong>Importo:</strong> €${d.importo}<br>`
+                      : `<strong>Bene:</strong> ${d.bene}<br>`
+                    }
+                    <strong>Ente:</strong> ${d.ente}<br>
+                    <strong>Data:</strong> ${d.data}
+                  </p>
+                </div>
+              `;
+              
               container.appendChild(card);
             });
             document.getElementById('donazioniList').style.display = 'block';
