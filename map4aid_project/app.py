@@ -218,7 +218,11 @@ def create_app():
     @app.route("/admin-login")
     def adminlogin_page():
         return render_template("admin-login.html")
-                            
+
+    @app.route("/feedback-punto")
+    def feedbackpunto_page():
+        return render_template("feedback-punto.html")          
+                      
     if os.environ.get('WERKZEUG_RUN_MAIN') == 'true' or not app.debug:
         start_scheduler(app)
 

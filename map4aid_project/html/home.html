@@ -280,6 +280,7 @@
           <p><strong>Categoria:</strong> ${punto.categoria}</p>
           <button class="btn btn-sm btn-primary mt-2" onclick="apriPrenotazione(${punto.id})">Prenota</button>
           <button class="btn btn-sm btn-outline-primary mt-2 ms-1" onclick="calcolaPercorsoVerso(${punto.lat},${punto.lng},'${punto.nome.replace(/'/g, "\\'")}')">🗺️ Percorso</button>
+          <button class="btn btn-sm btn-warning mt-2 ms-1" onclick="apriFeedbackPunto(${punto.id})">Feedback</button>
         </div>
       `;
 
@@ -689,6 +690,10 @@
 
     // ====== FEEDBACK DA HOME ======
 
+    function apriFeedbackPunto(idPunto) {
+      window.location.href = `/feedback-punto?id=${idPunto}`;
+    }
+
     /**
      * Apre il modal feedback dopo aver verificato il login
      * e caricato le prenotazioni ritirate
@@ -696,7 +701,6 @@
     async function apriFeedbackModal() {
       if (!sessionStorage.getItem('isLoggedIn')) {
         showError('errorMessage', 'Devi effettuare il login per lasciare un feedback');
-        setTimeout(() => { window.location.href = '/login'; }, 2000);
         setTimeout(() => { window.location.href = '/login'; }, 2000);
         return;
       }

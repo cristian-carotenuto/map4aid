@@ -11,7 +11,7 @@ from controllers.pdf_service import genera_pdf_storico
 from controllers.auth_facade import AuthFacade
 from controllers.service_email.email_control_bridge import EmailControlBridge
 from config import db
-from models.models import Prenotazione, DonazioneBene, DonazioneMonetaria, PuntoDistribuzione
+from models.models import Prenotazione, DonazioneBene, DonazioneMonetaria, PuntoDistribuzione, Feedback
 
 
 @auth_bp.route("/profilo", methods=["GET"])
@@ -99,32 +99,24 @@ def get_prenotazioni():
 @auth_bp.route("/donazioni", methods=["GET"])
 @login_required
 def get_donazioni():
-    """
-    Restituisce tutte le donazioni dell'utente autenticato (solo donatori)
-    """
     user = current_user
-
-    if user.tipo != "donatore":
-        return jsonify({"error": "Solo i donatori hanno donazioni"}), 403
-
     risultato = []
 
-    # Donazioni di beni
-    don_beni = DonazioneBene.query.filter_by(donatore_id=user.id).all()
-    for d in don_beni:
-        risultato.append({
-            "id": f"DB{d.id}",
-            "tipo": "bene",
-            "data": d.data.strftime('%d/%m/%Y'),
-            "bene": d.bene.nome if d.bene else "N/A",
-            "ente": d.ente_erogatore.nome_organizzazione if d.ente_erogatore else "N/A",
-            "stato": "completata"
-        })
+    #donazioni beni
+    if user.tipo == "donatore":
+        don_beni = DonazioneBene.query.filter_by(donatore_id=user.id).all()
+        for d in don_beni:
+            risultato.append({
+                "id": f"DB{d.id}",
+                "tipo": "bene",
+                "data": d.data.strftime('%d/%m/%Y'),
+                "bene": d.bene.nome if d.bene else "N/A",
+                "ente": d.ente_erogatore.nome_organizzazione if d.ente_erogatore else "N/A",
+                "stato": "completata"
+            })
 
-    # Donazioni monetarie
+    #donazioni monetarie
     don_money = DonazioneMonetaria.query.filter_by(donatore_id=user.id).all()
-    don_money.sort(key=lambda d: d.data, reverse=True)
-
     for d in don_money:
         risultato.append({
             "id": f"DM{d.id}",
@@ -135,10 +127,11 @@ def get_donazioni():
             "stato": "completata"
         })
 
-    # Ordina per data (più recenti prima)
-    risultato.sort(key=lambda x: x['data'], reverse=True)
+    #ordina per data
+    risultato.sort(key=lambda x: x["data"], reverse=True)
 
     return jsonify(risultato), 200
+
 
 
 @auth_bp.route("/modifica_profilo", methods=["POST"])
@@ -394,3 +387,28 @@ def storico_pdf():
         as_attachment=True,
         download_name="storico.pdf"
     )
+
+
+
+
+
+@auth_bp.route("/feedback/punto/<int:id_punto>", methods=["GET"])
+@login_required
+def feedback_punto(id_punto):
+    prenotazioni = Prenotazione.query.filter_by(punto_id=id_punto).all()
+
+    if not prenotazioni:
+        return jsonify([]), 200
+
+    feedback_list = []
+    for p in prenotazioni:
+        fb = Feedback.query.filter_by(prenotazione_id=p.id).first()
+        if fb:
+            feedback_list.append({
+                "valutazione": fb.valutazione,
+                "recensione": fb.recensione,
+                "data": fb.prenotazione.data_prenotazione.strftime('%d/%m/%Y'),
+                "beneficiario": f"{p.beneficiario.nome} {p.beneficiario.cognome}"
+            })
+
+    return jsonify(feedback_list), 200
