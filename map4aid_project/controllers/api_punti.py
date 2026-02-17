@@ -112,7 +112,6 @@ def result_to_dicts(res):
 
 
 @api.route("/punti-distribuzione", methods=["GET"])
-@api.route("/punti-distribuzione", methods=["GET"])
 def get_punti_distribuzione():
     categoria = request.args.get("categoria", type=str)
 
