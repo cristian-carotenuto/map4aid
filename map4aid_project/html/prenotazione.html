@@ -64,13 +64,12 @@
               <h5 class="mb-3">Prenotazione confermata!</h5>
               <div class="qr-placeholder">
                 <div class="mb-3">
-                  <strong>QR Code della tua prenotazione</strong>
+                  <strong>Ti è stata inviata un'email di conferma della tua prenotazione</strong>
                 </div>
                 <div id="qrCodePlaceholder" class="text-muted">
-                  Il QR code verrà generato dal server
+                  Il QR code verrà generato e mandato alla tua email
                 </div>
                 <div class="mt-3">
-                  <button class="btn btn-success" onclick="window.print()">Stampa QR Code</button>
                 </div>
               </div>
               <div class="mt-3">
@@ -198,7 +197,7 @@
         formData.append('is_pacco', isPacco);
 
         // Se il bene singolo è un medicinale (gestito tramite sottocategoria)
-        const isMedicinale = (paccoSelezionato.sottocategoria === 'Medicinali') ? 'True' : 'False';
+        const isMedicinale = (paccoSelezionato.tipo === 'medicinale') ? 'True' : 'False';
         formData.append('is_medicinale', isMedicinale);
 
         const response = await fetch('/auth/prenotazione', {
@@ -210,7 +209,7 @@
         if (response.ok) {
           document.getElementById('qrCodePlaceholder').innerHTML = `
             <div class="mb-2 text-success">Prenotazione confermata con successo!</div>
-            <div class="h4 fw-bold">${data.codice || 'QR-GENERATO'}</div>
+            <div class="h4 fw-bold">${data.codice || 'QR-CODE inviato alla tua email'}</div>
             <div class="small text-muted">Mostra questo codice al punto di ritiro.</div>
           `;
           goToStep(3);
