@@ -1,7 +1,7 @@
 from flask import request, session, jsonify
 from controllers.routes import auth_bp
 from controllers.permessi import require_roles
-from models.models import AccountEnteErogatore, PuntoDistribuzione, Bene, SottoCategoria, MacroCategoria
+from models.models import *
 from config import db
 import threading
 
@@ -167,13 +167,23 @@ def aggiungi_bene():
 
         # 4. Creazione del bene
         # SQLAlchemy userà 'tipo' per capire che è un'istanza polimorfica
-        nuovo_bene = Bene(
+        class_map = {
+            "alimentare": BeneAlimentare,
+            "medicinale": BeneMedicinale,
+            "vestiario": BeneVestiario,
+            "igiene": BeneIgiene,
+            "mobilita": BeneMobilita
+        }
+
+        BeneClass = class_map.get(tipo_identita, Bene)
+
+        nuovo_bene = BeneClass(
             nome=nome,
             quantita=quantita,
             punto_distribuzione_id=punto_id,
-            sottocategoria_id=sottocategoria_id,
-            tipo=tipo_identita
+            sottocategoria_id=sottocategoria_id
         )
+
 
         db.session.add(nuovo_bene)
         db.session.commit()
