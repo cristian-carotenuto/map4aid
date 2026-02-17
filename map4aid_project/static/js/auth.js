@@ -129,7 +129,7 @@ function updateAuthButtons() {
       <a href="/" class="btn btn-light">Home</a>
       <a href="/donazione" class="btn btn-light">Donazione monetaria</a>
       <a href="/login" class="btn btn-light">Login</a>
-      <a href="/register" class="btn btn-light">Sign In</a>
+      <a href="/register" class="btn btn-light">Sign up</a>
     `;
   }
 }
