@@ -56,7 +56,7 @@
         </div>
         <div class="modal-body">
           <p>Inserisci il codice a 4 cifre inviato alla tua email.</p>
-          <form id="codiceForm">
+          <form id="codiceForm" onsubmit="return false;">
             <div class="mb-3">
               <label for="codice" class="form-label">Codice</label>
               <input type="text" class="form-control" id="codice" name="codice" maxlength="4" required>
@@ -102,7 +102,8 @@
 
         if (response.ok) {
           // Mostra modale 2FA
-          const modal = new bootstrap.Modal(document.getElementById('codiceModal'));
+          const modalEl = document.getElementById('codiceModal');
+          const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
           modal.show();
         } else {
           showError('errorMessage', data.error || 'Errore sconosciuto');
@@ -119,6 +120,14 @@
      * Conferma del codice 2FA
      * Coerente con two_fa_control.py → endpoint /auth/2FALogin
      */
+    // Enter key sull'input OTP
+    document.getElementById('codice').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('confermaCodiceBtn').click();
+      }
+    });
+
     document.getElementById('confermaCodiceBtn').addEventListener('click', async () => {
       const codice = document.getElementById('codice').value;
       if (!codice) {

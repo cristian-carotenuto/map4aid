@@ -50,6 +50,10 @@ def recupero_password():
     # Genera codice OTP sicuro a 4 cifre
     codice = secrets.randbelow(9000) + 1000  # tra 1000 e 9999
 
+    # Rimuovi eventuali PendingAccount precedenti per questa email
+    PendingAccount.query.filter_by(email=email).delete()
+    db.session.commit()
+
     # Salva nella sessione email
     session["pending_email"] = email
     puser = PendingAccount(

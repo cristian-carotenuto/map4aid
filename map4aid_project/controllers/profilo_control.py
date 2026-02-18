@@ -1,5 +1,7 @@
-from flask import request, jsonify, send_file
+import secrets
+from flask import request, jsonify, send_file, session
 from flask_login import login_required, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 from geopy import Nominatim
 from io import BytesIO
 from reportlab.lib.pagesizes import A4
@@ -12,6 +14,12 @@ from controllers.auth_facade import AuthFacade
 from controllers.service_email.email_control_bridge import EmailControlBridge
 from config import db
 from models.models import Prenotazione, DonazioneBene, DonazioneMonetaria, PuntoDistribuzione, Feedback
+
+# Campi che non devono essere modificabili liberamente dall'utente
+CAMPI_PROTETTI = [
+    "tipo", "categoria", "data_nascita", "codice_carta_identita",
+    "path_immagine_carta_identita", "partita_iva", "tipologia_ente", "accettato"
+]
 
 
 @auth_bp.route("/profilo", methods=["GET"])
@@ -137,50 +145,93 @@ def get_donazioni():
 @auth_bp.route("/modifica_profilo", methods=["POST"])
 @login_required
 def modifica_profilo():
-    from controllers.service_email.email_control_bridge import EmailControlBridge 
-    from controllers.auth_facade import AuthFacade
-    facade = AuthFacade(EmailControlBridge())
-
     user = current_user
     data = request.form
 
-    #validazione email
-    if "email" in data:
-        try:
-            facade.validate_email(data["email"],user)
-            user.email = data["email"]
-        except ValueError as e:
-            return jsonify({"error": str(e)}), 400
+    # L'email va cambiata tramite il flusso OTP dedicato
+    if "email" in data and data["email"] != user.email:
+        return jsonify({"error": "Per cambiare email usa il pulsante 'Cambia email' con verifica OTP."}), 400
 
-    #BENEFICIARIO
+    # Rifiuta campi protetti
+    for campo in CAMPI_PROTETTI:
+        if campo in data:
+            return jsonify({"error": f"Il campo '{campo}' non è modificabile."}), 400
+
+    # BENEFICIARIO
     if user.tipo == "beneficiario":
         for field in ["nome", "cognome", "allergeni", "patologie"]:
             if field in data:
                 setattr(user, field, data[field])
 
-    #DONATORE
+    # DONATORE
     elif user.tipo == "donatore":
-        # privato
         if user.categoria == "privato":
             for field in ["nome", "cognome"]:
                 if field in data:
                     setattr(user, field, data[field])
-        # azienda
         else:
             for field in ["nome_attivita", "indirizzo_sede"]:
                 if field in data:
                     setattr(user, field, data[field])
 
-    #ENTE EROGATORE
+    # ENTE EROGATORE
     elif user.tipo == "ente_erogatore":
         for field in ["nome_organizzazione", "indirizzo_sede", "iban"]:
             if field in data:
                 setattr(user, field, data[field])
 
-    #salva
+    db.session.commit()
+    return jsonify({"message": "Profilo aggiornato con successo"}), 200
+
+
+@auth_bp.route("/richiedi_cambio_email", methods=["POST"])
+@login_required
+def richiedi_cambio_email():
+    nuova_email = request.form.get("nuova_email", "").strip().lower()
+    if not nuova_email:
+        return jsonify({"error": "Inserisci la nuova email."}), 400
+
+    if nuova_email == current_user.email:
+        return jsonify({"error": "La nuova email coincide con quella attuale."}), 400
+
+    facade = AuthFacade(EmailControlBridge())
+    try:
+        facade.validate_email(nuova_email, current_user)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+    codice = secrets.randbelow(9000) + 1000  # 4 cifre
+    session["otp_cambio_email_hash"] = generate_password_hash(str(codice))
+    session["otp_cambio_email_nuova"] = nuova_email
+
+    bridge = EmailControlBridge()
+    bridge.send_otp(nuova_email, codice)
+
+    return jsonify({"message": "Codice OTP inviato alla nuova email."}), 200
+
+
+@auth_bp.route("/conferma_cambio_email", methods=["POST"])
+@login_required
+def conferma_cambio_email():
+    codice = request.form.get("codice", "").strip()
+    otp_hash = session.get("otp_cambio_email_hash")
+    nuova_email = session.get("otp_cambio_email_nuova")
+
+    if not otp_hash or not nuova_email:
+        return jsonify({"error": "Nessuna richiesta di cambio email in corso."}), 400
+
+    if not check_password_hash(otp_hash, codice):
+        return jsonify({"error": "Codice OTP non valido."}), 400
+
+    current_user.email = nuova_email
     db.session.commit()
 
-    return jsonify({"message": "Profilo aggiornato con successo"}), 200
+    # Aggiorna sessione
+    session.pop("otp_cambio_email_hash", None)
+    session.pop("otp_cambio_email_nuova", None)
+    session["user_email"] = nuova_email
+
+    return jsonify({"message": "Email aggiornata con successo."}), 200
 
 
 @auth_bp.route("/storico_pdf", methods=["GET"])

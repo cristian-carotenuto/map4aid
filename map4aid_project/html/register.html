@@ -105,7 +105,7 @@
         </div>
         <div class="modal-body">
           <p>Inserisci il codice a 4 cifre inviato alla tua email.</p>
-          <form id="codiceForm">
+          <form id="codiceForm" onsubmit="return false;">
             <div class="mb-3">
               <label for="codice" class="form-label">Codice</label>
               <input type="text" class="form-control" id="codice" name="codice" maxlength="4" required>
@@ -286,10 +286,18 @@
         if (response.ok) {
           localStorage.setItem('ruoloRegistrazione', ruolo);
           localStorage.setItem('emailRegistrazione', email);
-          new bootstrap.Modal(document.getElementById('codiceModal')).show();
+          bootstrap.Modal.getOrCreateInstance(document.getElementById('codiceModal')).show();
         } else { showError('errorMessage', data.error || 'Errore sconosciuto durante la registrazione'); }
       } catch (error) { showError('errorMessage', 'Errore di connessione al server'); }
       finally { submitBtn.disabled = false; submitBtn.textContent = originalText; }
+    });
+
+    // Enter key sull'input OTP
+    document.getElementById('codice').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('confermaCodiceBtn').click();
+      }
     });
 
     document.getElementById('confermaCodiceBtn').addEventListener('click', async () => {
